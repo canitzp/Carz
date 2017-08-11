@@ -19,19 +19,19 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 @Mod.EventBusSubscriber
 public class KeyListener {
 
-    private KeyBinding keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
-    private KeyBinding keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
-    private KeyBinding keyLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft;
-    private KeyBinding keyRight = Minecraft.getMinecraft().gameSettings.keyBindRight;
+    private static KeyBinding keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
+    private static KeyBinding keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
+    private static KeyBinding keyLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft;
+    private static KeyBinding keyRight = Minecraft.getMinecraft().gameSettings.keyBindRight;
 
     @SubscribeEvent
-    public void onKeyInput(InputEvent.KeyInputEvent event) {
+    public static void onKeyInput(InputEvent.KeyInputEvent event) {
         EntityPlayer p = Minecraft.getMinecraft().player;
         Entity riding = p.getRidingEntity();
         if (!(riding instanceof EntitySteerableBase)){
             return;
         }
         EntitySteerableBase steerable = (EntitySteerableBase) riding;
-        steerable.updateInputs(this.keyLeft.isKeyDown(), this.keyRight.isKeyDown(), this.keyForward.isKeyDown(), this.keyBackward.isKeyDown());
+        steerable.updateInputs(keyLeft.isKeyDown(), keyRight.isKeyDown(), keyForward.isKeyDown(), keyBackward.isKeyDown());
     }
 }

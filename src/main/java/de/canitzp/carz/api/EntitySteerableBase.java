@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public abstract class EntitySteerableBase extends EntityRideableBase {
 
-
     private boolean inputLeftDown, inputRightDown, inputForwardDown, inputBackDown;
 
     public EntitySteerableBase(World worldIn) {

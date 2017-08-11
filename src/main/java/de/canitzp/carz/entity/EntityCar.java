@@ -34,6 +34,7 @@ public class EntityCar extends EntitySteerableBase {
     public void setupGL(double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.translate(x - 1F, y + 1.15F, z + 0.5F);
         GlStateManager.rotate(180.0F, 1.0F, 0, 0);
+        GlStateManager.rotate(this.rotationYaw, 0.0F, 1.0F, 0.0F);
     }
 
     @Override

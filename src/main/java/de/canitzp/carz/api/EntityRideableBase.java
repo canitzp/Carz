@@ -10,6 +10,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 /**
  * Represents rideable vehicles
  * //TODO: Get rid of the generic boat stuff
@@ -20,6 +23,12 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
 
     public EntityRideableBase(World worldIn) {
         super(worldIn);
+    }
+
+    @Nullable
+    public Entity getControllingPassenger() {
+        List<Entity> list = this.getPassengers();
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
