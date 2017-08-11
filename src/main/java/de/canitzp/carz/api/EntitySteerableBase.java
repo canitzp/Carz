@@ -43,7 +43,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
     }
 
     @SideOnly(Side.CLIENT)
-    public void controlVehicle() {
+    private void controlVehicle() {
         if (this.isBeingRidden()) {
             float fwd = 0.0F; //Forward movement?
 
@@ -74,8 +74,15 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     deltaR *= 5 * Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
                 }
 
-                if (deltaR == 0 && autoSnapping){
-                    //TODO: continue here
+                if (this.speedSq > 0 && deltaR == 0 && autoSnapping) {
+                    double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
+                    double rotmod = MathHelper.positiveModulo(rotYaw, 90);
+
+                    if (rotmod < 6) {
+                        deltaR -= 0.15;
+                    } else if (rotmod > 80) {
+                        deltaR += 0.15;
+                    }
                 }
 
                 if (this.speedSqAbs * Math.abs(this.angle) > 3.5) {

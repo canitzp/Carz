@@ -1,11 +1,9 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
-import de.canitzp.carz.CarzStats;
 import de.canitzp.carz.client.models.ModelCar;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -88,10 +86,9 @@ public abstract class EntityMoveableBase extends Entity {
         }
     }
 
-    private void getSpeedData() {
+    private void updateServerDrivingData() {
         double x = this.posX - this.lastColX;
         double z = this.posZ - this.lastColZ;
-        Carz.LOG.info("X=>" + this.posX + "-" + this.lastColX);
 
         this.speedSqAbs = x * x + z * z;
         if (this.speedSqAbs > 0.00001) {
@@ -161,7 +158,7 @@ public abstract class EntityMoveableBase extends Entity {
                 this.lastColZ = this.posZ;
                 this.lastColTime = this.ticksExisted;
             } else if (this.lastColX != 0) {
-                this.getSpeedData();
+                this.updateServerDrivingData();
                 double angle = Math.atan2(this.posZ, this.posX) - Math.atan2(entityIn.posZ, entityIn.posX);
                 Carz.LOG.info("Hit with angle " + angle + " // " + this.angle + " @ " + this.speedSq);
 
