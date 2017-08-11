@@ -6,11 +6,17 @@ import de.canitzp.carz.client.models.ModelCar;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,7 +35,7 @@ public abstract class EntityMoveableBase extends Entity {
     protected float momentum, angularMomentum;
     protected int spinningTicks = 0; //Out of control
 
-    protected double speedSqAbs, speedSq;
+    public double speedSqAbs, speedSq;
     protected double angle;
 
     private double lastColX = 0, lastColZ = 0;
@@ -184,14 +190,26 @@ public abstract class EntityMoveableBase extends Entity {
     }
 
     @Override
-    public void setPosition(double x, double y, double z) {
-        this.posX = x;
-        this.posY = y;
-        this.posZ = z;
-        double length = this.getCarLength() / 2;
-        float f = this.width / 2.0F;
-        float f1 = this.height;
-        this.setEntityBoundingBox(new AxisAlignedBB(x - length, y, z - (double) f, x + length, y + (double) f1, z + (double) f));
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        return this.getCapability(capability, facing) != null;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+            IFluidHandler fluidHandler = this.getFluidHandler(facing);
+            if(fluidHandler != null){
+                return (T) fluidHandler;
+            }
+        }
+        if(capability == CapabilityEnergy.ENERGY){
+            IEnergyStorage energyStorage = this.getEnergyStorage(facing);
+            if(energyStorage != null){
+                return (T) energyStorage;
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 
     @SideOnly(Side.CLIENT)
@@ -204,5 +222,14 @@ public abstract class EntityMoveableBase extends Entity {
     @SideOnly(Side.CLIENT)
     public abstract void setupGL(double x, double y, double z, float entityYaw, float partialTicks);
 
-    public abstract double getCarLength();
+    @Nullable
+    protected IFluidHandler getFluidHandler(@Nullable EnumFacing facing){
+        return null;
+    }
+
+    @Nullable
+    protected IEnergyStorage getEnergyStorage(@Nullable EnumFacing facing){
+        return null;
+    }
+
 }

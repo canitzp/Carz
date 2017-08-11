@@ -28,12 +28,7 @@ public class Carz {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         LOG.info("Launching " + MODNAME + " v" + MODVERSION);
-        LOG.info("Registering Cars");
-        EntityRegistry.registerModEntity(new ResourceLocation(MODID, "car"), EntityCar.class, "car", 0, carz, 64, 5, true);
-        if (event.getSide().isClient()) {
-            LOG.info("Registering Car renderer");
-            RenderingRegistry.registerEntityRenderingHandler(EntityCar.class, RenderCar::new);
-        }
+        Registry.preInit(event);
     }
 
     @Mod.EventHandler

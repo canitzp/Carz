@@ -1,5 +1,6 @@
 package de.canitzp.carz.client.renderer;
 
+import de.canitzp.carz.api.EntityMoveableBase;
 import de.canitzp.carz.client.models.ModelCar;
 import de.canitzp.carz.entity.EntityCar;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
  * @author canitzp
  */
 @SideOnly(Side.CLIENT)
-public class RenderCar extends Render<EntityCar> implements IResourceManagerReloadListener {
+public class RenderCar<T extends EntityMoveableBase> extends Render<T> implements IResourceManagerReloadListener {
 
     public static final ModelCar MODEL_CAR = new ModelCar();
 
@@ -30,12 +31,12 @@ public class RenderCar extends Render<EntityCar> implements IResourceManagerRelo
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(EntityCar entity) {
+    protected ResourceLocation getEntityTexture(T entity) {
         return null;
     }
 
     @Override
-    public void doRender(EntityCar car, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(T car, double x, double y, double z, float entityYaw, float partialTicks) {
         if (this.model == null) {
             this.model = car.getCarModel();
             this.texture = car.getCarTexture();
