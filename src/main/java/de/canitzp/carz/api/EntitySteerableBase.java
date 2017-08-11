@@ -17,6 +17,8 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
 
     private boolean inputLeftDown, inputRightDown, inputForwardDown, inputBackDown;
 
+    protected boolean autoSnapping = true;
+
     public EntitySteerableBase(World worldIn) {
         super(worldIn);
     }
@@ -57,29 +59,33 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 if (this.inputBackDown)
                     fwd -= 0.005;
 
-                double speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
+//                double speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
 
-                double momYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.motionZ, this.motionX) * 180 / Math.PI) - 90;
-                double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
-                double angle = MathHelper.wrapDegrees(rotYaw - momYaw);
-                double speedSq = (angle > 170 || angle < -170) ? -speedSqAbs : speedSqAbs;
+//                double momYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.motionZ, this.motionX) * 180 / Math.PI) - 90;
+//                double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
+//                double angle = MathHelper.wrapDegrees(rotYaw - momYaw);
+//                double speedSq = (angle > 170 || angle < -170) ? -speedSqAbs : speedSqAbs;
 
 
                 //times 2.5 and reverse if driving backwards
-                deltaR *= 2.5 * speedSq > 0 ? 1 : -1;
-                if (speedSq > 0) {
+                deltaR *= 2.5 * this.speedSq > 0 ? 1 : -1;
+                if (this.speedSq > 0) {
                     //TODO: Yeah - find some actual good numbers
                     deltaR *= 5 * Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
                 }
 
-                if (speedSqAbs * Math.abs(angle) > 3.5) {
+                if (deltaR == 0 && autoSnapping){
+                    //TODO: continue here
+                }
+
+                if (this.speedSqAbs * Math.abs(this.angle) > 3.5) {
                     Carz.LOG.info("Too fast around that corner");
                     deltaR = 0;
                     this.spinningTicks = this.spinningTicks * 2 + 2;
                     world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX, this.posY + 2, this.posZ, 0.1, 0.1, 0.1);
                 }
-                if (speedSqAbs > 0.001)
-                    Carz.LOG.info(speedSq * 20 + " b/s");
+//                if (speedSqAbs > 0.001)
+//                    Carz.LOG.info(speedSq * 20 + " b/s");
 
 //                Carz.LOG.info("Angle " + angle + " //  " + this.deltaRotation + "  =>> " + this.rotationYaw + " => ZP = " + Math.round(speedSqAbs * angle));
                 if (speedSqAbs > 0.001) {

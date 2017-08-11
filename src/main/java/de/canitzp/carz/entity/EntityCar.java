@@ -4,7 +4,10 @@ import de.canitzp.carz.api.EntitySteerableBase;
 import de.canitzp.carz.client.models.ModelCar;
 import de.canitzp.carz.client.renderer.RenderCar;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.IEntityMultiPart;
+import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -56,5 +59,16 @@ public class EntityCar extends EntitySteerableBase {
     protected void writeEntityToNBT(NBTTagCompound compound) {
 
     }
+
+
+//    @Override
+//    protected CarPart[] constructArray() {
+//        return new CarPart[]{
+//                new CarPart(this, "front_left", 0.5f, 1f, 1,0,-.5f),
+//                new CarPart(this, "front_right", 0.5f, 2f, 1,0,.5f),
+//
+//        };
+//    }
+
 
 }
