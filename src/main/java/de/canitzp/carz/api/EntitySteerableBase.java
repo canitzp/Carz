@@ -79,10 +79,10 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
                     double rotmod = MathHelper.positiveModulo(rotYaw, 90);
 
-                    if (rotmod < 6) {
-                        deltaR -= 0.15;
-                    } else if (rotmod > 80) {
-                        deltaR += 0.15;
+                    if (rotmod < 5) {
+                        deltaR -= 0.04*(rotmod+0.00001);//  -0.15;
+                    } else if (rotmod > 85) {
+                        deltaR += 0.04*(90-rotmod);//  +0.15;
                     }
                 }
 

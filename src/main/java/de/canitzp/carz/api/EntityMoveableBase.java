@@ -30,13 +30,13 @@ import javax.annotation.Nullable;
  *
  * @author MisterErwin
  */
-public abstract class EntityMoveableBase extends Entity {
+public abstract class EntityMoveableBase extends EntityRenderdBase {
     protected float deltaRotation;
     protected float momentum, angularMomentum;
     protected int spinningTicks = 0; //Out of control
 
     public double speedSqAbs, speedSq;
-    protected double angle;
+    public double angle;
 
     private double lastColX = 0, lastColZ = 0;
     private int lastColTime;
@@ -47,7 +47,6 @@ public abstract class EntityMoveableBase extends Entity {
 
     @Override
     public void onUpdate() {
-
         super.onUpdate();
         this.onUpdate(this.canPassengerSteer());
         this.stepHeight = 0.2f; //Yeah - config
@@ -128,7 +127,6 @@ public abstract class EntityMoveableBase extends Entity {
     @Override
     public boolean canBePushed() {
         return true;
-//        return this.speedSqAbs<0.01;
     }
 
     /**
@@ -189,47 +187,6 @@ public abstract class EntityMoveableBase extends Entity {
         }
     }
 
-    @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return this.getCapability(capability, facing) != null;
-    }
 
-    @Nullable
-    @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-            IFluidHandler fluidHandler = this.getFluidHandler(facing);
-            if(fluidHandler != null){
-                return (T) fluidHandler;
-            }
-        }
-        if(capability == CapabilityEnergy.ENERGY){
-            IEnergyStorage energyStorage = this.getEnergyStorage(facing);
-            if(energyStorage != null){
-                return (T) energyStorage;
-            }
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public abstract ModelCar getCarModel();
-
-    @SideOnly(Side.CLIENT)
-    @Nullable
-    public abstract ResourceLocation getCarTexture();
-
-    @SideOnly(Side.CLIENT)
-    public abstract void setupGL(double x, double y, double z, float entityYaw, float partialTicks);
-
-    @Nullable
-    protected IFluidHandler getFluidHandler(@Nullable EnumFacing facing){
-        return null;
-    }
-
-    @Nullable
-    protected IEnergyStorage getEnergyStorage(@Nullable EnumFacing facing){
-        return null;
-    }
 
 }
