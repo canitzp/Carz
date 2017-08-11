@@ -1,6 +1,6 @@
 package de.canitzp.carz.listener;
 
-import de.canitzp.carz.entity.car.EntitySteerableBase;
+import de.canitzp.carz.api.EntitySteerableBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;

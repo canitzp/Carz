@@ -1,5 +1,6 @@
-package de.canitzp.carz.entity.renderer;
+package de.canitzp.carz.client.models;
 
+import de.canitzp.carz.entity.EntityCar;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -50,13 +51,12 @@ public class ModelCar extends ModelBase {
     }
 
     @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(Entity car, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        //GlStateManager.color(1.0F, 1.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate(90.0F, 0, 1, 0);
-        this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
+        //GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
+        //GlStateManager.rotate(90.0F, 0, 1, 0);
+        this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, car);
         this.Sportwagen_body.render(scale);
         this.Achse_front.render(scale);
         this.Achse_back.render(scale);

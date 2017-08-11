@@ -1,4 +1,4 @@
-package de.canitzp.carz.entity.car;
+package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
 import net.minecraft.entity.Entity;

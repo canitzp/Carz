@@ -1,6 +1,7 @@
-package de.canitzp.carz.entity.car;
+package de.canitzp.carz.entity;
 
-import de.canitzp.carz.entity.renderer.RenderCar;
+import de.canitzp.carz.api.EntitySteerableBase;
+import de.canitzp.carz.client.renderer.RenderCar;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;

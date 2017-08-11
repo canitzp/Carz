@@ -1,0 +1,71 @@
+package de.canitzp.carz.client.renderer;
+
+import de.canitzp.carz.entity.EntityCar;
+import de.canitzp.carz.client.models.ModelCar;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+
+/**
+ * @author canitzp
+ */
+@SideOnly(Side.CLIENT)
+public class RenderCar extends Render<EntityCar> implements IResourceManagerReloadListener{
+
+    public static final ModelCar MODEL_CAR = new ModelCar();
+
+    private ModelCar model;
+    private ResourceLocation texture;
+
+    public RenderCar(RenderManager renderManager) {
+        super(renderManager);
+    }
+
+    @Nullable
+    @Override
+    protected ResourceLocation getEntityTexture(EntityCar entity) {
+        //return new ResourceLocation("textures/entity/boat/boat_oak.png");
+        return null;
+    }
+
+    @Override
+    public void doRender(EntityCar car, double x, double y, double z, float entityYaw, float partialTicks) {
+        if(this.model == null){
+            this.model = car.getCarModel();
+            this.texture = car.getCarTexture();
+        }
+        GlStateManager.pushMatrix();
+        car.setupGL(x, y, z, entityYaw, partialTicks);
+        if(this.texture != null){
+            this.bindTexture(this.texture);
+        }
+
+        if (this.renderOutlines) {
+            GlStateManager.enableColorMaterial();
+            GlStateManager.enableOutlineMode(this.getTeamColor(car));
+        }
+
+        this.model.render(car, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+
+        if (this.renderOutlines) {
+            GlStateManager.disableOutlineMode();
+            GlStateManager.disableColorMaterial();
+        }
+
+        GlStateManager.popMatrix();
+        super.doRender(car, x, y, z, entityYaw, partialTicks);
+    }
+
+    @Override
+    public void onResourceManagerReload(IResourceManager resourceManager) {
+        this.model = null;
+        this.texture = null;
+    }
+}

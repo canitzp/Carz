@@ -1,6 +1,6 @@
 package de.canitzp.carz.listener;
 
-import de.canitzp.carz.entity.car.EntityRideableBase;
+import de.canitzp.carz.api.EntityRideableBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
