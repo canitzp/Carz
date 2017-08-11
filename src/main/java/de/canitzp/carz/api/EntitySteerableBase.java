@@ -72,6 +72,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 deltaR *= 2.5 * this.speedSq > 0 ? 1 : -1;
                 if (this.speedSq > 0) {
                     //TODO: Yeah - find some actual good numbers
+                    //OPTION: steering
                     deltaR *= 5 * Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
                 }
 
@@ -80,22 +81,18 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     double rotmod = MathHelper.positiveModulo(rotYaw, 90);
 
                     if (rotmod < 5) {
-                        deltaR -= 0.04*(rotmod+0.00001);//  -0.15;
+                        deltaR -= 0.04 * (rotmod + 0.00001);//  -0.15;
                     } else if (rotmod > 85) {
-                        deltaR += 0.04*(90-rotmod);//  +0.15;
+                        deltaR += 0.04 * (90 - rotmod);//  +0.15;
                     }
                 }
 
-                if (this.speedSqAbs * Math.abs(this.angle) > 3.5) {
+                if (this.centrifugalForce > 2) { //OPTION: go into spinning mode (2)
                     Carz.LOG.info("Too fast around that corner");
                     deltaR = 0;
-                    this.spinningTicks = this.spinningTicks * 2 + 2;
+                    this.spinningTicks = 40;
                     world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX, this.posY + 2, this.posZ, 0.1, 0.1, 0.1);
                 }
-//                if (speedSqAbs > 0.001)
-//                    Carz.LOG.info(speedSq * 20 + " b/s");
-
-//                Carz.LOG.info("Angle " + angle + " //  " + this.deltaRotation + "  =>> " + this.rotationYaw + " => ZP = " + Math.round(speedSqAbs * angle));
                 if (speedSqAbs > 0.001) {
                     //Apply the rotation if the car is moving.
                     this.deltaRotation += deltaR;

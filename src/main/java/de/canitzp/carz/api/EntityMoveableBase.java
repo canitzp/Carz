@@ -1,24 +1,14 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
-import de.canitzp.carz.CarzStats;
-import de.canitzp.carz.client.models.ModelCar;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
@@ -36,7 +26,7 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
     protected int spinningTicks = 0; //Out of control
 
     public double speedSqAbs, speedSq;
-    public double angle;
+    public double angle, centrifugalForce;
 
     private double lastColX = 0, lastColZ = 0;
     private int lastColTime;
@@ -68,7 +58,7 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
     private void updateMotion() {
         if (spinningTicks > 0) {
             if (--spinningTicks > 15) {
-                this.momentum = 0.8F;
+                this.momentum = 0.99F;
                 this.angularMomentum = 0.9F;
 
                 world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, this.posX, this.posY + 2, this.posZ, 0.1, 0.1, 0.1);
@@ -87,16 +77,20 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
             double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
             this.angle = MathHelper.wrapDegrees(rotYaw - momYaw);
             this.speedSq = (this.angle > 170 || this.angle < -170) ? -this.speedSqAbs : this.speedSqAbs;
+            BlockPos pos = this.getPosition().add(0, -1, 0);
+            IBlockState stateBase = this.world.getBlockState(pos);
+            float slippery = stateBase.getBlock().getSlipperiness(stateBase, world, pos, this);
+            this.centrifugalForce = slippery * this.speedSqAbs * Math.abs(this.angle);
         } else {
             this.angle = 0;
             this.speedSq = 0;
+            this.centrifugalForce = 0;
         }
     }
 
     private void updateServerDrivingData() {
         double x = this.posX - this.lastColX;
         double z = this.posZ - this.lastColZ;
-        Carz.LOG.info("X=>" + this.posX + "-" + this.lastColX);
 
         this.speedSqAbs = x * x + z * z;
         if (this.speedSqAbs > 0.00001) {
@@ -186,7 +180,6 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
             }
         }
     }
-
 
 
 }
