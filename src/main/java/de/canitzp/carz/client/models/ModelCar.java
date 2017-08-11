@@ -27,7 +27,7 @@ public class ModelCar extends ModelBase {
         this.textureHeight = 32;
 
         this.Sportwagen_body = new ModelRenderer(this, 0, 0);
-        this.Sportwagen_body.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.Sportwagen_body.setRotationPoint(0.0F, 1.0F, 0.0F);
         this.Sportwagen_body.addBox(0.0F, 8.0F, 0.0F, 32, 8, 16);
         this.Achse_front = new ModelRenderer(this, 0, 0);
         this.Achse_front.setRotationPoint(5.0F, 16.0F, 0.0F);

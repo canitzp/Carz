@@ -17,6 +17,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
 
     private boolean inputLeftDown, inputRightDown, inputForwardDown, inputBackDown;
 
+
     protected boolean autoSnapping = true;
 
     public EntitySteerableBase(World worldIn) {

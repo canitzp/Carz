@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "carz:fuel_station"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "bottom": {
+      "false": {
+        "model": "carz:empty"
+      },
+      "true": {}
+    }
+  }
+}
