@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Represents steerable vehicles
+ *
  * @author MisterErwin
  */
 public abstract class EntitySteerableBase extends EntityRideableBase {
@@ -69,7 +70,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 deltaR *= 2.5 * speedSq > 0 ? 1 : -1;
                 if (speedSq > 0) {
                     //TODO: Yeah - find some actual good numbers
-                    deltaR *= 5*Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
+                    deltaR *= 5 * Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
                 }
 
                 if (speedSqAbs * Math.abs(angle) > 3.5) {

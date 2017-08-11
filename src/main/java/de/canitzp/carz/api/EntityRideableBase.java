@@ -1,23 +1,19 @@
 package de.canitzp.carz.api;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 /**
  * Represents rideable vehicles
  * //TODO: Get rid of the generic boat stuff
+ *
  * @author MisterErwin
  */
 public abstract class EntityRideableBase extends EntityMoveableBase {
@@ -34,43 +30,6 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         }
         return false;
     }
-
-    /**
-     * Returns a boundingBox used to collide the entity with other entities and blocks. This enables the entity to be
-     * pushable on contact, like boats or minecarts.
-     */
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBox(Entity entityIn) {
-        return entityIn.canBePushed() ? entityIn.getEntityBoundingBox() : null;
-    }
-
-
-    /**
-     * Returns the Y offset from the entity's position for any entity riding this one.
-     */
-    public double getMountedYOffset() {
-        return super.getMountedYOffset();
-    }
-
-    protected boolean canFitPassenger(Entity passenger) {
-        return super.canFitPassenger(passenger);
-    }
-
-    /**
-     * For vehicles, the first passenger is generally considered the controller and "drives" the vehicle. For example,
-     * Pigs, Horses, and Boats are generally "steered" by the controlling passenger.
-     */
-    @Nullable
-    public Entity getControllingPassenger() {
-        List<Entity> list = this.getPassengers();
-        return list.isEmpty() ? null : (Entity) list.get(0);
-    }
-
-    /*
-     * Applies a velocity to the entities, to push them away from eachother.
-     * applyEntityCollision
-     */
 
     /**
      * Applies this boat's yaw to the given entity. Used to update the orientation of its passenger.
@@ -125,16 +84,4 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         }
     }
 
-    @Override
-    protected void addPassenger(Entity passenger) {
-        super.addPassenger(passenger);
-    }
-
-    @Override
-    protected void removePassenger(Entity passenger) {
-        super.removePassenger(passenger);
-        if (world.isRemote && passenger instanceof EntityPlayer){
-            Minecraft.getMinecraft().gameSettings.thirdPersonView = 0;
-        }
-    }
 }
