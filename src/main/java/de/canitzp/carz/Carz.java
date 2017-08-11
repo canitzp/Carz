@@ -1,13 +1,8 @@
 package de.canitzp.carz;
 
-import de.canitzp.carz.client.renderer.RenderCar;
-import de.canitzp.carz.entity.EntityCar;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
