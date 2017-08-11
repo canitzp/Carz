@@ -21,6 +21,8 @@ import java.util.List;
  */
 public abstract class EntityRideableBase extends EntityMoveableBase {
 
+    protected Vec3d[] seats = new Vec3d[]{new Vec3d(0,0,0)};
+
     public EntityRideableBase(World worldIn) {
         super(worldIn);
     }
@@ -29,6 +31,15 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
     public Entity getControllingPassenger() {
         List<Entity> list = this.getPassengers();
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    protected boolean canFitPassenger(Entity passenger) {
+        return this.getPassengers().size() < getMaxPassengerAmount();
+    }
+
+    public int getMaxPassengerAmount(){
+        return this.seats.length;
     }
 
     @Override
@@ -65,31 +76,25 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             float f = 0.0F;
             float f1 = (float) ((this.isDead ? 0.009999999776482582D : this.getMountedYOffset()) + passenger.getYOffset());
 
+            int index = 0;
             if (this.getPassengers().size() > 1) {
-                int i = this.getPassengers().indexOf(passenger);
-
-                if (i == 0) {
-                    f = 0.2F;
-                } else {
-                    f = -0.6F;
-                }
-
-                if (passenger instanceof EntityAnimal) {
-                    f = (float) ((double) f + 0.2D);
-                }
+                index = this.getPassengers().indexOf(passenger);
             }
+            if (index==-1)
+                return;
+            Vec3d seat = seats[index];
 
-            Vec3d vec3d = (new Vec3d((double) f, 0.0D, 0.0D)).rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
+            Vec3d vec3d = seat.rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
             passenger.setPosition(this.posX + vec3d.x, this.posY + (double) f1, this.posZ + vec3d.z);
             passenger.rotationYaw += this.deltaRotation;
             passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotation);
             this.applyYawToEntity(passenger);
 
-            if (passenger instanceof EntityAnimal && this.getPassengers().size() > 1) {
-                int j = passenger.getEntityId() % 2 == 0 ? 90 : 270;
-                passenger.setRenderYawOffset(((EntityAnimal) passenger).renderYawOffset + (float) j);
-                passenger.setRotationYawHead(passenger.getRotationYawHead() + (float) j);
-            }
+//            if (passenger instanceof EntityAnimal && this.getPassengers().size() > 1) {
+//                int j = passenger.getEntityId() % 2 == 0 ? 90 : 270;
+//                passenger.setRenderYawOffset(((EntityAnimal) passenger).renderYawOffset + (float) j);
+//                passenger.setRotationYawHead(passenger.getRotationYawHead() + (float) j);
+//            }
         }
     }
 

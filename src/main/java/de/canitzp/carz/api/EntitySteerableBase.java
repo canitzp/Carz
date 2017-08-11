@@ -56,9 +56,9 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     deltaR += 1;
 
                 if (this.inputForwardDown)
-                    fwd += 0.04;
+                    fwd += 0.04; //OPTION: forward (0.04)
                 if (this.inputBackDown)
-                    fwd -= 0.005;
+                    fwd -= 0.015; //OPTION: backward (0.005)
 
 //                double speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
 
