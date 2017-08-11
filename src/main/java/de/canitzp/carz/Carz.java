@@ -1,12 +1,11 @@
 package de.canitzp.carz;
 
-import de.canitzp.carz.entity.EntityCar;
-import de.canitzp.carz.entity.renderer.RenderCar;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import de.canitzp.carz.proxy.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,15 +23,25 @@ public class Carz {
     @Mod.Instance(MODID)
     public static Carz carz;
 
+    @SidedProxy(clientSide = "de.canitzp.carz.proxy.ClientProxy", serverSide = "de.canitzp.carz.proxy.ServerProxy")
+    public static CommonProxy proxy;
+
+
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event){
+    public void preInit(FMLPreInitializationEvent event) {
         LOG.info("Launching " + MODNAME + " v" + MODVERSION);
-        LOG.info("Registering Cars");
-        EntityRegistry.registerModEntity(new ResourceLocation(MODID, "car"), EntityCar.class, "car", 0, carz, 64, 5, true);
-        if(event.getSide().isClient()){
-            LOG.info("Registering Car renderer");
-            RenderingRegistry.registerEntityRenderingHandler(EntityCar.class, RenderCar::new);
-        }
+        proxy.preInit(event);
     }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent e) {
+        proxy.init(e);
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent e) {
+        proxy.postInit(e);
+    }
+
 
 }
