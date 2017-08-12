@@ -1,13 +1,10 @@
 package de.canitzp.carz.entity;
 
 import de.canitzp.carz.api.EntitySteerableBase;
-import de.canitzp.carz.client.models.ModelCar;
 import de.canitzp.carz.client.renderer.RenderCar;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.IEntityMultiPart;
-import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -24,7 +21,7 @@ public class EntityCar extends EntitySteerableBase {
     }
 
     @Override
-    public ModelCar getCarModel() {
+    public ModelBase getCarModel() {
         return RenderCar.MODEL_CAR;
     }
 

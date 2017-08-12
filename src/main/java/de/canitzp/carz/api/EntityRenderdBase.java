@@ -1,6 +1,6 @@
 package de.canitzp.carz.api;
 
-import de.canitzp.carz.client.models.ModelCar;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -48,7 +48,7 @@ public abstract class EntityRenderdBase extends Entity {
     }
 
     @SideOnly(Side.CLIENT)
-    public abstract ModelCar getCarModel();
+    public abstract ModelBase getCarModel();
 
     @SideOnly(Side.CLIENT)
     @Nullable
