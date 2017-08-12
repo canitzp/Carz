@@ -1,16 +1,18 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 
 /**
@@ -28,8 +30,10 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
     public double speedSqAbs, speedSq;
     public double angle, centrifugalForce;
 
+
     private double lastColX = 0, lastColZ = 0;
     private int lastColTime;
+
 
     public EntityMoveableBase(World worldIn) {
         super(worldIn);
@@ -41,6 +45,10 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
         this.onUpdate(this.canPassengerSteer());
         this.stepHeight = 0.2f; //Yeah - config
 
+        if (this.isCollidedHorizontally) {
+            blockCollisionCheck();
+        }
+        this.doBlockCollisions();
     }
 
     protected void onUpdate(boolean canPassengerSteer) {
@@ -61,7 +69,7 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
                 this.momentum = 0.99F;
                 this.angularMomentum = 0.9F;
 
-                world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, this.posX, this.posY + 2, this.posZ, 0.1, 0.1, 0.1);
+                world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX, this.posY + 2, this.posZ, 0.1, 0.1, 0.1);
             }
         } else {
             this.momentum = this.angularMomentum = 0.9F;
@@ -105,7 +113,6 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
 
     }
 
-
     /**
      * Returns true if other Entities should be prevented from moving through this Entity.
      * (or interacted with - in this case)
@@ -126,15 +133,9 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
     /**
      * Returns the collision bounding box for this entity
      */
-    @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox() {
         return this.getEntityBoundingBox(); //so others can't pass through us
-    }
-
-    @Override
-    public AxisAlignedBB getEntityBoundingBox() {
-        return super.getEntityBoundingBox();
     }
 
 
@@ -181,5 +182,42 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
         }
     }
 
+    private void blockCollisionCheck() {
+        List<AxisAlignedBB> list = this.world.getCollisionBoxes(this, this.getEntityBoundingBox().grow(0.01, -0.01, 0.01));
+        Vec3d ourCenter = getCenter(this.getCollisionBoundingBox());
+        //TODO: get side of collision and apply damage
+        for (AxisAlignedBB bb : list) {
+            rayCheck(bb.maxX, ourCenter.y, bb.maxZ, ourCenter);
+            rayCheck(bb.maxX, ourCenter.y, bb.minZ, ourCenter);
+            rayCheck(bb.minX, ourCenter.y, bb.maxZ, ourCenter);
+            rayCheck(bb.minX, ourCenter.y, bb.minZ, ourCenter);
+            Vec3d c = getCenter(bb);
+            double colYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.posZ - c.z, this.posX - c.x) * 180 / Math.PI) - 90;
+            double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
+            double colAngle = -(MathHelper.wrapDegrees(rotYaw - colYaw) - 90) + 90;
+        }
+    }
+
+    @Nullable
+    private RayTraceResult rayCheck(double x, double y, double z, Vec3d center) {
+        //calculateIntercept(pos, view)
+        Vec3d p = new Vec3d(x, y, z);
+        world.spawnParticle(EnumParticleTypes.DRIP_LAVA, x, y, z, 0.1, 0.1, 0.1);
+        RayTraceResult rtr = this.getCollisionBoundingBox().calculateIntercept(p, center.subtract(p));
+        if (rtr != null)
+            world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, rtr.hitVec.x, rtr.hitVec.y, rtr.hitVec.z, 0.1, 0.1, 0.1);
+        return rtr;
+    }
+
+    /**
+     * Copy as AxisAlignedBB#getCenter is client only
+     *
+     * @param b the bounding box
+     * @return the center
+     * @see AxisAlignedBB#getCenter()
+     */
+    private Vec3d getCenter(AxisAlignedBB b) {
+        return new Vec3d(b.minX + (b.maxX - b.minX) * 0.5D, b.minY + (b.maxY - b.minY) * 0.5D, b.minZ + (b.maxZ - b.minZ) * 0.5D);
+    }
 
 }

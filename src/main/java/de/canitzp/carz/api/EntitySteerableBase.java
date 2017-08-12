@@ -98,9 +98,10 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     this.deltaRotation += deltaR;
                     this.rotationYaw += this.deltaRotation;
                 }
-            } else
+            } else {
+                this.deltaRotation += 0.01;
                 this.rotationYaw += this.deltaRotation; //Spin me around
-
+            }
             //Apply movement
             this.motionX += (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * fwd);
             this.motionZ += (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * fwd);
