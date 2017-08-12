@@ -9,6 +9,8 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
@@ -49,20 +51,18 @@ public class RenderCar<T extends EntityRenderdBase> extends Render<T> implements
         car.setupGL(x, y, z, entityYaw, partialTicks);
         if (this.texture != null) {
             this.bindTexture(this.texture);
+        } else {
+            GlStateManager.bindTexture(TextureUtil.MISSING_TEXTURE.getGlTextureId());
         }
-
         if (this.renderOutlines) {
             GlStateManager.enableColorMaterial();
             GlStateManager.enableOutlineMode(this.getTeamColor(car));
         }
-
         this.model.render(car, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
-
         if (this.renderOutlines) {
             GlStateManager.disableOutlineMode();
             GlStateManager.disableColorMaterial();
         }
-
         GlStateManager.popMatrix();
         super.doRender(car, x, y, z, entityYaw, partialTicks);
     }

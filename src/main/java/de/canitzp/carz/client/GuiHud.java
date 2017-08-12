@@ -1,14 +1,17 @@
 package de.canitzp.carz.client;
 
+import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.EntitySteerableBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 /**
  * @author canitzp
@@ -16,17 +19,27 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiHud extends Gui {
 
-    //private static final ResourceLocation HUD_RES = new ResourceLocation("");
+    private static final ResourceLocation HUD_RES = new ResourceLocation(Carz.MODID, "textures/gui/gui_car_hud.png");
 
     public void render(ScaledResolution res, EntitySteerableBase steerableBase){
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        float f = 0.25F * res.getScaleFactor();
+        GlStateManager.translate(2 * f, res.getScaledHeight() - 66 * f, 0);
+        GlStateManager.scale(f, f, f);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(HUD_RES);
+        this.drawTexturedModalRect(0, 0, 0, 0, 224, 64);
+        GlStateManager.popMatrix();
+
+        GlStateManager.pushMatrix();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        //Minecraft.getMinecraft().getTextureManager().bindTexture(HUD_RES);
-        int width = res.getScaledWidth() / 2;
-
-        double speed = steerableBase.speedSqAbs * 3.6D;
-        String text = String.format("Speed: %dkm/h", Math.round(speed * 100.0D));
-
-        fontRenderer.drawString(text, width - (fontRenderer.getStringWidth(text) / 2), res.getScaledHeight() - 32, 0xFFFFFF);
+        String speed = String.format("%dkm/h", Math.round(steerableBase.speedSqAbs * 3.6D * 100.0D));
+        f = 0.24F * res.getScaleFactor();
+        GlStateManager.translate(53 * f, res.getScaledHeight() - 17 * f, 0);
+        GlStateManager.scale(f, f, f);
+        fontRenderer.drawString(speed, 0, 0, 0xFFFFFF);
+        GlStateManager.popMatrix();
     }
 
 }
