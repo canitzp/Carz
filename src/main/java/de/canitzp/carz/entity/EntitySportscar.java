@@ -33,7 +33,7 @@ public class EntitySportscar extends EntitySteerableBase {
     @Nullable
     @Override
     public ResourceLocation getCarTexture() {
-        return null;
+        return new ResourceLocation(Carz.MODID, "textures/cars/sportscar.png");
     }
 
     @Override

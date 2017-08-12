@@ -1,9 +1,11 @@
 package de.canitzp.carz.api;
 
+import it.unimi.dsi.fastutil.objects.ObjectLists;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -14,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Created by MisterErwin on 11.08.2017.
@@ -65,5 +68,9 @@ public abstract class EntityRenderdBase extends Entity {
     @Nullable
     protected IEnergyStorage getEnergyStorage(@Nullable EnumFacing facing){
         return null;
+    }
+
+    public List<AxisAlignedBB> getHitBoxes(AxisAlignedBB aabb, final List<AxisAlignedBB> list){
+        return list;
     }
 }
