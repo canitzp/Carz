@@ -1,36 +1,28 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
+import de.canitzp.carz.blocks.BlockBase;
 import de.canitzp.carz.blocks.BlockFuelStation;
 import de.canitzp.carz.blocks.BlockRoad;
-import de.canitzp.carz.blocks.BlockSign;
-import de.canitzp.carz.blocks.EnumSigns;
+import de.canitzp.carz.blocks.BlockRoadSign;
+import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntitySportscar;
-import de.canitzp.carz.items.ItemBlockSign;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -42,6 +34,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author canitzp
  */
@@ -51,6 +46,7 @@ public class Registry {
     /**
      * Internal Stuff:
      */
+    public static final List<BlockBase> BLOCKS_FOR_REGISTERING = new ArrayList<>();
     private static int entityId = 0;
     @SideOnly(Side.CLIENT)
     private static IRenderFactory<EntityRenderedBase> renderFactory;
@@ -61,7 +57,7 @@ public class Registry {
     public static final CreativeTabs TAB = new CreativeTabs(Carz.MODID) {
         @Override
         public ItemStack getTabIconItem() {
-            return new ItemStack(Items.ARMOR_STAND);
+            return new ItemStack(blockFuelStation);
         }
     };
 
@@ -70,7 +66,7 @@ public class Registry {
      */
     public static BlockFuelStation blockFuelStation;
     public static BlockRoad blockRoad;
-    public static BlockSign blockSign;
+    public static BlockRoadSign blockRoadSign;
 
     /**
      * Items:
@@ -90,30 +86,34 @@ public class Registry {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        Carz.LOG.info("Registering Blocks");
         IForgeRegistry<Block> reg = event.getRegistry();
-        reg.register(blockFuelStation = new BlockFuelStation());
-        reg.register(blockRoad = new BlockRoad("road"));
-        reg.register(blockSign = new BlockSign());
+        for (BlockBase block : BLOCKS_FOR_REGISTERING) {
+            Carz.LOG.info("Registering Block: " + block.getRegistryName());
+            reg.register(block);
+        }
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        Carz.LOG.info("Registering Items");
         IForgeRegistry<Item> reg = event.getRegistry();
-        reg.register(new ItemBlock(blockFuelStation).setRegistryName(blockFuelStation.getRegistryName()).setUnlocalizedName(blockFuelStation.getUnlocalizedName()));
-        reg.register(new ItemBlock(blockRoad).setRegistryName(blockRoad.getRegistryName()).setUnlocalizedName(blockRoad.getUnlocalizedName()));
-        reg.register(new ItemBlockSign(blockSign));
+        for (BlockBase block : BLOCKS_FOR_REGISTERING) {
+            Carz.LOG.info("Registering ItemBlock: " + block.getRegistryName());
+            reg.register(block.getItemBlock());
+        }
     }
 
     @SubscribeEvent
-    public static void registerModel(ModelRegistryEvent event){
-        //for(EnumSigns sign : EnumSigns.values()){
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockSign), 0, new ModelResourceLocation(new ResourceLocation(blockSign.getRegistryName().toString()), "inventory"));
-        //}
+    public static void registerModel(ModelRegistryEvent event) {
+        ModelLoaderRegistry.registerLoader(new CustomModelLoader());
+        for (BlockBase block : BLOCKS_FOR_REGISTERING) {
+            block.registerClient();
+        }
     }
 
     public static void preInit(FMLPreInitializationEvent event) {
+        blockFuelStation = new BlockFuelStation().register();
+        blockRoad = new BlockRoad().register();
+        blockRoadSign = new BlockRoadSign().register();
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
     }
@@ -122,12 +122,12 @@ public class Registry {
         Carz.LOG.info(String.format("Registering '%s'", name));
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, name), entity, name, entityId++, Carz.carz, 64, 5, true);
         if (side.isClient()) {
-           initClientEntity(entity);
+            initClientEntity(entity);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    private static <T extends EntityRenderedBase> void initClientEntity(Class<T> entityClass){
+    private static <T extends EntityRenderedBase> void initClientEntity(Class<T> entityClass) {
         if (renderFactory == null) {
             renderFactory = manager -> {
                 RenderCar<EntityRenderedBase> renderCar = new RenderCar<>(manager);

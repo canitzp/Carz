@@ -3,16 +3,17 @@ package de.canitzp.carz.blocks;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.client.models.ModelRoad;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -27,20 +28,23 @@ import java.util.List;
 /**
  * @author canitzp
  */
-public class BlockRoad extends Block {
+public class BlockRoad extends BlockBase<BlockRoad> {
 
     public static final PropertyEnum<EnumRoad> ROAD_TYPE = PropertyEnum.create("road_type", EnumRoad.class);
 
-    public BlockRoad(String resourceName) {
+    public BlockRoad() {
         super(Material.ROCK);
         this.setCreativeTab(Registry.TAB);
         this.setHarvestLevel("pickaxe", 1);
         this.setHardness(2.0F);
         this.setResistance(10.0F);
-        this.setRegistryName(new ResourceLocation(Carz.MODID, resourceName));
+        this.setRegistryName(new ResourceLocation(Carz.MODID, "road"));
         this.setUnlocalizedName(this.getRegistryName().toString());
-
         this.setDefaultState(this.blockState.getBaseState().withProperty(ROAD_TYPE, EnumRoad.DEFAULT));
+    }
+
+    @Override
+    public void registerClient() {
         StateMapperBase ignoreState = new StateMapperBase() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
@@ -48,6 +52,11 @@ public class BlockRoad extends Block {
             }
         };
         ModelLoader.setCustomStateMapper(this, ignoreState);
+    }
+
+    @Override
+    public void registerClientInit() {
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(this), 0, new ModelResourceLocation(this.getRegistryName().toString(), "inventory"));
     }
 
     @Override
@@ -81,20 +90,25 @@ public class BlockRoad extends Block {
     }
 
     @Override
+    public boolean isBlockNormalCube(IBlockState blockState) {
+        return false;
+    }
+
+    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return state.getValue(ROAD_TYPE).getBoundingBox();
     }
 
     @Override
     public void addCollisionBoxToList(IBlockState state, @Nonnull World worldIn, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
-        for(AxisAlignedBB typeAABB : state.getValue(ROAD_TYPE).getCollisionBoxes()){
+        for (AxisAlignedBB typeAABB : state.getValue(ROAD_TYPE).getCollisionBoxes()) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, typeAABB);
         }
     }
 
     @Override
     public void onEntityWalk(World world, BlockPos pos, Entity entity) {
-        if(entity instanceof EntityLivingBase){
+        if (entity instanceof EntityLivingBase) {
             entity.motionX *= 1.25D;
             entity.motionZ *= 1.25D;
         }

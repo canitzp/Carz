@@ -1,7 +1,6 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
-import net.minecraft.entity.MoverType;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -60,7 +59,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 if (this.inputBackDown)
                     fwd -= 0.015; //OPTION: backward (0.005)
 
-                setSpeed(getSpeed()+fwd);
+                setSpeed(getSpeed() + fwd);
 
 //                double speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
 

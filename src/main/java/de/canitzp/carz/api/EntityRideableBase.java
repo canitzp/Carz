@@ -29,11 +29,11 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         super(worldIn);
     }
 
-    protected void addSeat(double x, double y, double z){
+    protected void addSeat(double x, double y, double z) {
         this.seats.add(new Vec3d(x, y, z));
     }
 
-    protected void setDriverSeat(double x, double y, double z){
+    protected void setDriverSeat(double x, double y, double z) {
         this.seats.set(0, new Vec3d(x, y, z));
     }
 
@@ -55,11 +55,11 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         if (!this.world.isRemote && !player.isSneaking()) {
-            if(player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer){
+            if (player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer) {
                 ItemStack spawnEgg = player.getHeldItem(player.getActiveHand());
                 Entity entity = ItemMonsterPlacer.spawnCreature(this.world, ItemMonsterPlacer.getNamedIdFrom(spawnEgg), this.posX, this.posY, this.posZ);
-                if(entity != null){
-                    if(entity.startRiding(this)){
+                if (entity != null) {
+                    if (entity.startRiding(this)) {
                         return true;
                     }
                 }

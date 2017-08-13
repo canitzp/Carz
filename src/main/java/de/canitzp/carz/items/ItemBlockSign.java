@@ -1,8 +1,7 @@
 package de.canitzp.carz.items;
 
-import de.canitzp.carz.blocks.BlockSign;
+import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.blocks.EnumSigns;
-import de.canitzp.carz.tile.TileSign;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -10,8 +9,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -45,9 +46,7 @@ public class ItemBlockSign extends ItemBlock {
         if (!stack.isEmpty() && player.canPlayerEdit(pos, facing, stack) && worldIn.mayPlace(this.block, pos, false, facing, player)) {
             int i = this.getMetadata(stack.getMetadata());
             IBlockState state = this.block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, i, player, hand);
-            if(stack.hasTagCompound() && stack.getTagCompound().hasKey("SignValue", Constants.NBT.TAG_INT)){
-                state = state.withProperty(BlockSign.SIGN_TYPE, EnumSigns.values()[stack.getTagCompound().getInteger("SignValue")]);
-            }
+            state = state.withProperty(BlockRoadSign.SIGN_TYPE, EnumSigns.values()[stack.getMetadata()]);
             if (placeBlockAt(stack, player, worldIn, pos, facing, hitX, hitY, hitZ, state)) {
                 state = worldIn.getBlockState(pos);
                 SoundType soundtype = state.getBlock().getSoundType(state, worldIn, pos, player);
@@ -62,23 +61,7 @@ public class ItemBlockSign extends ItemBlock {
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        if(stack.hasTagCompound()){
-            for(EnumSigns sign : EnumSigns.values()){
-                NBTTagCompound nbt = stack.getTagCompound();
-                if(nbt.hasKey("SignValue", Constants.NBT.TAG_INT) && nbt.getInteger("SignValue") == sign.ordinal()){
-                    return "tile.sign." + sign.getName();
-                }
-            }
-        }
-        return super.getUnlocalizedName(stack);
-    }
-
-    @Override
-    public int getDamage(ItemStack stack) {
-        if(stack.hasTagCompound()){
-            return stack.getTagCompound().getInteger("SignValue");
-        }
-        return super.getDamage(stack);
+        return "tile.sign." + EnumSigns.values()[stack.getMetadata()].getName();
     }
 
     @Override

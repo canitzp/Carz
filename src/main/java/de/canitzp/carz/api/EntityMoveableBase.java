@@ -1,8 +1,8 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
-import de.canitzp.carz.packet.MessageCarSpeed;
-import mcp.MethodsReturnNonnullByDefault;
+import de.canitzp.carz.network.MessageCarSpeed;
+import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -67,7 +67,7 @@ public abstract class EntityMoveableBase extends EntityRenderedBase {
             float speed = getSpeed();
             speed *= this.momentum;
             if (world.isRemote)
-                Carz.carz.networkWrapper.sendToServer(new MessageCarSpeed(speed));
+                NetworkHandler.net.sendToServer(new MessageCarSpeed(speed));
             setSpeed(speed);
         } else {
 //            if (this.motionZ != 0)
@@ -134,20 +134,20 @@ public abstract class EntityMoveableBase extends EntityRenderedBase {
 
     public void setSpeed(float speed) {
         remoteSpeed = speed;
-        if (world.isRemote){
-            Carz.carz.networkWrapper.sendToServer(new MessageCarSpeed(speed));
-        }else{
+        if (world.isRemote) {
+            NetworkHandler.net.sendToServer(new MessageCarSpeed(speed));
+        } else {
             this.dataManager.set(SPEED, speed);
         }
     }
 
     public float getSpeed() {
-        return canPassengerSteer()? remoteSpeed: this.dataManager.get(SPEED);
+        return canPassengerSteer() ? remoteSpeed : this.dataManager.get(SPEED);
     }
 
     @Override
     protected void addPassenger(Entity passenger) {
-        this.remoteSpeed =this.dataManager.get(SPEED);
+        this.remoteSpeed = this.dataManager.get(SPEED);
         super.addPassenger(passenger);
     }
 

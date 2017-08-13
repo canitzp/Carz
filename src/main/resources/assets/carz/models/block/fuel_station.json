@@ -1,211 +1,1158 @@
 {
-    "__comment": "Author: Zombiefleischer 11.08.2017",
-    "textures": {
-        "fuel_station_texture": "carz:blocks/fuel_station"
-    },
-    "elements": [
-        {
-            "from": [ 0, 0, 0 ],
-            "to": [ 16, 8, 16 ],
-            "faces": {
-                "down": { "uv": [ 0, 12, 4, 16 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 4, 12, 8, 16 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 8, 12, 12, 14 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 12, 12, 16, 14 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 3, 10, 7, 12 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 7, 10, 11, 12 ], "texture": "#fuel_station_texture" }
-            }
+  "__comment": "Author: Zombiefleischer 11.08.2017",
+  "textures": {
+    "fuel_station_texture": "carz:blocks/fuel_station"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        8,
+        16
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#fuel_station_texture"
         },
-        {
-            "from": [ 1, 8, 4 ],
-            "to": [ 13, 24, 12 ],
-            "faces": {
-                "down": { "uv": [ 0, 0, 2, 4 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 8, 14, 14, 16 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 0, 8, 3, 12 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 0, 4, 3, 8 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 3, 6, 5, 10 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 3, 2, 5, 6 ], "texture": "#fuel_station_texture" }
-            }
+        "up": {
+          "uv": [
+            4,
+            12,
+            8,
+            16
+          ],
+          "texture": "#fuel_station_texture"
         },
-        {
-            "from": [ 0, 24, 3 ],
-            "to": [ 14, 32, 12 ],
-            "faces": {
-                "up": { "uv": [ 5, 6.5, 7.25, 10 ], "texture": "#fuel_station_texture", "rotation": 270 },
-                "north": { "uv": [ 11, 10, 14.5, 12 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 7.25, 8, 10.75, 10 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 5, 4.5, 7.25, 6.5 ], "texture": "#fuel_station_texture", "rotation": 180 },
-                "east": { "uv": [ 5, 2.5, 7.25, 4.5 ], "texture": "#fuel_station_texture" }
-            }
+        "north": {
+          "uv": [
+            8,
+            12,
+            12,
+            14
+          ],
+          "texture": "#fuel_station_texture"
         },
-        {
-            "from": [ 0, 31, 12 ],
-            "to": [ 14, 32, 13 ],
-            "faces": {
-                "down": { "uv": [ 10.75, 9.75, 14.25, 10 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 10.75, 9.5, 14.25, 9.75 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 10.75, 9.25, 14.25, 9.5 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 10.75, 9, 14.25, 9.25 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 14.75, 10, 15, 10.25 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 15, 10.75, 15.25, 11 ], "texture": "#fuel_station_texture" }
-            }
+        "south": {
+          "uv": [
+            12,
+            12,
+            16,
+            14
+          ],
+          "texture": "#fuel_station_texture"
         },
-        {
-            "from": [ 0, 25, 12 ],
-            "to": [ 1, 31, 13 ],
-            "faces": {
-                "down": { "uv": [ 15.25, 10.75, 15.5, 11 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 15.5, 10.75, 15.75, 11 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 15, 14.5, 15.25, 16 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 15.25, 14.5, 15.5, 16 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 15.5, 14.5, 15.75, 16 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 15.75, 14.5, 16, 16 ], "texture": "#fuel_station_texture" }
-            }
+        "west": {
+          "uv": [
+            3,
+            10,
+            7,
+            12
+          ],
+          "texture": "#fuel_station_texture"
         },
-        {
-            "from": [ 0, 24, 12 ],
-            "to": [ 14, 25, 13 ],
-            "faces": {
-                "down": { "uv": [ 10.75, 8.75, 14.25, 9 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 10.75, 8.5, 14.25, 8.75 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 10.75, 8.25, 14.25, 8.5 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 10.75, 8, 14.25, 8.25 ], "texture": "#fuel_station_texture", "rotation": 180 },
-                "west": { "uv": [ 15.75, 10.75, 16, 11 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 15, 10.5, 15.25, 10.75 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 13, 25, 12 ],
-            "to": [ 14, 31, 13 ],
-            "faces": {
-                "down": { "uv": [ 15.25, 10.5, 15.5, 10.75 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 15.5, 10.5, 15.75, 10.75 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 14.5, 10.5, 14.75, 12 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 14, 14.5, 14.5, 16 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 14.5, 14.5, 14.75, 16 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 14.75, 14.5, 15, 16 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 13, 20, 8 ],
-            "to": [ 14, 21, 9 ],
-            "faces": {
-                "down": { "uv": [ 15.25, 10, 15.5, 10.25 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 15.5, 10.25, 15.75, 10.5 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 15.75, 10.25, 16, 10.5 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 15.5, 10, 15.75, 10.25 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 15.75, 14.25, 16, 14.5 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 15.75, 14, 16, 14.25 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 11, 9 ],
-            "to": [ 15, 20, 10 ],
-            "faces": {
-                "down": { "uv": [ 14.75, 10.75, 15, 11 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 15.75, 11, 16, 11.25 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 5.5, 0.25, 5.75, 2.5 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 5.75, 0.25, 6, 2.5 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 5, 0.25, 5.25, 2.5 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 5.25, 0.25, 5.5, 2.5 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 10, 7 ],
-            "to": [ 15, 11, 9 ],
-            "faces": {
-                "down": { "uv": [ 14, 14, 14.25, 14.5 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 14.25, 14, 14.5, 14.5 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 2, 0, 2.25, 0.25 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 2.75, 0.25, 3, 0.5 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 2.75, 0, 3, 0.25 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 15.75, 11.75, 16, 12 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 11, 6 ],
-            "to": [ 15, 24, 7 ],
-            "faces": {
-                "down": { "uv": [ 15.75, 11.5, 16, 11.75 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 15.75, 11.25, 16, 11.5 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 2.75, 0.5, 3, 4 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 2.25, 0.5, 2.5, 4 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 2.5, 0.5, 2.75, 4 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 2, 0.25, 2.25, 4 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 24, 6 ],
-            "to": [ 15, 28, 7 ],
-            "faces": {
-                "down": { "uv": [ 14.75, 10.5, 15, 10.75 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 14.75, 10.25, 15, 10.5 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 14.75, 11, 15, 12 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 15, 11, 15.25, 12 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 15.25, 11, 15.5, 12 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 15.5, 11, 15.75, 12 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 24, 7 ],
-            "to": [ 15, 25, 9 ],
-            "faces": {
-                "down": { "uv": [ 15.25, 14.25, 15.75, 14.5 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 15.25, 14, 15.75, 14.25 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 15, 10.25, 15.25, 10.5 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 15, 10, 15.25, 10.25 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 2.25, 0.25, 2.75, 0.5 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 2.25, 0, 2.75, 0.25 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 25, 8 ],
-            "to": [ 15, 27, 9 ],
-            "faces": {
-                "down": { "uv": [ 15.75, 10.5, 16, 10.75 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 15.25, 10.25, 15.5, 10.5 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 14.5, 14, 14.75, 14.5 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 14.75, 14, 15, 14.5 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 15, 14, 15.25, 14.5 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 14.5, 10, 14.75, 10.5 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 26, 7 ],
-            "to": [ 15, 27, 8 ],
-            "faces": {
-                "down": { "uv": [ 15.75, 10, 16, 10.25 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 3, 1.75, 3.25, 2 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 3.25, 1.75, 3.5, 2 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 3.5, 1.75, 3.75, 2 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 3.75, 1.75, 4, 2 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 4, 1.75, 4.25, 2 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 29, 8 ],
-            "to": [ 15, 30, 9 ],
-            "faces": {
-                "down": { "uv": [ 4.25, 1.75, 4.5, 2 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 4.5, 1.75, 4.75, 2 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 4.75, 1.75, 5, 2 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 3, 1.5, 3.25, 1.75 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 3, 1.25, 3.25, 1.5 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 3, 1, 3.25, 1.25 ], "texture": "#fuel_station_texture" }
-            }
-        },
-        {
-            "from": [ 14, 28, 7 ],
-            "to": [ 15, 29, 8 ],
-            "faces": {
-                "down": { "uv": [ 3, 0.75, 3.25, 1 ], "texture": "#fuel_station_texture" },
-                "up": { "uv": [ 3, 0.5, 3.25, 0.75 ], "texture": "#fuel_station_texture" },
-                "north": { "uv": [ 3, 0.25, 3.25, 0.5 ], "texture": "#fuel_station_texture" },
-                "south": { "uv": [ 3, 0, 3.25, 0.25 ], "texture": "#fuel_station_texture" },
-                "west": { "uv": [ 3.25, 1.5, 3.5, 1.75 ], "texture": "#fuel_station_texture" },
-                "east": { "uv": [ 3.5, 1.5, 3.75, 1.75 ], "texture": "#fuel_station_texture" }
-            }
+        "east": {
+          "uv": [
+            7,
+            10,
+            11,
+            12
+          ],
+          "texture": "#fuel_station_texture"
         }
-    ]
+      }
+    },
+    {
+      "from": [
+        1,
+        8,
+        4
+      ],
+      "to": [
+        13,
+        24,
+        12
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            4
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            8,
+            14,
+            14,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            0,
+            8,
+            3,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            3,
+            8
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            3,
+            6,
+            5,
+            10
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            3,
+            2,
+            5,
+            6
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        24,
+        3
+      ],
+      "to": [
+        14,
+        32,
+        12
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            5,
+            6.5,
+            7.25,
+            10
+          ],
+          "texture": "#fuel_station_texture",
+          "rotation": 270
+        },
+        "north": {
+          "uv": [
+            11,
+            10,
+            14.5,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            7.25,
+            8,
+            10.75,
+            10
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            5,
+            4.5,
+            7.25,
+            6.5
+          ],
+          "texture": "#fuel_station_texture",
+          "rotation": 180
+        },
+        "east": {
+          "uv": [
+            5,
+            2.5,
+            7.25,
+            4.5
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        31,
+        12
+      ],
+      "to": [
+        14,
+        32,
+        13
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            10.75,
+            9.75,
+            14.25,
+            10
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            10.75,
+            9.5,
+            14.25,
+            9.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            10.75,
+            9.25,
+            14.25,
+            9.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            10.75,
+            9,
+            14.25,
+            9.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            14.75,
+            10,
+            15,
+            10.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            15,
+            10.75,
+            15.25,
+            11
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        25,
+        12
+      ],
+      "to": [
+        1,
+        31,
+        13
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            15.25,
+            10.75,
+            15.5,
+            11
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            15.5,
+            10.75,
+            15.75,
+            11
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            15,
+            14.5,
+            15.25,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            15.25,
+            14.5,
+            15.5,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            15.5,
+            14.5,
+            15.75,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            15.75,
+            14.5,
+            16,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        24,
+        12
+      ],
+      "to": [
+        14,
+        25,
+        13
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            10.75,
+            8.75,
+            14.25,
+            9
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            10.75,
+            8.5,
+            14.25,
+            8.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            10.75,
+            8.25,
+            14.25,
+            8.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            10.75,
+            8,
+            14.25,
+            8.25
+          ],
+          "texture": "#fuel_station_texture",
+          "rotation": 180
+        },
+        "west": {
+          "uv": [
+            15.75,
+            10.75,
+            16,
+            11
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            15,
+            10.5,
+            15.25,
+            10.75
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        25,
+        12
+      ],
+      "to": [
+        14,
+        31,
+        13
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            15.25,
+            10.5,
+            15.5,
+            10.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            15.5,
+            10.5,
+            15.75,
+            10.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            14.5,
+            10.5,
+            14.75,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            14,
+            14.5,
+            14.5,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            14.5,
+            14.5,
+            14.75,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            14.75,
+            14.5,
+            15,
+            16
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        20,
+        8
+      ],
+      "to": [
+        14,
+        21,
+        9
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            15.25,
+            10,
+            15.5,
+            10.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            15.5,
+            10.25,
+            15.75,
+            10.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            15.75,
+            10.25,
+            16,
+            10.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            15.5,
+            10,
+            15.75,
+            10.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            15.75,
+            14.25,
+            16,
+            14.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            15.75,
+            14,
+            16,
+            14.25
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        11,
+        9
+      ],
+      "to": [
+        15,
+        20,
+        10
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            14.75,
+            10.75,
+            15,
+            11
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            15.75,
+            11,
+            16,
+            11.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            5.5,
+            0.25,
+            5.75,
+            2.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            5.75,
+            0.25,
+            6,
+            2.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            5,
+            0.25,
+            5.25,
+            2.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            5.25,
+            0.25,
+            5.5,
+            2.5
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        10,
+        7
+      ],
+      "to": [
+        15,
+        11,
+        9
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            14,
+            14,
+            14.25,
+            14.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            14.25,
+            14,
+            14.5,
+            14.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            2,
+            0,
+            2.25,
+            0.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            2.75,
+            0.25,
+            3,
+            0.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            2.75,
+            0,
+            3,
+            0.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            15.75,
+            11.75,
+            16,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        11,
+        6
+      ],
+      "to": [
+        15,
+        24,
+        7
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            15.75,
+            11.5,
+            16,
+            11.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            15.75,
+            11.25,
+            16,
+            11.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            2.75,
+            0.5,
+            3,
+            4
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            2.25,
+            0.5,
+            2.5,
+            4
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            2.5,
+            0.5,
+            2.75,
+            4
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            2,
+            0.25,
+            2.25,
+            4
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        24,
+        6
+      ],
+      "to": [
+        15,
+        28,
+        7
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            14.75,
+            10.5,
+            15,
+            10.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            14.75,
+            10.25,
+            15,
+            10.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            14.75,
+            11,
+            15,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            15,
+            11,
+            15.25,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            15.25,
+            11,
+            15.5,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            15.5,
+            11,
+            15.75,
+            12
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        24,
+        7
+      ],
+      "to": [
+        15,
+        25,
+        9
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            15.25,
+            14.25,
+            15.75,
+            14.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            15.25,
+            14,
+            15.75,
+            14.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            15,
+            10.25,
+            15.25,
+            10.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            15,
+            10,
+            15.25,
+            10.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            2.25,
+            0.25,
+            2.75,
+            0.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            2.25,
+            0,
+            2.75,
+            0.25
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        25,
+        8
+      ],
+      "to": [
+        15,
+        27,
+        9
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            15.75,
+            10.5,
+            16,
+            10.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            15.25,
+            10.25,
+            15.5,
+            10.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            14.5,
+            14,
+            14.75,
+            14.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            14.75,
+            14,
+            15,
+            14.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            15,
+            14,
+            15.25,
+            14.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            14.5,
+            10,
+            14.75,
+            10.5
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        26,
+        7
+      ],
+      "to": [
+        15,
+        27,
+        8
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            15.75,
+            10,
+            16,
+            10.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            3,
+            1.75,
+            3.25,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            3.25,
+            1.75,
+            3.5,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            3.5,
+            1.75,
+            3.75,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            3.75,
+            1.75,
+            4,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            4,
+            1.75,
+            4.25,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        29,
+        8
+      ],
+      "to": [
+        15,
+        30,
+        9
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            4.25,
+            1.75,
+            4.5,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            4.5,
+            1.75,
+            4.75,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            4.75,
+            1.75,
+            5,
+            2
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            3,
+            1.5,
+            3.25,
+            1.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            3,
+            1.25,
+            3.25,
+            1.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            3,
+            1,
+            3.25,
+            1.25
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        28,
+        7
+      ],
+      "to": [
+        15,
+        29,
+        8
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            3,
+            0.75,
+            3.25,
+            1
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "up": {
+          "uv": [
+            3,
+            0.5,
+            3.25,
+            0.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "north": {
+          "uv": [
+            3,
+            0.25,
+            3.25,
+            0.5
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "south": {
+          "uv": [
+            3,
+            0,
+            3.25,
+            0.25
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "west": {
+          "uv": [
+            3.25,
+            1.5,
+            3.5,
+            1.75
+          ],
+          "texture": "#fuel_station_texture"
+        },
+        "east": {
+          "uv": [
+            3.5,
+            1.5,
+            3.75,
+            1.75
+          ],
+          "texture": "#fuel_station_texture"
+        }
+      }
+    }
+  ]
 }

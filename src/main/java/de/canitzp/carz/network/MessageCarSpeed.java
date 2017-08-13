@@ -1,4 +1,4 @@
-package de.canitzp.carz.packet;
+package de.canitzp.carz.network;
 
 import de.canitzp.carz.api.EntitySteerableBase;
 import io.netty.buffer.ByteBuf;

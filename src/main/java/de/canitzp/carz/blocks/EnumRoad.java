@@ -12,12 +12,12 @@ import java.util.List;
  */
 public enum EnumRoad implements IStringSerializable {
 
-    DEFAULT(MapColor.BLACK, new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 7/8D, 1.0D));
+    DEFAULT(MapColor.BLACK, new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 7 / 8D, 1.0D));
 
     private MapColor color;
     private AxisAlignedBB boundingBox;
 
-    EnumRoad(MapColor color, AxisAlignedBB boundingBox){
+    EnumRoad(MapColor color, AxisAlignedBB boundingBox) {
         this.color = color;
         this.boundingBox = boundingBox;
     }
