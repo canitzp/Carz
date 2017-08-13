@@ -2,13 +2,20 @@ package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
 import de.canitzp.carz.blocks.BlockFuelStation;
+import de.canitzp.carz.blocks.BlockRoad;
+import de.canitzp.carz.blocks.BlockSign;
+import de.canitzp.carz.blocks.EnumSigns;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntitySportscar;
+import de.canitzp.carz.items.ItemBlockSign;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -21,6 +28,9 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -59,6 +69,8 @@ public class Registry {
      * Blocks:
      */
     public static BlockFuelStation blockFuelStation;
+    public static BlockRoad blockRoad;
+    public static BlockSign blockSign;
 
     /**
      * Items:
@@ -81,6 +93,8 @@ public class Registry {
         Carz.LOG.info("Registering Blocks");
         IForgeRegistry<Block> reg = event.getRegistry();
         reg.register(blockFuelStation = new BlockFuelStation());
+        reg.register(blockRoad = new BlockRoad("road"));
+        reg.register(blockSign = new BlockSign());
     }
 
     @SubscribeEvent
@@ -88,6 +102,15 @@ public class Registry {
         Carz.LOG.info("Registering Items");
         IForgeRegistry<Item> reg = event.getRegistry();
         reg.register(new ItemBlock(blockFuelStation).setRegistryName(blockFuelStation.getRegistryName()).setUnlocalizedName(blockFuelStation.getUnlocalizedName()));
+        reg.register(new ItemBlock(blockRoad).setRegistryName(blockRoad.getRegistryName()).setUnlocalizedName(blockRoad.getUnlocalizedName()));
+        reg.register(new ItemBlockSign(blockSign));
+    }
+
+    @SubscribeEvent
+    public static void registerModel(ModelRegistryEvent event){
+        //for(EnumSigns sign : EnumSigns.values()){
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockSign), 0, new ModelResourceLocation(new ResourceLocation(blockSign.getRegistryName().toString()), "inventory"));
+        //}
     }
 
     public static void preInit(FMLPreInitializationEvent event) {

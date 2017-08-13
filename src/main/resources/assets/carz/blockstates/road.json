@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "normal": [
+      {
+        "model": "carz:baked_road"
+      }
+    ]
+  }
+}

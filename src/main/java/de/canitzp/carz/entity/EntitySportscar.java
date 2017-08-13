@@ -19,8 +19,8 @@ public class EntitySportscar extends EntitySteerableBase {
 
     public EntitySportscar(World worldIn) {
         super(worldIn);
-        this.setSize(1.75F, 1.5F);
-        this.seats[0] = new Vec3d(-0.3D, -1.0D, 0.0D);
+        this.setSize(1.75F, 1.8125F);
+        this.setDriverSeat(-0.3D, -1.0D, 0.0D);
     }
 
     @Override
@@ -56,5 +56,7 @@ public class EntitySportscar extends EntitySteerableBase {
     protected void writeEntityToNBT(NBTTagCompound compound) {
 
     }
+
+
 
 }

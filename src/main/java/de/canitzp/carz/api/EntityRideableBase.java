@@ -1,7 +1,10 @@
 package de.canitzp.carz.api;
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -20,10 +23,18 @@ import java.util.List;
  */
 public abstract class EntityRideableBase extends EntityMoveableBase {
 
-    protected Vec3d[] seats = new Vec3d[]{new Vec3d(0, 0, 0)};
+    private List<Vec3d> seats = Lists.newArrayList(new Vec3d(0.0D, 0.0D, 0.0D));
 
     public EntityRideableBase(World worldIn) {
         super(worldIn);
+    }
+
+    protected void addSeat(double x, double y, double z){
+        this.seats.add(new Vec3d(x, y, z));
+    }
+
+    protected void setDriverSeat(double x, double y, double z){
+        this.seats.set(0, new Vec3d(x, y, z));
     }
 
     @Nullable
@@ -38,14 +49,22 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
     }
 
     public int getMaxPassengerAmount() {
-        return this.seats.length;
+        return this.seats.size();
     }
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         if (!this.world.isRemote && !player.isSneaking()) {
-            player.startRiding(this);
-            return true;
+            if(player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer){
+                ItemStack spawnEgg = player.getHeldItem(player.getActiveHand());
+                Entity entity = ItemMonsterPlacer.spawnCreature(this.world, ItemMonsterPlacer.getNamedIdFrom(spawnEgg), this.posX, this.posY, this.posZ);
+                if(entity != null){
+                    if(entity.startRiding(this)){
+                        return true;
+                    }
+                }
+            }
+            return player.startRiding(this);
         }
         return false;
     }
@@ -81,7 +100,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             }
             if (index == -1)
                 return;
-            Vec3d seat = seats[index];
+            Vec3d seat = this.seats.get(index);
 
             Vec3d vec3d = seat.rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
             passenger.setPosition(this.posX + vec3d.x, this.posY + (double) f1 + vec3d.y, this.posZ + vec3d.z);
