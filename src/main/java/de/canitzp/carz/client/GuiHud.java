@@ -8,7 +8,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -21,7 +20,7 @@ public class GuiHud extends Gui {
 
     private static final ResourceLocation HUD_RES = new ResourceLocation(Carz.MODID, "textures/gui/gui_car_hud.png");
 
-    public void render(ScaledResolution res, EntitySteerableBase steerableBase){
+    public void render(ScaledResolution res, EntitySteerableBase steerableBase) {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

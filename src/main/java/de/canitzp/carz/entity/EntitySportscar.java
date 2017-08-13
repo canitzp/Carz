@@ -1,12 +1,10 @@
 package de.canitzp.carz.entity;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntitySteerableBase;
-import de.canitzp.carz.client.renderer.RenderCar;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -27,7 +25,7 @@ public class EntitySportscar extends EntitySteerableBase {
 
     @Override
     public ModelBase getCarModel() {
-        return RenderCar.MODEL_SPORTSCAR;
+        return Registry.MODEL_SPORTSCAR;
     }
 
     @Nullable
@@ -58,7 +56,5 @@ public class EntitySportscar extends EntitySteerableBase {
     protected void writeEntityToNBT(NBTTagCompound compound) {
 
     }
-
-
 
 }

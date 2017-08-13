@@ -26,10 +26,4 @@ public class Carz {
         Registry.preInit(event);
     }
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        CarzStats.registerStats();
-    }
-
-
 }

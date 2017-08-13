@@ -8,35 +8,35 @@ public enum EnumCarParts {
     ;
 
     private float suspension;
-    private float side_traction;
-    private float forward_traction;
+    private float sideTraction;
+    private float forwardTraction;
     private float mass;
-    private float fuel_usage_idle;
-    private float fuel_usage_accelerating;
-    private float tank_size;
-    private float hit_damage;
+    private float fuelUsageIdle;
+    private float fuelUsageAccelerating;
+    private float tankSize;
+    private float hitDamage;
     private float health;
-    private float frontal_health_modifier;
+    private float frontalHealthModifier;
     private float steering;
     private float acceleration;
-    private float reverse_acceleration;
-    private int seat_count;
+    private float reverseAcceleration;
+    private int seatCount;
 
-    EnumCarParts(float suspension, float side_traction, float forward_traction, float mass, float fuel_usage_idle, float fuel_usage_accelerating, float tank_size, float hit_damage, float health, float frontal_health_modifier, float steering, float acceleration, float reverse_acceleration, int seat_count) {
+    EnumCarParts(float suspension, float sideTraction, float forwardTraction, float mass, float fuelUsageIdle, float fuelUsageAccelerating, float tankSize, float hitDamage, float health, float frontalHealthModifier, float steering, float acceleration, float reverseAcceleration, int seatCount) {
         this.suspension = suspension;
-        this.side_traction = side_traction;
-        this.forward_traction = forward_traction;
+        this.sideTraction = sideTraction;
+        this.forwardTraction = forwardTraction;
         this.mass = mass;
-        this.fuel_usage_idle = fuel_usage_idle;
-        this.fuel_usage_accelerating = fuel_usage_accelerating;
-        this.tank_size = tank_size;
-        this.hit_damage = hit_damage;
+        this.fuelUsageIdle = fuelUsageIdle;
+        this.fuelUsageAccelerating = fuelUsageAccelerating;
+        this.tankSize = tankSize;
+        this.hitDamage = hitDamage;
         this.health = health;
-        this.frontal_health_modifier = frontal_health_modifier;
+        this.frontalHealthModifier = frontalHealthModifier;
         this.steering = steering;
         this.acceleration = acceleration;
-        this.reverse_acceleration = reverse_acceleration;
-        this.seat_count = seat_count;
+        this.reverseAcceleration = reverseAcceleration;
+        this.seatCount = seatCount;
     }
 
     public float getSuspension() {
@@ -44,11 +44,11 @@ public enum EnumCarParts {
     }
 
     public float getSideTraction() {
-        return side_traction;
+        return sideTraction;
     }
 
     public float getForwardTraction() {
-        return forward_traction;
+        return forwardTraction;
     }
 
     public float getMass() {
@@ -56,19 +56,19 @@ public enum EnumCarParts {
     }
 
     public float getFuelUsageIdle() {
-        return fuel_usage_idle;
+        return fuelUsageIdle;
     }
 
     public float getFuelUsageAccelerating() {
-        return fuel_usage_accelerating;
+        return fuelUsageAccelerating;
     }
 
     public float getTankSize() {
-        return tank_size;
+        return tankSize;
     }
 
     public float getHitDamage() {
-        return hit_damage;
+        return hitDamage;
     }
 
     public float getHealth() {
@@ -76,7 +76,7 @@ public enum EnumCarParts {
     }
 
     public float getFrontalHealthModifier() {
-        return frontal_health_modifier;
+        return frontalHealthModifier;
     }
 
     public float getSteering() {
@@ -88,10 +88,10 @@ public enum EnumCarParts {
     }
 
     public float getReverseAcceleration() {
-        return reverse_acceleration;
+        return reverseAcceleration;
     }
 
     public int getSeatCount() {
-        return seat_count;
+        return seatCount;
     }
 }

@@ -1,15 +1,12 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.List;
  *
  * @author MisterErwin
  */
-public abstract class EntityMoveableBase extends EntityRenderdBase {
+public abstract class EntityMoveableBase extends EntityRenderedBase {
     protected float deltaRotation;
     protected float momentum, angularMomentum;
     protected int spinningTicks = 0; //Out of control

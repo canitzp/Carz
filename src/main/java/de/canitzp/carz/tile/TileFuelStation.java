@@ -24,7 +24,7 @@ public class TileFuelStation extends TileEntity {
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return ((T) this.tank);
         }
         return super.getCapability(capability, facing);

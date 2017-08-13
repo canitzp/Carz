@@ -28,7 +28,7 @@ public class KeyListener {
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
         EntityPlayer p = Minecraft.getMinecraft().player;
         Entity riding = p.getRidingEntity();
-        if (!(riding instanceof EntitySteerableBase)){
+        if (!(riding instanceof EntitySteerableBase)) {
             return;
         }
         EntitySteerableBase steerable = (EntitySteerableBase) riding;

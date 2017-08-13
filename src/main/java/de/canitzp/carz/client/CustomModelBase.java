@@ -8,5 +8,4 @@ import net.minecraft.client.model.ModelBase;
 public class CustomModelBase extends ModelBase {
 
 
-
 }
