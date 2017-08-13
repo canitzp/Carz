@@ -42,11 +42,6 @@ public class EntityBus extends EntitySteerableBase {
     }
 
     @Override
-    protected void entityInit() {
-
-    }
-
-    @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
 
     }
