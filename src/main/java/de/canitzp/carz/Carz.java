@@ -38,10 +38,4 @@ public class Carz {
 
     }
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        CarzStats.registerStats();
-    }
-
-
 }

@@ -1,15 +1,10 @@
 package de.canitzp.carz.client.renderer;
 
-import de.canitzp.carz.api.EntityMoveableBase;
-import de.canitzp.carz.api.EntityRenderdBase;
-import de.canitzp.carz.client.models.ModelCar;
-import de.canitzp.carz.client.models.ModelSportscar;
-import de.canitzp.carz.entity.EntityCar;
+import de.canitzp.carz.api.EntityRenderedBase;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -23,10 +18,7 @@ import javax.annotation.Nullable;
  * @author canitzp
  */
 @SideOnly(Side.CLIENT)
-public class RenderCar<T extends EntityRenderdBase> extends Render<T> implements IResourceManagerReloadListener {
-
-    public static final ModelCar MODEL_CAR = new ModelCar();
-    public static final ModelSportscar MODEL_SPORTSCAR = new ModelSportscar();
+public class RenderCar<T extends EntityRenderedBase> extends Render<T> implements IResourceManagerReloadListener {
 
     private ModelBase model;
     private ResourceLocation texture;

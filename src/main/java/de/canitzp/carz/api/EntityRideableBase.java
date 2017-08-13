@@ -1,7 +1,6 @@
 package de.canitzp.carz.api;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public abstract class EntityRideableBase extends EntityMoveableBase {
 
-    protected Vec3d[] seats = new Vec3d[]{new Vec3d(0,0,0)};
+    protected Vec3d[] seats = new Vec3d[]{new Vec3d(0, 0, 0)};
 
     public EntityRideableBase(World worldIn) {
         super(worldIn);
@@ -38,7 +37,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         return this.getPassengers().size() < getMaxPassengerAmount();
     }
 
-    public int getMaxPassengerAmount(){
+    public int getMaxPassengerAmount() {
         return this.seats.length;
     }
 
@@ -80,7 +79,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             if (this.getPassengers().size() > 1) {
                 index = this.getPassengers().indexOf(passenger);
             }
-            if (index==-1)
+            if (index == -1)
                 return;
             Vec3d seat = seats[index];
 

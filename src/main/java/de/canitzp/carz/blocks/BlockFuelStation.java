@@ -10,11 +10,9 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -34,7 +32,7 @@ public class BlockFuelStation extends BlockContainer {
 
     public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
     public static final AxisAlignedBB AABB_BASE_PLATE = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D);
-    public static final AxisAlignedBB AABB_STAND = new AxisAlignedBB(0.0D, 0.0D, 3/16D, 7/8D, 1.0D, 13/16D);
+    public static final AxisAlignedBB AABB_STAND = new AxisAlignedBB(0.0D, 0.0D, 3 / 16D, 7 / 8D, 1.0D, 13 / 16D);
 
     public BlockFuelStation() {
         super(Material.IRON);
@@ -71,7 +69,7 @@ public class BlockFuelStation extends BlockContainer {
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        if(!world.isRemote && state.getValue(BOTTOM)){
+        if (!world.isRemote && state.getValue(BOTTOM)) {
             world.setBlockState(pos.up(), this.getDefaultState().withProperty(BOTTOM, false), 1 | 2);
         }
     }
@@ -83,8 +81,8 @@ public class BlockFuelStation extends BlockContainer {
 
     @Override
     public void onBlockDestroyedByPlayer(World worldIn, BlockPos pos, IBlockState state) {
-        if(!worldIn.isRemote){
-            if(state.getValue(BOTTOM)){
+        if (!worldIn.isRemote) {
+            if (state.getValue(BOTTOM)) {
                 worldIn.destroyBlock(pos.up(), false);
             } else {
                 worldIn.destroyBlock(pos.down(), false);
@@ -104,18 +102,18 @@ public class BlockFuelStation extends BlockContainer {
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state){
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state){
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
-        if(!state.getValue(BOTTOM)){
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        if (!state.getValue(BOTTOM)) {
             return AABB_STAND;
         }
         return super.getBoundingBox(state, source, pos);
@@ -123,7 +121,7 @@ public class BlockFuelStation extends BlockContainer {
 
     @Override
     public void addCollisionBoxToList(IBlockState state, @Nonnull World worldIn, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
-        if(state.getValue(BOTTOM)){
+        if (state.getValue(BOTTOM)) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BASE_PLATE);
         }
         addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND);

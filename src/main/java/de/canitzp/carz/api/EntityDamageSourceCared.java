@@ -1,7 +1,6 @@
 package de.canitzp.carz.api;
 
-import de.canitzp.carz.CarzStats;
-import mcp.MethodsReturnNonnullByDefault;
+import de.canitzp.carz.Registry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,30 +8,32 @@ import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * DamageSource for getting run over by a car
+ *
  * @author MisterErwin
  */
 public class EntityDamageSourceCared extends EntityDamageSourceIndirect {
-    public EntityDamageSourceCared( String damageTypeIn, Entity source, @Nullable Entity indirectEntityIn) {
+
+    public EntityDamageSourceCared(String damageTypeIn, Entity source, @Nullable Entity indirectEntityIn) {
         super(damageTypeIn, source, indirectEntityIn);
         //death.attack.car.hitby=%1 was ....
     }
 
     @Override
-    @MethodsReturnNonnullByDefault
+    @Nonnull
     public ITextComponent getDeathMessage(EntityLivingBase entityLivingBaseIn) {
         ITextComponent itextcomponent = this.getTrueSource() == null ? this.damageSourceEntity.getDisplayName() : this.getTrueSource().getDisplayName();
-        return  new TextComponentTranslation("death.attack." + this.damageType,
-                entityLivingBaseIn.getDisplayName(), itextcomponent);
+        return new TextComponentTranslation("death.attack." + this.damageType, entityLivingBaseIn.getDisplayName(), itextcomponent);
     }
 
     public static EntityDamageSourceCared causeDamageAndStat(Entity source, Entity transmitter, int dmg) {
-        if (source instanceof EntityPlayer){
-            ((EntityPlayer) source).addStat(CarzStats.ENTITY_HIT_COUNT);
-            ((EntityPlayer) source).addStat(CarzStats.ENTITY_HIT_DAMAGE, dmg);
+        if (source instanceof EntityPlayer) {
+            ((EntityPlayer) source).addStat(Registry.ENTITY_HIT_COUNT);
+            ((EntityPlayer) source).addStat(Registry.ENTITY_HIT_DAMAGE, dmg);
         }
         return causeDamage(source, transmitter);
     }
