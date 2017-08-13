@@ -1,10 +1,15 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.packet.MessageCarSpeed;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.MoverType;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
@@ -30,6 +35,8 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
     public double speedSqAbs, speedSq;
     public double angle, centrifugalForce;
 
+    protected final static DataParameter<Float> SPEED = EntityDataManager.createKey(EntityMoveableBase.class, DataSerializers.FLOAT);
+    private float remoteSpeed = 0;
 
     private double lastColX = 0, lastColZ = 0;
     private int lastColTime;
@@ -49,17 +56,27 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
             blockCollisionCheck();
         }
         this.doBlockCollisions();
+
+        float speed = getSpeed();
+        this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
+        this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
+        this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
     }
 
     protected void onUpdate(boolean canPassengerSteer) {
         if (canPassengerSteer) {
             this.updateMotion();
+            float speed = getSpeed();
+            speed *= this.momentum;
+            if (world.isRemote)
+                Carz.carz.networkWrapper.sendToServer(new MessageCarSpeed(speed));
+            setSpeed(speed);
         } else {
-            if (this.motionZ != 0)
-                Carz.LOG.info("MotZ = " + this.motionZ);
-            this.motionX = 0.0D;
-            this.motionY = 0.0D;
-            this.motionZ = 0.0D;
+//            if (this.motionZ != 0)
+//                Carz.LOG.info("MotZ = " + this.motionZ);
+//            this.motionX = 0.0D;
+//            this.motionY = 0.0D;
+//            this.motionZ = 0.0D;
         }
     }
 
@@ -110,7 +127,30 @@ public abstract class EntityMoveableBase extends EntityRenderdBase {
             this.angle = 0;
             this.speedSq = 0;
         }
+    }
 
+    @Override
+    protected void entityInit() {
+        this.dataManager.register(SPEED, 0f);
+    }
+
+    public void setSpeed(float speed) {
+        remoteSpeed = speed;
+        if (world.isRemote){
+            Carz.carz.networkWrapper.sendToServer(new MessageCarSpeed(speed));
+        }else{
+            this.dataManager.set(SPEED, speed);
+        }
+    }
+
+    public float getSpeed() {
+        return canPassengerSteer()? remoteSpeed: this.dataManager.get(SPEED);
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger) {
+        this.remoteSpeed =this.dataManager.get(SPEED);
+        super.addPassenger(passenger);
     }
 
     /**

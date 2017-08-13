@@ -31,7 +31,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
             if (this.world.isRemote) {
                 this.controlVehicle();
             }
-            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+//            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ); moved to EntityMoveable
         }
     }
 
@@ -43,9 +43,9 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
         this.inputBackDown = back;
     }
 
-    @SideOnly(Side.CLIENT)
     private void controlVehicle() {
         if (this.isBeingRidden()) {
+            world.spawnParticle(EnumParticleTypes.FOOTSTEP, posX, posY, posZ, 0.1, 0.1, 0.1);
             float fwd = 0.0F; //Forward movement?
 
             if (this.spinningTicks <= 10) {
@@ -59,6 +59,8 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     fwd += 0.04; //OPTION: forward (0.04)
                 if (this.inputBackDown)
                     fwd -= 0.015; //OPTION: backward (0.005)
+
+                setSpeed(getSpeed()+fwd);
 
 //                double speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
 
@@ -103,8 +105,9 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 this.rotationYaw += this.deltaRotation; //Spin me around
             }
             //Apply movement
-            this.motionX += (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * fwd);
-            this.motionZ += (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * fwd);
+//            this.motionX += (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * fwd);
+//            this.motionZ += (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * fwd);
+            //moved to EntityMoveable
         }
     }
 }

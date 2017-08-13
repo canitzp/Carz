@@ -38,12 +38,6 @@ public class EntityCar extends EntitySteerableBase {
         GlStateManager.rotate(180.0F, 1.0F, 0, 0);
     }
 
-
-    @Override
-    protected void entityInit() {
-
-    }
-
     @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
 

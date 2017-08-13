@@ -45,11 +45,6 @@ public class EntitySportscar extends EntitySteerableBase {
     }
 
     @Override
-    protected void entityInit() {
-
-    }
-
-    @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
 
     }
