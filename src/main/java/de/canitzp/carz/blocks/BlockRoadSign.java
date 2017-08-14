@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
@@ -57,13 +58,19 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     }
 
     @Override
-    public void registerClient() {
-    }
-
-    @Override
     public ItemBlock getItemBlock() {
         return new ItemBlockSign(this);
     }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileSign && ((TileSign) tile).hasSignType()){
+            state = state.withProperty(SIGN_TYPE, ((TileSign) tile).getSignType());
+        }
+        return state;
+    }
+
 
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
@@ -96,8 +103,15 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        if (!world.isRemote && state.getValue(BOTTOM)) {
-            world.setBlockState(pos.up(), this.getDefaultState().withProperty(BOTTOM, false).withProperty(FACING, state.getValue(FACING)).withProperty(SIGN_TYPE, state.getValue(SIGN_TYPE)), 1 | 2);
+        if (!world.isRemote) {
+            if(state.getValue(BOTTOM)){
+                world.setBlockState(pos.up(), this.getDefaultState().withProperty(BOTTOM, false).withProperty(FACING, state.getValue(FACING)).withProperty(SIGN_TYPE, state.getValue(SIGN_TYPE)), 1 | 2);
+            }
+            TileEntity tile = world.getTileEntity(pos);
+            System.out.println(tile);
+            if(tile instanceof TileSign){
+                ((TileSign) tile).signType = state.getValue(SIGN_TYPE);
+            }
         }
     }
 
