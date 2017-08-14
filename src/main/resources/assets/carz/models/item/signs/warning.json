@@ -1,0 +1,6 @@
+{
+  "parent": "carz:item/signs/triangle",
+  "textures": {
+    "all": "carz:blocks/signs/warning"
+  }
+}

@@ -1,7 +1,8 @@
 {
   "__comment": "Author: Zombiefleischer 13.08.2017",
   "textures": {
-    "all": "carz:blocks/signs/warning"
+    "all": "carz:blocks/signs/warning",
+    "particle": "#all"
   },
   "elements": [
     {

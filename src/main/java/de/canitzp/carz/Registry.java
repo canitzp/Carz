@@ -1,10 +1,7 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
-import de.canitzp.carz.blocks.BlockBase;
-import de.canitzp.carz.blocks.BlockFuelStation;
-import de.canitzp.carz.blocks.BlockRoad;
-import de.canitzp.carz.blocks.BlockRoadSign;
+import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
@@ -13,6 +10,9 @@ import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntitySportscar;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -22,6 +22,7 @@ import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -108,6 +109,11 @@ public class Registry {
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
         }
+
+        for(EnumSigns sign : EnumSigns.values()){
+            ModelBakery.registerItemVariants(Item.getItemFromBlock(blockRoadSign), new ModelResourceLocation(new ResourceLocation(Carz.MODID, "signs/" + sign.getName()), "inventory"));
+        }
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(blockRoadSign), stack -> new ModelResourceLocation(new ResourceLocation(Carz.MODID, "signs/" + EnumSigns.values()[stack.getMetadata()].getName()), "inventory"));
     }
 
     public static void preInit(FMLPreInitializationEvent event) {

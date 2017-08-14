@@ -58,7 +58,6 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
 
     @Override
     public void registerClient() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(new ResourceLocation(this.getRegistryName().toString()), "inventory"));
     }
 
     @Override
