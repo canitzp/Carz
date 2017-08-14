@@ -46,7 +46,6 @@ public class ItemBlockSign extends ItemBlock {
         if (!stack.isEmpty() && player.canPlayerEdit(pos, facing, stack) && worldIn.mayPlace(this.block, pos, false, facing, player)) {
             int i = this.getMetadata(stack.getMetadata());
             IBlockState state = this.block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, i, player, hand);
-            state = state.withProperty(BlockRoadSign.SIGN_TYPE, EnumSigns.values()[stack.getMetadata()]);
             if (placeBlockAt(stack, player, worldIn, pos, facing, hitX, hitY, hitZ, state)) {
                 state = worldIn.getBlockState(pos);
                 SoundType soundtype = state.getBlock().getSoundType(state, worldIn, pos, player);

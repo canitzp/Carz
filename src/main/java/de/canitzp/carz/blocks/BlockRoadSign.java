@@ -2,6 +2,7 @@ package de.canitzp.carz.blocks;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
+import de.canitzp.carz.client.renderer.RenderRoadSign;
 import de.canitzp.carz.items.ItemBlockSign;
 import de.canitzp.carz.tile.TileSign;
 import net.minecraft.block.material.MapColor;
@@ -20,10 +21,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -32,6 +30,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,7 +44,6 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
     public static final AxisAlignedBB SIGN_DEFAULT_TOP = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
 
-    public static final PropertyEnum<EnumSigns> SIGN_TYPE = PropertyEnum.create("type", EnumSigns.class);
     public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
     public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
 
@@ -54,7 +52,12 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
         this.setCreativeTab(Registry.TAB);
         this.setRegistryName(Carz.MODID, "road_sign");
         this.setUnlocalizedName(this.getRegistryName().toString());
-        this.setDefaultState(this.blockState.getBaseState().withProperty(SIGN_TYPE, EnumSigns.WARNING).withProperty(BOTTOM, true).withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(BOTTOM, true).withProperty(FACING, EnumFacing.NORTH));
+    }
+
+    @Override
+    public void registerClient() {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileSign.class, new RenderRoadSign());
     }
 
     @Override
@@ -63,18 +66,8 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileSign && ((TileSign) tile).hasSignType()){
-            state = state.withProperty(SIGN_TYPE, ((TileSign) tile).getSignType());
-        }
-        return state;
-    }
-
-
-    @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        return new ItemStack(this, 1, state.getValue(SIGN_TYPE).ordinal());
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -93,25 +86,13 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, SIGN_TYPE, BOTTOM, FACING);
-    }
-
-    @Override
-    public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return state.getValue(SIGN_TYPE).getColor();
+        return new BlockStateContainer(this, BOTTOM, FACING);
     }
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        if (!world.isRemote) {
-            if(state.getValue(BOTTOM)){
-                world.setBlockState(pos.up(), this.getDefaultState().withProperty(BOTTOM, false).withProperty(FACING, state.getValue(FACING)).withProperty(SIGN_TYPE, state.getValue(SIGN_TYPE)), 1 | 2);
-            }
-            TileEntity tile = world.getTileEntity(pos);
-            System.out.println(tile);
-            if(tile instanceof TileSign){
-                ((TileSign) tile).signType = state.getValue(SIGN_TYPE);
-            }
+        if (!world.isRemote && state.getValue(BOTTOM)) {
+            world.setBlockState(pos.up(), this.getDefaultState().withProperty(BOTTOM, false).withProperty(FACING, state.getValue(FACING)), 1 | 2);
         }
     }
 
@@ -148,17 +129,18 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        if (state.getValue(BOTTOM)) {
+        /*if (state.getValue(BOTTOM)) {
             return state.getValue(SIGN_TYPE).getBottomBoundingBox();
         }
-        return state.getValue(SIGN_TYPE).getTopBoundingBox();
+        return state.getValue(SIGN_TYPE).getTopBoundingBox();*/
+        return super.getBoundingBox(state, source, pos);
     }
 
     @Override
     public void addCollisionBoxToList(IBlockState state, @Nonnull World worldIn, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
-        for (AxisAlignedBB typeAABB : state.getValue(BOTTOM) ? state.getValue(SIGN_TYPE).getBottomHitBoxes() : state.getValue(SIGN_TYPE).getTopHitBoxes()) {
+        /*for (AxisAlignedBB typeAABB : state.getValue(BOTTOM) ? state.getValue(SIGN_TYPE).getBottomHitBoxes() : state.getValue(SIGN_TYPE).getTopHitBoxes()) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, typeAABB);
-        }
+        }*/
     }
 
     @Override
@@ -168,4 +150,8 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
         }
     }
 
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return state.getValue(BOTTOM);
+    }
 }

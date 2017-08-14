@@ -4,6 +4,7 @@ import de.canitzp.carz.api.EntityRenderedBase;
 import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
+import de.canitzp.carz.client.models.ModelRoadSign;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.entity.EntityBus;
@@ -78,6 +79,7 @@ public class Registry {
      */
     public static final ModelSportscar MODEL_SPORTSCAR = new ModelSportscar();
     public static final ModelBus MODEL_BUS = new ModelBus();
+    public static final ModelRoadSign MODEL_ROAD_SIGN = new ModelRoadSign();
 
     /**
      * Statistics:
