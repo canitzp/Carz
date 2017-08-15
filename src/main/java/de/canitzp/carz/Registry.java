@@ -9,6 +9,8 @@ import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntitySportscar;
+import de.canitzp.carz.items.ItemBase;
+import de.canitzp.carz.items.ItemCarPart;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -48,6 +50,7 @@ public class Registry {
      * Internal Stuff:
      */
     public static final List<BlockBase> BLOCKS_FOR_REGISTERING = new ArrayList<>();
+    public static final List<ItemBase> ITEMS_FOR_REGISTERING = new ArrayList<>();
     private static int entityId = 0;
     @SideOnly(Side.CLIENT)
     private static IRenderFactory<EntityRenderedBase> renderFactory;
@@ -72,6 +75,7 @@ public class Registry {
     /**
      * Items:
      */
+    public static ItemCarPart itemCarPart;
 
     /**
      * Models:
@@ -102,6 +106,10 @@ public class Registry {
             Carz.LOG.info("Registering ItemBlock: " + block.getRegistryName());
             reg.register(block.getItemBlock());
         }
+        for(ItemBase item : ITEMS_FOR_REGISTERING){
+            Carz.LOG.info("Registering Item: " + item.getRegistryName());
+            reg.register(item);
+        }
     }
 
     @SubscribeEvent
@@ -109,6 +117,9 @@ public class Registry {
         ModelLoaderRegistry.registerLoader(new CustomModelLoader());
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
+        }
+        for(ItemBase item : ITEMS_FOR_REGISTERING){
+            item.registerClient();
         }
 
         for(EnumSigns sign : EnumSigns.values()){
@@ -121,6 +132,7 @@ public class Registry {
         blockFuelStation = new BlockFuelStation().register();
         blockRoad = new BlockRoad().register();
         blockRoadSign = new BlockRoadSign().register();
+        itemCarPart = new ItemCarPart().register();
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
     }
