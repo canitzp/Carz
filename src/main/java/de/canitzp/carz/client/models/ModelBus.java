@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
  * @author canitzp
  */
 public class ModelBus extends ModelBase {
+
     public ModelRenderer bottom_plate;
     public ModelRenderer left_side;
     public ModelRenderer front_plate;

@@ -41,8 +41,8 @@ import java.util.List;
  */
 public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
 
-    public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
-    public static final AxisAlignedBB SIGN_DEFAULT_TOP = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
+    public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(7/16D, 0.0D, 7/16D, 9/16D, 1.0D, 9/16D);
+    public static final AxisAlignedBB SIGN_DEFAULT_TOP = new AxisAlignedBB(7/16D, 0.0D, 7/16D, 1.0D, 1.0D, 1.0D);
 
     public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
     public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
@@ -63,6 +63,15 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     @Override
     public ItemBlock getItemBlock() {
         return new ItemBlockSign(this);
+    }
+
+    @Override
+    public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileSign){
+            return ((TileSign) tile).getMapColor();
+        }
+        return super.getMapColor(state, world, pos);
     }
 
     @Override
@@ -128,19 +137,24 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        /*if (state.getValue(BOTTOM)) {
-            return state.getValue(SIGN_TYPE).getBottomBoundingBox();
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileSign){
+            return ((TileSign) tile).getBoundingBox(state.getValue(BOTTOM));
         }
-        return state.getValue(SIGN_TYPE).getTopBoundingBox();*/
-        return super.getBoundingBox(state, source, pos);
+        return super.getBoundingBox(state, world, pos);
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, @Nonnull World worldIn, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
-        /*for (AxisAlignedBB typeAABB : state.getValue(BOTTOM) ? state.getValue(SIGN_TYPE).getBottomHitBoxes() : state.getValue(SIGN_TYPE).getTopHitBoxes()) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, typeAABB);
-        }*/
+    public void addCollisionBoxToList(IBlockState state, @Nonnull World world, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileSign){
+            for (AxisAlignedBB typeAABB : ((TileSign) tile).getHitBoxes(state.getValue(BOTTOM))) {
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, typeAABB);
+            }
+        } else {
+            super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entityIn, bool);
+        }
     }
 
     @Override

@@ -16,7 +16,6 @@ public class NetworkHandler {
     public static void preInit(FMLPreInitializationEvent event) {
         int id = 0;
         net.registerMessage(MessageCarSpeed.class, MessageCarSpeed.class, id++, Side.SERVER);
-        net.registerMessage(MessageNBT.class, MessageNBT.class, id++, Side.CLIENT);
     }
 
 }
