@@ -3,7 +3,6 @@ package de.canitzp.carz.blocks;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.client.renderer.RenderRoadSign;
-import de.canitzp.carz.items.ItemBlockSign;
 import de.canitzp.carz.tile.TileSign;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -11,25 +10,20 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import javax.annotation.Nonnull;
@@ -41,8 +35,8 @@ import java.util.List;
  */
 public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
 
-    public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(7/16D, 0.0D, 7/16D, 9/16D, 1.0D, 9/16D);
-    public static final AxisAlignedBB SIGN_DEFAULT_TOP = new AxisAlignedBB(7/16D, 0.0D, 7/16D, 1.0D, 1.0D, 1.0D);
+    public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(7 / 16D, 0.0D, 7 / 16D, 9 / 16D, 1.0D, 9 / 16D);
+    public static final AxisAlignedBB SIGN_DEFAULT_TOP = new AxisAlignedBB(7 / 16D, 0.0D, 7 / 16D, 9 / 16D, 15 / 16D, 9 / 16D);
 
     public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
     public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
@@ -61,14 +55,9 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     }
 
     @Override
-    public ItemBlock getItemBlock() {
-        return new ItemBlockSign(this);
-    }
-
-    @Override
     public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileSign){
+        if (tile instanceof TileSign) {
             return ((TileSign) tile).getMapColor();
         }
         return super.getMapColor(state, world, pos);
@@ -139,7 +128,7 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileSign){
+        if (tile instanceof TileSign) {
             return ((TileSign) tile).getBoundingBox(state.getValue(BOTTOM));
         }
         return super.getBoundingBox(state, world, pos);
@@ -148,19 +137,12 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     @Override
     public void addCollisionBoxToList(IBlockState state, @Nonnull World world, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileSign){
+        if (tile instanceof TileSign) {
             for (AxisAlignedBB typeAABB : ((TileSign) tile).getHitBoxes(state.getValue(BOTTOM))) {
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, typeAABB);
             }
         } else {
             super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entityIn, bool);
-        }
-    }
-
-    @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (EnumSigns sign : EnumSigns.values()) {
-            items.add(new ItemStack(this, 1, sign.ordinal()));
         }
     }
 

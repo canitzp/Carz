@@ -1,13 +1,11 @@
 package de.canitzp.carz.client;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * @author canitzp
  */
-public class Pixel{
+public class Pixel {
 
     public static final Pixel EMPTY = new Pixel(-1, -1, -1, -1);
 
@@ -20,7 +18,7 @@ public class Pixel{
         this.a = a;
     }
 
-    public Pixel(ByteBuf buf){
+    public Pixel(ByteBuf buf) {
         this.fromBytes(buf);
     }
 

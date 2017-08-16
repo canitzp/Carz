@@ -14,6 +14,7 @@ public class NetworkHandler {
     public static SimpleNetworkWrapper net = NetworkRegistry.INSTANCE.newSimpleChannel(Carz.MODID);
 
     public static void preInit(FMLPreInitializationEvent event) {
+        NetworkRegistry.INSTANCE.registerGuiHandler(Carz.carz, new GuiHandler());
         int id = 0;
         net.registerMessage(MessageCarSpeed.class, MessageCarSpeed.class, id++, Side.SERVER);
         net.registerMessage(MessageSendPixelMeshes.class, MessageSendPixelMeshes.class, id++, Side.CLIENT);

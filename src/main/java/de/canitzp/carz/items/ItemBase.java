@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public abstract class ItemBase<T extends ItemBase> extends Item {
 
-    public T register(){
+    public T register() {
         Registry.ITEMS_FOR_REGISTERING.add(this);
         return (T) this;
     }

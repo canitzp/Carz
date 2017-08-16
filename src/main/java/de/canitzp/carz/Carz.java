@@ -1,7 +1,5 @@
 package de.canitzp.carz;
 
-import de.canitzp.carz.client.Pixel;
-import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -11,8 +9,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Arrays;
 
 /**
  * @author canitzp

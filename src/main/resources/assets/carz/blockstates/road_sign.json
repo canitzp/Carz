@@ -4,8 +4,12 @@
     "model": "carz:signs/triangle"
   },
   "variants": {
-    "normal": [{}],
-    "inventory": [{}],
+    "normal": [
+      {}
+    ],
+    "inventory": [
+      {}
+    ],
     "bottom": {
       "false": {
         "model": "carz:empty",

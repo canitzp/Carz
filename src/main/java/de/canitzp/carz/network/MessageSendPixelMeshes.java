@@ -19,9 +19,10 @@ public class MessageSendPixelMeshes implements IMessage, IMessageHandler<Message
 
     private List<PixelMesh> meshes;
 
-    public MessageSendPixelMeshes(){ }
+    public MessageSendPixelMeshes() {
+    }
 
-    public MessageSendPixelMeshes(List<PixelMesh> meshes){
+    public MessageSendPixelMeshes(List<PixelMesh> meshes) {
         this.meshes = meshes;
     }
 
@@ -30,7 +31,7 @@ public class MessageSendPixelMeshes implements IMessage, IMessageHandler<Message
         this.meshes = new ArrayList<>();
         PacketBuffer buffer = new PacketBuffer(buf);
         int amount = buffer.readInt();
-        for(int i = 0; i < amount; i++){
+        for (int i = 0; i < amount; i++) {
             String name = buffer.readString(1000);
             this.meshes.add(new PixelMesh(name, buffer));
         }
@@ -40,7 +41,7 @@ public class MessageSendPixelMeshes implements IMessage, IMessageHandler<Message
     public void toBytes(ByteBuf buf) {
         PacketBuffer buffer = new PacketBuffer(buf);
         buffer.writeInt(this.meshes.size());
-        for(PixelMesh mesh : this.meshes){
+        for (PixelMesh mesh : this.meshes) {
             buffer.writeString(mesh.getName());
             mesh.toBytes(buffer);
         }

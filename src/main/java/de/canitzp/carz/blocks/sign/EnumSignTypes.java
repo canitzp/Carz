@@ -20,7 +20,7 @@ public enum EnumSignTypes {
     private MapColor color;
     private AxisAlignedBB bottomBB, topBB;
 
-    EnumSignTypes(ModelRoadSign model, MapColor color, AxisAlignedBB bottomBB, AxisAlignedBB topBB){
+    EnumSignTypes(ModelRoadSign model, MapColor color, AxisAlignedBB bottomBB, AxisAlignedBB topBB) {
         this.model = model;
         this.color = color;
         this.bottomBB = bottomBB;

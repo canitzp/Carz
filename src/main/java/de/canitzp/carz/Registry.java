@@ -1,16 +1,20 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
-import de.canitzp.carz.blocks.*;
+import de.canitzp.carz.blocks.BlockBase;
+import de.canitzp.carz.blocks.BlockFuelStation;
+import de.canitzp.carz.blocks.BlockRoad;
+import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
-import de.canitzp.carz.client.models.signs.ModelRoadSign;
 import de.canitzp.carz.client.models.ModelSportscar;
+import de.canitzp.carz.client.models.signs.ModelRoadSign;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntitySportscar;
 import de.canitzp.carz.items.ItemBase;
 import de.canitzp.carz.items.ItemCarPart;
+import de.canitzp.carz.items.ItemPainter;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -76,6 +80,7 @@ public class Registry {
      * Items:
      */
     public static ItemCarPart itemCarPart;
+    public static ItemPainter itemPainter;
 
     /**
      * Models:
@@ -106,7 +111,7 @@ public class Registry {
             Carz.LOG.info("Registering ItemBlock: " + block.getRegistryName());
             reg.register(block.getItemBlock());
         }
-        for(ItemBase item : ITEMS_FOR_REGISTERING){
+        for (ItemBase item : ITEMS_FOR_REGISTERING) {
             Carz.LOG.info("Registering Item: " + item.getRegistryName());
             reg.register(item);
         }
@@ -118,14 +123,9 @@ public class Registry {
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
         }
-        for(ItemBase item : ITEMS_FOR_REGISTERING){
+        for (ItemBase item : ITEMS_FOR_REGISTERING) {
             item.registerClient();
         }
-
-        for(EnumSigns sign : EnumSigns.values()){
-            ModelBakery.registerItemVariants(Item.getItemFromBlock(blockRoadSign), new ModelResourceLocation(new ResourceLocation(Carz.MODID, "signs/" + sign.getName()), "inventory"));
-        }
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(blockRoadSign), stack -> new ModelResourceLocation(new ResourceLocation(Carz.MODID, "signs/" + EnumSigns.values()[stack.getMetadata()].getName()), "inventory"));
     }
 
     public static void preInit(FMLPreInitializationEvent event) {
@@ -133,6 +133,7 @@ public class Registry {
         blockRoad = new BlockRoad().register();
         blockRoadSign = new BlockRoadSign().register();
         itemCarPart = new ItemCarPart().register();
+        itemPainter = new ItemPainter().register();
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
     }
