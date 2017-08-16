@@ -73,7 +73,7 @@ public class GuiPixelMesher extends GuiScreen {
                     if(pixel.isValid()){
                         int x = this.guiLeft + 8 + (column * 9);
                         int y = this.guiTop + 8 + (row * 9);
-                        Gui.drawRect(x, y, x + 8, y + 8, 0x80000000);
+                        Gui.drawRect(x, y, x + 8, y + 8, pixel.toHex());
                     }
                 }
             }
