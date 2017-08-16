@@ -12,16 +12,16 @@ import java.util.UUID;
 public class PixelMesh {
 
     private Pixel[][] pixels;
-    private String name;
+    private String name, fileNameLoadedFrom;
     private UUID id;
 
     public PixelMesh(String name, int size, UUID id) {
         this.name = name;
         this.id = id;
         this.pixels = new Pixel[size][size];
-        Pixel[] empty = new Pixel[size];
-        Arrays.fill(empty, Pixel.EMPTY);
-        Arrays.fill(this.pixels, empty);
+        for(int i = 0; i < this.pixels.length; i++){
+            this.pixels[i] = getUniqueFilledPixelArray(size);
+        }
     }
 
     public PixelMesh(String name, int size) {
@@ -31,6 +31,12 @@ public class PixelMesh {
     public PixelMesh(String name, PacketBuffer buf) {
         this.name = name;
         this.fromBytes(buf);
+    }
+
+    private Pixel[] getUniqueFilledPixelArray(int size){
+        Pixel[] empty = new Pixel[size];
+        Arrays.fill(empty, Pixel.EMPTY);
+        return empty;
     }
 
     public Pixel[][] getPixels() {
@@ -43,6 +49,18 @@ public class PixelMesh {
 
     public UUID getId() {
         return id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFileNameLoadedFrom() {
+        return fileNameLoadedFrom;
+    }
+
+    public void setFileNameLoadedFrom(String fileNameLoadedFrom) {
+        this.fileNameLoadedFrom = fileNameLoadedFrom;
     }
 
     private boolean isInRange(int line) {

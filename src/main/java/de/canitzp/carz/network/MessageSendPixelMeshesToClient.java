@@ -10,19 +10,19 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author canitzp
  */
-public class MessageSendPixelMeshes implements IMessage, IMessageHandler<MessageSendPixelMeshes, MessageSendPixelMeshes> {
+public class MessageSendPixelMeshesToClient implements IMessage, IMessageHandler<MessageSendPixelMeshesToClient, MessageSendPixelMeshesToClient> {
 
-    private List<PixelMesh> meshes;
+    private Collection<PixelMesh> meshes;
 
-    public MessageSendPixelMeshes() {
+    public MessageSendPixelMeshesToClient() {
     }
 
-    public MessageSendPixelMeshes(List<PixelMesh> meshes) {
+    public MessageSendPixelMeshesToClient(Collection<PixelMesh> meshes) {
         this.meshes = meshes;
     }
 
@@ -48,10 +48,12 @@ public class MessageSendPixelMeshes implements IMessage, IMessageHandler<Message
     }
 
     @Override
-    public MessageSendPixelMeshes onMessage(MessageSendPixelMeshes message, MessageContext ctx) {
+    public MessageSendPixelMeshesToClient onMessage(MessageSendPixelMeshesToClient message, MessageContext ctx) {
         Minecraft.getMinecraft().addScheduledTask(() -> {
             WorldEvents.MESHES_LOADED_INTO_WORLD.clear();
-            WorldEvents.MESHES_LOADED_INTO_WORLD.addAll(message.meshes);
+            for(PixelMesh mesh : message.meshes){
+                WorldEvents.MESHES_LOADED_INTO_WORLD.put(mesh.getId(), mesh);
+            }
         });
         return null;
     }

@@ -17,7 +17,8 @@ public class NetworkHandler {
         NetworkRegistry.INSTANCE.registerGuiHandler(Carz.carz, new GuiHandler());
         int id = 0;
         net.registerMessage(MessageCarSpeed.class, MessageCarSpeed.class, id++, Side.SERVER);
-        net.registerMessage(MessageSendPixelMeshes.class, MessageSendPixelMeshes.class, id++, Side.CLIENT);
+        net.registerMessage(MessageSendPixelMeshesToClient.class, MessageSendPixelMeshesToClient.class, id++, Side.CLIENT);
+        net.registerMessage(MessageSendPixelMeshesToServer.class, MessageSendPixelMeshesToServer.class, id++, Side.SERVER);
     }
 
 }
