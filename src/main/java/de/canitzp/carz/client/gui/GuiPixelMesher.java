@@ -3,6 +3,7 @@ package de.canitzp.carz.client.gui;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.client.Pixel;
 import de.canitzp.carz.client.PixelMesh;
+import de.canitzp.carz.client.PixelMeshScrollPane;
 import de.canitzp.carz.events.WorldEvents;
 import de.canitzp.carz.network.MessageSendPixelMeshesToServer;
 import de.canitzp.carz.network.NetworkHandler;
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
@@ -27,6 +29,7 @@ public class GuiPixelMesher extends GuiScreen {
     public int guiLeft, guiTop, currentColor = 0xFFFFFFFF;
     public GuiTextField textField;
     private Robot robot;
+    private PixelMeshScrollPane scrollPane;
 
     public GuiPixelMesher(){
         try {
@@ -45,6 +48,7 @@ public class GuiPixelMesher extends GuiScreen {
         if(this.currentMesh != null){
             this.textField.setText(this.currentMesh.getName());
         }
+        this.scrollPane = new PixelMeshScrollPane(this, this.guiLeft + 6, this.guiTop + 156, 147, 94, 10, 256, 256);
     }
 
     @Override
@@ -57,6 +61,7 @@ public class GuiPixelMesher extends GuiScreen {
         this.mc.fontRenderer.drawString(textOpen, (int) (this.guiLeft + 228 - (this.mc.fontRenderer.getStringWidth(textOpen) / 2.0F)), this.guiTop + 9, 0xFFFFFF);
         this.mc.fontRenderer.drawString(textSave, (int) (this.guiLeft + 203 - (this.mc.fontRenderer.getStringWidth(textSave) / 2.0F)), this.guiTop + 23, 0xFFFFFF);
         this.textField.drawTextBox();
+        this.scrollPane.drawScreen(mouseX, mouseY, partialTicks);
         Gui.drawRect(this.guiLeft + 157, this.guiTop + 52, this.guiLeft + 249, this.guiTop + 57, this.currentColor);
 
         if(this.currentMesh == null){
@@ -131,6 +136,16 @@ public class GuiPixelMesher extends GuiScreen {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         this.textField.textboxKeyTyped(typedChar, keyCode);
         super.keyTyped(typedChar, keyCode);
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        super.handleMouseInput();
+        if(this.scrollPane != null){
+            this.scrollPane.handleMouseInput(mouseX, mouseY);
+        }
     }
 
     private void updateMesh(int mouseX, int mouseY){

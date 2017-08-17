@@ -51,7 +51,6 @@ public class PixelMeshParser {
     }
 
     public static void writeMeshFile(File meshDir, Collection<PixelMesh> meshes) throws IOException {
-        String regex = "[<>'\"/;`%]";
         for (PixelMesh mesh : meshes) {
             if(mesh.getFileNameLoadedFrom() != null){
                 File oldFile = new File(meshDir, mesh.getFileNameLoadedFrom());
@@ -59,7 +58,7 @@ public class PixelMeshParser {
                     oldFile.delete();
                 }
             }
-            File file = new File(meshDir, mesh.getName().replaceAll(regex, "_") + ".txt");
+            File file = new File(meshDir, mesh.getId().toString() + ".txt");
             if (file.exists()) {
                 file.delete();
             }
