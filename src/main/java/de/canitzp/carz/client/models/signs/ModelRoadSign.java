@@ -2,6 +2,7 @@ package de.canitzp.carz.client.models.signs;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * @author canitzp
  */
-public class ModelRoadSign extends ModelBase {
+public abstract class ModelRoadSign extends ModelBase {
 
     private List<ModelRenderer> parts = new ArrayList<>();
 
@@ -26,6 +27,8 @@ public class ModelRoadSign extends ModelBase {
             }
         }
     }
+
+    public abstract ResourceLocation getTexture();
 
     private void scanParts() {
         for (Field field : this.getClass().getDeclaredFields()) {

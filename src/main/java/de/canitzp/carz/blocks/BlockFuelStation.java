@@ -35,12 +35,10 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
 
     public BlockFuelStation() {
         super(Material.IRON, TileFuelStation.class);
-        this.setCreativeTab(Registry.TAB);
         this.setHarvestLevel("pickaxe", 1);
         this.setHardness(1.5F);
         this.setResistance(7.5F);
         this.setRegistryName(new ResourceLocation(Carz.MODID, "fuel_station"));
-        this.setUnlocalizedName(this.getRegistryName().toString());
         this.setDefaultState(this.blockState.getBaseState().withProperty(BOTTOM, true));
     }
 

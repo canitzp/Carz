@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.commons.io.FileUtils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class WorldEvents {
         }
     }
 
+    @Nullable
     public static PixelMesh getMeshByUUID(UUID id) {
         return MESHES_LOADED_INTO_WORLD.getOrDefault(id, null);
     }

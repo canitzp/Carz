@@ -21,7 +21,6 @@ public class ItemCarPart extends ItemBase<ItemCarPart> {
 
     public ItemCarPart() {
         this.setRegistryName(Carz.MODID, "car_part");
-        this.setCreativeTab(Registry.TAB);
     }
 
     @Nonnull

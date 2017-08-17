@@ -87,7 +87,6 @@ public class Registry {
      */
     public static final ModelSportscar MODEL_SPORTSCAR = new ModelSportscar();
     public static final ModelBus MODEL_BUS = new ModelBus();
-    public static final ModelRoadSign MODEL_ROAD_SIGN = new ModelRoadSign();
 
     /**
      * Statistics:

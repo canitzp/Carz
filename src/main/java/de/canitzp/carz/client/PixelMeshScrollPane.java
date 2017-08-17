@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.GuiScrollingList;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,9 +18,11 @@ import java.util.List;
 public class PixelMeshScrollPane extends GuiScrollingList {
 
     private List<PixelMesh> meshList = new ArrayList<>(WorldEvents.MESHES_LOADED_INTO_WORLD.values());
+    private PixelMesh currentMesh = null;
+    private int selected = -1;
 
     public PixelMeshScrollPane(GuiScreen parent, int x, int y, int width, int height, int entryHeight, int xSize, int ySize) {
-        super(parent.mc, width, height, y, y + height, x, entryHeight, xSize, ySize);
+        super(parent.mc, width, height, y, y + height, x, 22, xSize, ySize);
     }
 
     @Override
@@ -29,12 +32,13 @@ public class PixelMeshScrollPane extends GuiScrollingList {
 
     @Override
     protected void elementClicked(int index, boolean doubleClick) {
-
+        this.currentMesh = this.meshList.get(index);
+        this.selected = index;
     }
 
     @Override
     protected boolean isSelected(int index) {
-        return false;
+        return index == this.selected;
     }
 
     @Override
@@ -46,6 +50,16 @@ public class PixelMeshScrollPane extends GuiScrollingList {
     protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) {
         FontRenderer font = Minecraft.getMinecraft().fontRenderer;
         PixelMesh mesh = this.meshList.get(slotIdx);
-        font.drawString(mesh.getName(), this.left + 1, slotTop + 1, 0xFFFFFF);
+        mesh.render(this.left + 3, slotTop + 1);
+        font.drawString(mesh.getName(), this.left + 22, slotTop + 5, 0xFFFFFF);
+    }
+
+    public void setCurrentMesh(@Nullable PixelMesh currentMesh) {
+        this.currentMesh = currentMesh;
+    }
+
+    @Nullable
+    public PixelMesh getCurrentMesh() {
+        return currentMesh;
     }
 }

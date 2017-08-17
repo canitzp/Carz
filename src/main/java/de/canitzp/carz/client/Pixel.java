@@ -1,6 +1,10 @@
 package de.canitzp.carz.client;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -94,5 +98,16 @@ public class Pixel {
             this.b = Integer.parseInt(split[2]);
             this.a = Integer.parseInt(split[3]);
         }
+    }
+
+    public void render(int x, int y){
+        Tessellator tessy = Tessellator.getInstance();
+        BufferBuilder buffer = tessy.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(x + 1, y, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
+        buffer.pos(x, y, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
+        buffer.pos(x, y + 1, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
+        buffer.pos(x + 1, y + 1, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
+        tessy.draw();
     }
 }

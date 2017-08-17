@@ -10,20 +10,24 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import javax.annotation.Nonnull;
@@ -43,9 +47,7 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
 
     public BlockRoadSign() {
         super(Material.IRON, TileSign.class);
-        this.setCreativeTab(Registry.TAB);
         this.setRegistryName(Carz.MODID, "road_sign");
-        this.setUnlocalizedName(this.getRegistryName().toString());
         this.setDefaultState(this.blockState.getBaseState().withProperty(BOTTOM, true).withProperty(FACING, EnumFacing.NORTH));
     }
 

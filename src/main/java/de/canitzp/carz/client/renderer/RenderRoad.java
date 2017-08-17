@@ -25,7 +25,6 @@ public class RenderRoad implements IModel {
         return new ModelRoad(state, format, bakedTextureGetter);
     }
 
-
     @Override
     public Collection<ResourceLocation> getDependencies() {
         return Collections.emptySet();

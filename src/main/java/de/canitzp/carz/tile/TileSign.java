@@ -1,5 +1,6 @@
 package de.canitzp.carz.tile;
 
+import de.canitzp.carz.api.IPaintableTile;
 import de.canitzp.carz.blocks.sign.EnumSignTypes;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.events.WorldEvents;
@@ -9,12 +10,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * @author canitzp
  */
-public class TileSign extends TileEntity {
+public class TileSign extends TileEntity implements IPaintableTile {
 
     private EnumSignTypes signType = EnumSignTypes.TRIANGLE;
     private PixelMesh mesh = null;
@@ -35,7 +37,7 @@ public class TileSign extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         this.signType = EnumSignTypes.values()[compound.getInteger("SignType")];
-        if (compound.hasKey("Most", Constants.NBT.TAG_LONG) && compound.hasKey("Least", Constants.NBT.TAG_LONG)) {
+        if (compound.hasKey("MeshUUIDMost", Constants.NBT.TAG_LONG) && compound.hasKey("MeshUUIDLeast", Constants.NBT.TAG_LONG)) {
             this.mesh = WorldEvents.getMeshByUUID(compound.getUniqueId("MeshUUID"));
         }
     }
@@ -49,6 +51,14 @@ public class TileSign extends TileEntity {
         return super.writeToNBT(compound);
     }
 
+    public void setMesh(PixelMesh mesh) {
+        this.mesh = mesh;
+    }
+
+    public PixelMesh getMesh() {
+        return mesh;
+    }
+
     public void setSignType(EnumSignTypes signType) {
         this.signType = signType;
     }
@@ -59,5 +69,10 @@ public class TileSign extends TileEntity {
 
     public boolean hasSignType() {
         return getSignType() != null;
+    }
+
+    @Override
+    public void setPixelMesh(@Nonnull PixelMesh mesh) {
+        this.mesh = mesh;
     }
 }

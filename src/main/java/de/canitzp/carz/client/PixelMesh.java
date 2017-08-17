@@ -1,7 +1,10 @@
 package de.canitzp.carz.client;
 
 
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.network.PacketBuffer;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -111,6 +114,28 @@ public class PixelMesh {
                 this.pixels[i][j] = new Pixel(buf);
             }
         }
+    }
+
+    public void render(int x, int y){
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Pixel[][] pixels1 = this.pixels;
+        for (int row = 0; row < pixels1.length; row++) {
+            Pixel[] pixels = pixels1[row];
+            for (int column = 0; column < pixels.length; column++) {
+                Pixel pixel = pixels[column];
+                if(pixel.isValid()){
+                    pixel.render(x + column, y + row);
+                }
+            }
+        }
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
     }
 
 }

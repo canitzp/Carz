@@ -28,12 +28,10 @@ public class BlockRoad extends BlockBase<BlockRoad> {
 
     public BlockRoad() {
         super(Material.ROCK, MapColor.BLACK);
-        this.setCreativeTab(Registry.TAB);
         this.setHarvestLevel("pickaxe", 1);
         this.setHardness(2.0F);
         this.setResistance(10.0F);
         this.setRegistryName(new ResourceLocation(Carz.MODID, "road"));
-        this.setUnlocalizedName(this.getRegistryName().toString());
     }
 
     @Override
