@@ -1,6 +1,7 @@
 package de.canitzp.carz.api;
 
 import com.google.common.collect.Lists;
+import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMonsterPlacer;

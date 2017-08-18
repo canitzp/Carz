@@ -1,5 +1,8 @@
 package de.canitzp.carz.entity;
 
+import de.canitzp.carz.api.EntityPartedBase;
+import de.canitzp.carz.network.MessageCarPartInteract;
+import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 /**
@@ -18,7 +22,7 @@ import java.util.List;
  * In case you need it, ask me ;)
  */
 public class EntityInvisibleCarPart extends Entity {
-    protected Entity parent;
+    protected EntityPartedBase parent;
 
     protected float offsetX, offsetY, offsetZ;
 
@@ -26,7 +30,7 @@ public class EntityInvisibleCarPart extends Entity {
         super(worldIn);
     }
 
-    public EntityInvisibleCarPart(Entity parent, float width, float height, float offsetX, float offsetY, float offsetZ) {
+    public EntityInvisibleCarPart(EntityPartedBase parent, float width, float height, float offsetX, float offsetY, float offsetZ) {
         super(parent.world);
         this.parent = parent;
         this.offsetX = offsetX;
@@ -53,8 +57,7 @@ public class EntityInvisibleCarPart extends Entity {
     @Override
     public void onUpdate() {
         if (this.parent == null || this.parent.isDead) {
-//            this.world.removeEntityDangerously(this);
-            this.world.removeEntity(this);
+            this.setDead();
             super.onUpdate();
             return;
         }
@@ -65,7 +68,6 @@ public class EntityInvisibleCarPart extends Entity {
                 this.parent.posY + this.offsetY,
                 this.parent.posZ + this.offsetX * sin + this.offsetZ * cos);
 
-//        this.setPositionAndUpdate(this.parent.posX + this.radius * Math.cos(this.parent.renderYawOffset * (Math.PI / 180.0F) + this.angleYaw), this.parent.posY + this.offsetY, this.parent.posZ + this.radius * Math.sin(this.parent.renderYawOffset * (Math.PI / 180.0F) + this.angleYaw));
         if (!this.world.isRemote) {
             this.collideWithNearbyEntities();
         }
@@ -121,26 +123,43 @@ public class EntityInvisibleCarPart extends Entity {
 
     public void doBlockCollisionsFromParent() {
         super.doBlockCollisions();
-        ;
     }
 
     @Override
     public void move(MoverType type, double x, double y, double z) {
-//        super.move(type, x, y, z);
+        //All move-checks are done via the parent
     }
 
     @Override
     public void addVelocity(double x, double y, double z) {
-//        super.addVelocity(x, y, z);
+        //Maybe redirect to the parent?
     }
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        return parent.processInitialInteract(player, hand);
+        if (this.parent != null && !this.parent.isDead) {
+            int index = -1;
+            for (int i=0;i<this.parent.getPartArray().length;++i){
+                if (parent.getPartArray()[i]==this){
+                    index = i;
+                    break;
+                }
+            }
+            if (world.isRemote) {
+                NetworkHandler.net.sendToServer(new MessageCarPartInteract(this.parent.getEntityId(), hand, index));
+            }else{
+               this.parent.processInitialInteract(player, hand, index);
+            }
+            return true;
+        }
+        return super.processInitialInteract(player, hand);
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public void applyEntityCollision(Entity entityIn) {
-        parent.applyEntityCollision(entityIn);
+        if (parent != null && !parent.isDead) {
+            parent.applyEntityCollision(entityIn);
+        }
     }
 }

@@ -13,12 +13,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Bootstrap;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -32,11 +35,19 @@ import java.util.*;
  */
 public abstract class EntityPartedBase extends EntityRenderedBase {
     protected EntityInvisibleCarPart[] partArray;
+    private EntityInvisibleCarPart[] collidingParts;
     //TODO: Seperate parts that are only following without the move/rotation collision checks
 
     public EntityPartedBase(World worldIn) {
         super(worldIn);
+
         this.partArray = constructPartArray();
+
+        int[] col = this.constructCollidingPartIndizes();
+        this.collidingParts = new EntityInvisibleCarPart[col.length];
+        for (int i = 0; i < col.length; ++i)
+            this.collidingParts[i] = this.partArray[col[i]];
+
     }
 
     @Override
@@ -52,24 +63,57 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
         return partArray;
     }
 
+
+    public EntityInvisibleCarPart[] getCollidingParts() {
+        return collidingParts;
+    }
+
+    protected int[] allPartIndizes() {
+        int[] ret = new int[this.partArray.length];
+        for (int i = 0; i < this.partArray.length; ++i)
+            ret[i] = i;
+        return ret;
+    }
+
+    /**
+     * @param from start Index incl
+     * @param to   end index ecl
+     * @return an array containing these indizes
+     */
+    protected int[] indizesRange(int from, int to) {
+        int[] ret = new int[to - from];
+        int n = 0;
+        for (int i = from; i < to; ++i)
+            ret[n++] = i;
+        return ret;
+    }
+
     /**
      * This method will be only called during the spawning of the parted entity.
+     *
      * @return an array of EntityInvisibleCarParts containing this entities parts
      */
     protected EntityInvisibleCarPart[] constructPartArray() {
-        return new EntityInvisibleCarPart[]{
-        };
+        return new EntityInvisibleCarPart[]{};
     }
 
+    protected int[] constructCollidingPartIndizes() {
+        return new int[]{};
+    }
+
+    public boolean processInitialInteract(EntityPlayer player, EnumHand hand, int partIndex) {
+        return this.processInitialInteract(player, hand);
+    }
 
     protected EntityInvisibleCarPart createPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
         return new EntityInvisibleCarPart(this, width, height, offsetX, offsetY, offsetZ);
     }
 
+
     @Override
     protected void doBlockCollisions() {
         super.doBlockCollisions();
-        for (EntityInvisibleCarPart part : partArray)
+        for (EntityInvisibleCarPart part : collidingParts)
             part.doBlockCollisionsFromParent();
     }
 
@@ -78,8 +122,8 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
      */
     public Set<AxisAlignedBB> getWorldCollisionBoxes(@Nullable Entity entityIn, double expandX, double expandY, double expandZ) {
         Set<AxisAlignedBB> returnSet = new HashSet<>(); //No duplicates
-        returnSet.addAll( this.getWorldCollisionBoxes(this, this.getEntityBoundingBox().expand(expandX, expandY, expandZ)));
-        for (EntityInvisibleCarPart part : this.partArray)
+        returnSet.addAll(this.getWorldCollisionBoxes(this, this.getEntityBoundingBox().expand(expandX, expandY, expandZ)));
+        for (EntityInvisibleCarPart part : this.collidingParts)
             returnSet.addAll(this.getWorldCollisionBoxes(part, part.getEntityBoundingBox().expand(expandX, expandY, expandZ)));
         return returnSet;
     }
@@ -91,7 +135,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
         List<AxisAlignedBB> boxes = this.world.getCollisionBoxes(null, aabb);
         if (entityIn != null) {
             addEntity(entityIn, this, aabb, boxes);
-            for (EntityInvisibleCarPart part : this.partArray)
+            for (EntityInvisibleCarPart part : this.collidingParts)
                 addEntity(part, this, aabb, boxes);
         }
         return boxes;
@@ -99,9 +143,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
     private void addEntity(Entity entityIn, Entity entityParentIgnored, AxisAlignedBB aabb, List<AxisAlignedBB> boxes) {
         List<Entity> list1 = this.world.getEntitiesWithinAABBExcludingEntity(entityIn, aabb.grow(0.25D));
-        for (int i = 0; i < list1.size(); ++i) {
-            Entity entity = list1.get(i);
-
+        for (Entity entity : list1) {
             if (!entityIn.isRidingSameEntity(entity) && !entity.isEntityEqual(entityIn) && !entity.isEntityEqual(entityParentIgnored)) {
                 AxisAlignedBB axisalignedbb = entity.getCollisionBoundingBox();
 
@@ -118,6 +160,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
     }
 
     //ToDo: Performance - like: for real
+
     /**
      * Tries to move the entity towards the specified location.
      */
@@ -190,11 +233,11 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
 
             Set<AxisAlignedBB> list1 = this.getWorldCollisionBoxes(this, x, y, z);
-            AxisAlignedBB[] backup = new AxisAlignedBB[this.partArray.length + 1];
+            AxisAlignedBB[] backup = new AxisAlignedBB[this.collidingParts.length + 1];
 
 
             for (int i = 0; i < backup.length; ++i) {
-                Entity e = i == 0 ? this : this.partArray[i - 1];
+                Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 backup[i] = e.getEntityBoundingBox();
                 if (y != 0) {
                     for (AxisAlignedBB aList1 : list1) {
@@ -203,7 +246,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 }
             }
             for (int i = 0; i < backup.length; ++i) {
-                Entity e = i == 0 ? this : this.partArray[i - 1];
+                Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (y != 0)
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, y, 0.0D));
                 if (x != 0) {
@@ -213,7 +256,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 }
             }
             for (int i = 0; i < backup.length; ++i) {
-                Entity e = i == 0 ? this : this.partArray[i - 1];
+                Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (x != 0) {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(x, 0.0D, 0.0D));
                 }
@@ -224,7 +267,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 }
             }
             for (int i = 0; i < backup.length; ++i) {
-                Entity e = i == 0 ? this : this.partArray[i - 1];
+                Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (z != 0) {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, 0.0D, z));
                 }
@@ -242,21 +285,21 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 double curX = x;
                 double curY = y;
                 double curZ = z;
-                AxisAlignedBB[] backup1 = new AxisAlignedBB[this.partArray.length + 1];
+                AxisAlignedBB[] backup1 = new AxisAlignedBB[this.collidingParts.length + 1];
                 for (int i = 0; i < backup1.length; ++i) {
-                    Entity e = i == 0 ? this : this.partArray[i - 1];
+                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     backup1[i] = e.getEntityBoundingBox();
                     //AxisAlignedBB axisalignedbb1 = this.getEntityBoundingBox();
                     e.setEntityBoundingBox(backup[i]);
                 }
                 y = (double) this.stepHeight;
 //                List<AxisAlignedBB> list = this.getWorldCollisionBoxes(this, this.getEntityBoundingBox().expand(origX, y, origZ));
-                AxisAlignedBB[] axisalignedbb2 = new AxisAlignedBB[this.partArray.length + 1];
-                AxisAlignedBB[] backup3 = new AxisAlignedBB[this.partArray.length + 1];
+                AxisAlignedBB[] axisalignedbb2 = new AxisAlignedBB[this.collidingParts.length + 1];
+                AxisAlignedBB[] backup3 = new AxisAlignedBB[this.collidingParts.length + 1];
                 List<AxisAlignedBB> list = new ArrayList<>();
                 double d8 = y;
                 for (int i = 0; i < backup1.length; ++i) {
-                    Entity e = i == 0 ? this : this.partArray[i - 1];
+                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     list.addAll(this.world.getCollisionBoxes(e, e.getEntityBoundingBox().expand(origX, y, origZ)));
 //                    AxisAlignedBB axisalignedbb2 = this.getEntityBoundingBox();
                     axisalignedbb2[i] = e.getEntityBoundingBox();
@@ -268,7 +311,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 }
                 double d18 = origX;
                 for (int i = 0; i < backup1.length; ++i) {
-                    Entity e = i == 0 ? this : this.partArray[i - 1];
+                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, d8, 0.0D);
 
                     for (AxisAlignedBB bb : list) {
@@ -278,7 +321,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 double d19 = origZ;
 
                 for (int i = 0; i < backup1.length; ++i) {
-                    Entity e = i == 0 ? this : this.partArray[i - 1];
+                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     axisalignedbb2[i] = axisalignedbb2[i].offset(d18, 0.0D, 0.0D);
 
                     for (AxisAlignedBB bb : list) {
@@ -287,10 +330,10 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
 
                 }
-                AxisAlignedBB[] axisalignedbb4 = new AxisAlignedBB[this.partArray.length + 1];
+                AxisAlignedBB[] axisalignedbb4 = new AxisAlignedBB[this.collidingParts.length + 1];
                 double d20 = y;
                 for (int i = 0; i < backup1.length; ++i) {
-                    Entity e = i == 0 ? this : this.partArray[i - 1];
+                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
 
                     axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, 0.0D, d19);
 
@@ -304,7 +347,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 }
                 double d21 = origX;
                 for (int i = 0; i < backup1.length; ++i) {
-                    Entity e = i == 0 ? this : this.partArray[i - 1];
+                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, d20, 0.0D);
 
 
@@ -314,7 +357,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 }
                 double d22 = origZ;
                 for (int i = 0; i < backup1.length; ++i) {
-                    Entity e = i == 0 ? this : this.partArray[i - 1];
+                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
 
                     axisalignedbb4[i] = axisalignedbb4[i].offset(d21, 0.0D, 0.0D);
 
@@ -324,7 +367,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     }
                 }
 //                for (int i = 0; i < backup1.length; ++i) {
-//                    Entity e = i == 0 ? this : this.partArray[i - 1];
+//                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
 //                    axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, d22);
 //                }
                 double d23 = d18 * d18 + d19 * d19;
@@ -336,7 +379,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     y = -d8;
 //                        e.setEntityBoundingBox(axisalignedbb2);
                     for (int i = 0; i < backup1.length; ++i) {
-                        Entity e = i == 0 ? this : this.partArray[i - 1];
+                        Entity e = i == 0 ? this : this.collidingParts[i - 1];
 //                        axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, d22);
                         e.setEntityBoundingBox(axisalignedbb2[i]);
                     }
@@ -347,7 +390,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     y = -d20;
 //                    e.setEntityBoundingBox(axisalignedbb4);
                     for (int i = 0; i < backup1.length; ++i) {
-                        Entity e = i == 0 ? this : this.partArray[i - 1];
+                        Entity e = i == 0 ? this : this.collidingParts[i - 1];
                         axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, d22);
                         e.setEntityBoundingBox(axisalignedbb4[i]);
                     }
@@ -360,12 +403,12 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     z = curZ;
 //                        e.setEntityBoundingBox(axisalignedbb1);
                     for (int i = 0; i < backup1.length; ++i) {
-                        Entity e = i == 0 ? this : this.partArray[i - 1];
+                        Entity e = i == 0 ? this : this.collidingParts[i - 1];
                         e.setEntityBoundingBox(backup1[i]);
                     }
                 } else {
                     for (int i = 0; i < backup1.length; ++i) {
-                        Entity e = i == 0 ? this : this.partArray[i - 1];
+                        Entity e = i == 0 ? this : this.collidingParts[i - 1];
                         for (AxisAlignedBB bb : list) {
                             y = bb.calculateYOffset(e.getEntityBoundingBox(), y);
                         }
@@ -457,6 +500,63 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
             this.world.profiler.endSection();
         }
+    }
+
+    protected static class PartData {
+        final float[][] data;
+        final int[] collidingPartIndizes;
+
+        private PartData(float[][] data, int[] collidingPartIndizes) {
+            this.data = data;
+            this.collidingPartIndizes = collidingPartIndizes;
+        }
+
+        public EntityInvisibleCarPart[] spawnInvisibleParts(EntityPartedBase parent) {
+            EntityInvisibleCarPart[] ret = new EntityInvisibleCarPart[data.length];
+            for (int i = 0, l = ret.length; i < l; ++i) {
+                ret[i] = parent.createPart(data[i][0], data[i][1], data[i][2],
+                        data[i][3], data[i][4]);
+            }
+            return ret;
+        }
+
+        public int[] getCollidingPartIndizes() {
+            return collidingPartIndizes;
+        }
+    }
+
+    protected static PartBuilder builder() {
+        return new PartBuilder();
+    }
+
+    protected static class PartBuilder {
+        private List<Map.Entry<float[], Boolean>> data = new ArrayList<>();
+
+
+        public PartBuilder addPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height}, false));
+            return this;
+        }
+
+        public PartBuilder addCollidingPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height}, true));
+            return this;
+        }
+
+        public PartData build() {
+            float[][] d = new float[data.size()][];
+            List<Integer> colliding = new ArrayList<>();
+            int i = 0;
+            for (Map.Entry<float[], Boolean> e : data) {
+                if (e.getValue()) {
+                    colliding.add(i);
+                }
+                d[i++] = e.getKey();
+            }
+            colliding.toArray(new Integer[0]);
+            return new PartData(d, colliding.stream().mapToInt(x -> x).toArray());
+        }
+
     }
 
 }
