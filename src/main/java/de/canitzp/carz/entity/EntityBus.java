@@ -3,6 +3,7 @@ package de.canitzp.carz.entity;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntitySteerableBase;
+import de.canitzp.carz.client.models.ModelNakedBus;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
