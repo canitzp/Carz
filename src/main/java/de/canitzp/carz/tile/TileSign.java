@@ -1,12 +1,14 @@
 package de.canitzp.carz.tile;
 
 import de.canitzp.carz.api.IPaintableTile;
+import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.blocks.sign.EnumSignTypes;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.events.WorldEvents;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 
@@ -31,6 +33,10 @@ public class TileSign extends TileEntity implements IPaintableTile {
 
     public List<AxisAlignedBB> getHitBoxes(boolean bottom) {
         return bottom ? this.signType.getBottomHitBoxes() : this.signType.getTopHitBoxes();
+    }
+
+    public EnumFacing getFacing(){
+        return this.world.getBlockState(this.pos).getValue(BlockRoadSign.FACING);
     }
 
     @Override
