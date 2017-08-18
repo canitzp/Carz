@@ -5,7 +5,7 @@ package de.canitzp.carz;
  */
 public enum EnumCarParts {
 
-    ;
+    ENGINE(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     private float suspension;
     private float sideTraction;

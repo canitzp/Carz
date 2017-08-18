@@ -3,15 +3,14 @@ package de.canitzp.carz.blocks;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.tile.TileFuelStation;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -19,7 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.client.model.ModelLoader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,28 +27,24 @@ import java.util.List;
 /**
  * @author canitzp
  */
-public class BlockFuelStation extends BlockContainer {
+public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
 
     public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
     public static final AxisAlignedBB AABB_BASE_PLATE = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D);
     public static final AxisAlignedBB AABB_STAND = new AxisAlignedBB(0.0D, 0.0D, 3 / 16D, 7 / 8D, 1.0D, 13 / 16D);
 
     public BlockFuelStation() {
-        super(Material.IRON);
-        this.setCreativeTab(Registry.TAB);
+        super(Material.IRON, TileFuelStation.class);
         this.setHarvestLevel("pickaxe", 1);
         this.setHardness(1.5F);
         this.setResistance(7.5F);
         this.setRegistryName(new ResourceLocation(Carz.MODID, "fuel_station"));
-        this.setUnlocalizedName(this.getRegistryName().toString());
-
         this.setDefaultState(this.blockState.getBaseState().withProperty(BOTTOM, true));
-        GameRegistry.registerTileEntity(TileFuelStation.class, this.getRegistryName().toString());
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.MODEL;
+    public void registerClient() {
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(new ResourceLocation(this.getRegistryName().toString()), "inventory"));
     }
 
     @Override
@@ -93,12 +88,6 @@ public class BlockFuelStation extends BlockContainer {
     @Override
     public void onBlockDestroyedByExplosion(World worldIn, BlockPos pos, Explosion explosionIn) {
         this.onBlockDestroyedByPlayer(worldIn, pos, worldIn.getBlockState(pos));
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileFuelStation();
     }
 
     @Override

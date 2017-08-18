@@ -1,6 +1,5 @@
 package de.canitzp.carz.client.models;
 
-import com.google.common.collect.Lists;
 import de.canitzp.carz.Carz;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
@@ -14,6 +13,7 @@ import net.minecraftforge.common.model.IModelState;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -27,19 +27,24 @@ public class ModelRoad implements IBakedModel {
     private TextureAtlasSprite sprite;
     private VertexFormat format;
 
-    public ModelRoad(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter){
+    public ModelRoad(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         this.format = format;
         this.sprite = bakedTextureGetter.apply(new ResourceLocation(Carz.MODID, "blocks/roads/default"));
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        if (side != null) {
+            return Collections.emptyList();
+        }
         List<BakedQuad> quads = new ArrayList<>();
         double yOffset = 0.125;
         quads.add(createQuad(new Vec3d(0, 0, 1), new Vec3d(0, 1 - yOffset, 1), new Vec3d(0, 1 - yOffset, 0), new Vec3d(0, 0, 0), sprite));
-        //quads.add(createQuad(new Vec3d(o, 1 - o, 1 - o), new Vec3d(o, 1, 1 - o), new Vec3d(o, 1, o), new Vec3d(o, 1 - o, o), sprite));
-        //quads.add(createQuad(new Vec3d(o, 1, o), new Vec3d(1 - o, 1, o), new Vec3d(1 - o, 1 - o, o), new Vec3d(o, 1 - o, o), sprite));
-        //quads.add(createQuad(new Vec3d(o, 1 - o, 1 - o), new Vec3d(1 - o, 1 - o, 1 - o), new Vec3d(1 - o, 1, 1 - o), new Vec3d(o, 1, 1 - o), sprite));
+        quads.add(createQuad(new Vec3d(1, 0, 0), new Vec3d(1, 1 - yOffset, 0), new Vec3d(1, 1 - yOffset, 1), new Vec3d(1, 0, 1), sprite));
+        quads.add(createQuad(new Vec3d(1, 1 - yOffset, 1), new Vec3d(0, 1 - yOffset, 1), new Vec3d(0, 0, 1), new Vec3d(1, 0, 1), sprite));
+        quads.add(createQuad(new Vec3d(1, 0, 0), new Vec3d(0, 0, 0), new Vec3d(0, 1 - yOffset, 0), new Vec3d(1, 1 - yOffset, 0), sprite));
+        quads.add(createQuad(new Vec3d(0, 0, 0), new Vec3d(1, 0, 0), new Vec3d(1, 0, 1), new Vec3d(0, 0, 1), sprite));
+        quads.add(createQuad(new Vec3d(1, 1 - yOffset, 0), new Vec3d(0, 1 - yOffset, 0), new Vec3d(0, 1 - yOffset, 1), new Vec3d(1, 1 - yOffset, 1), sprite));
         return quads;
     }
 
@@ -79,9 +84,9 @@ public class ModelRoad implements IBakedModel {
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
         builder.setTexture(sprite);
         putVertex(builder, normal, v1.x, v1.y, v1.z, 0, 0);
-        putVertex(builder, normal, v2.x, v2.y, v2.z, 0, 64);
-        putVertex(builder, normal, v3.x, v3.y, v3.z, 64, 64);
-        putVertex(builder, normal, v4.x, v4.y, v4.z, 64, 0);
+        putVertex(builder, normal, v2.x, v2.y, v2.z, 0, 16);
+        putVertex(builder, normal, v3.x, v3.y, v3.z, 16, 16);
+        putVertex(builder, normal, v4.x, v4.y, v4.z, 16, 0);
         return builder.build();
     }
 
@@ -89,7 +94,7 @@ public class ModelRoad implements IBakedModel {
         for (int e = 0; e < format.getElementCount(); e++) {
             switch (format.getElement(e).getUsage()) {
                 case POSITION:
-                    builder.put(e, (float)x, (float)y, (float)z, 1.0f);
+                    builder.put(e, (float) x, (float) y, (float) z, 1.0f);
                     break;
                 case COLOR:
                     builder.put(e, 1.0f, 1.0f, 1.0f, 1.0f);

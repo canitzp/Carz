@@ -1,0 +1,6 @@
+{
+  "parent": "carz:item/signs/triangle",
+  "textures": {
+    "all": "carz:blocks/signs/unmarked_intersection_ahead_with_priority_from_right"
+  }
+}

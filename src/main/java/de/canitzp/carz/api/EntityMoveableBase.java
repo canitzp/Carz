@@ -1,8 +1,8 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
-import de.canitzp.carz.packet.MessageCarSpeed;
-import mcp.MethodsReturnNonnullByDefault;
+import de.canitzp.carz.network.MessageCarSpeed;
+import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -58,10 +58,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
         float speed = getSpeed();
         this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
         this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
-        double mx = this.motionX;
-        double mz = this.motionZ;
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
-//        System.out.println((mx!=this.motionX?mx+"x" + this.motionX:"-") + " -- " + (mz!=this.motionZ?"z":"-"));
     }
 
     protected void onUpdate(boolean canPassengerSteer) {
@@ -70,7 +67,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
             float speed = getSpeed();
             speed *= this.momentum;
             if (world.isRemote)
-                Carz.carz.networkWrapper.sendToServer(new MessageCarSpeed(speed));
+                NetworkHandler.net.sendToServer(new MessageCarSpeed(speed));
             setSpeed(speed);
         } else {
 //            if (this.motionZ != 0)
@@ -138,7 +135,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
     public void setSpeed(float speed) {
         remoteSpeed = speed;
         if (world.isRemote) {
-            Carz.carz.networkWrapper.sendToServer(new MessageCarSpeed(speed));
+            NetworkHandler.net.sendToServer(new MessageCarSpeed(speed));
         } else {
             this.dataManager.set(SPEED, speed);
         }
@@ -225,18 +222,9 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
 
     private void blockCollisionCheck() {
         List<AxisAlignedBB> list = this.world.getCollisionBoxes(this, this.getEntityBoundingBox().grow(0.01, -0.01, 0.01));
-//        List<AxisAlignedBB> customHitboxes = this.getHitBoxes();
         Vec3d ourCenter = getCenter(this.getCollisionBoundingBox());
         //TODO: get side of collision and apply damage
         for (AxisAlignedBB bb : list) {
-//            boolean col = false;
-//            for (AxisAlignedBB cHB : customHitboxes)
-//                if (cHB.intersects(bb)) {
-//                    col = true;
-//                    break;
-//                }
-//            if (!col)
-//                continue;
             rayCheck(bb.maxX, ourCenter.y, bb.maxZ, ourCenter);
             rayCheck(bb.maxX, ourCenter.y, bb.minZ, ourCenter);
             rayCheck(bb.minX, ourCenter.y, bb.maxZ, ourCenter);
@@ -245,6 +233,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
             double colYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.posZ - c.z, this.posX - c.x) * 180 / Math.PI) - 90;
             double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
             double colAngle = -(MathHelper.wrapDegrees(rotYaw - colYaw) - 90) + 90;
+            //ToDO: yeah - do I really need this?
         }
     }
 
@@ -254,8 +243,8 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
         Vec3d p = new Vec3d(x, y, z);
 //        world.spawnParticle(EnumParticleTypes.DRIP_LAVA, x, y, z, 0.1, 0.1, 0.1);
         RayTraceResult rtr = this.getCollisionBoundingBox().calculateIntercept(p, center.subtract(p));
-        if (rtr != null)
-            world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, rtr.hitVec.x, rtr.hitVec.y, rtr.hitVec.z, 0, 0.1, 0);
+//        if (rtr != null)
+//            world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, rtr.hitVec.x, rtr.hitVec.y, rtr.hitVec.z, 0.1, 0.1, 0.1);
         return rtr;
     }
 
@@ -269,6 +258,5 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
     private Vec3d getCenter(AxisAlignedBB b) {
         return new Vec3d(b.minX + (b.maxX - b.minX) * 0.5D, b.minY + (b.maxY - b.minY) * 0.5D, b.minZ + (b.maxZ - b.minZ) * 0.5D);
     }
-
 
 }

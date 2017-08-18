@@ -1,8 +1,9 @@
-package de.canitzp.carz.blocks;
+package de.canitzp.carz.blocks.sign;
 
-import com.google.common.collect.Lists;
+import de.canitzp.carz.blocks.BlockRoadSign;
+import de.canitzp.carz.client.models.signs.ModelRoadSign;
+import de.canitzp.carz.client.models.signs.ModelRoadSignTriangle;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.Collections;
@@ -11,23 +12,23 @@ import java.util.List;
 /**
  * @author canitzp
  */
-public enum EnumSigns implements IStringSerializable{
+public enum EnumSignTypes {
 
-    WARNING(MapColor.RED, BlockSign.SIGN_DEFAULT_BOTTOM, BlockSign.SIGN_DEFAULT_TOP), //Danger ahead
-    UIWPFR(MapColor.RED, BlockSign.SIGN_DEFAULT_BOTTOM, BlockSign.SIGN_DEFAULT_TOP); //Unmarked intersection ahead with priority from right
+    TRIANGLE(new ModelRoadSignTriangle(), MapColor.RED, BlockRoadSign.SIGN_DEFAULT_BOTTOM, BlockRoadSign.SIGN_DEFAULT_TOP);
 
+    private ModelRoadSign model;
     private MapColor color;
     private AxisAlignedBB bottomBB, topBB;
 
-    EnumSigns(MapColor color, AxisAlignedBB bottomBB, AxisAlignedBB topBB){
+    EnumSignTypes(ModelRoadSign model, MapColor color, AxisAlignedBB bottomBB, AxisAlignedBB topBB) {
+        this.model = model;
         this.color = color;
         this.bottomBB = bottomBB;
         this.topBB = topBB;
     }
 
-    @Override
-    public String getName() {
-        return this.name().toLowerCase();
+    public ModelRoadSign getModel() {
+        return model;
     }
 
     public MapColor getColor() {
@@ -42,12 +43,11 @@ public enum EnumSigns implements IStringSerializable{
         return topBB;
     }
 
-    public List<AxisAlignedBB> getBottomHitBoxes(){
+    public List<AxisAlignedBB> getBottomHitBoxes() {
         return Collections.singletonList(this.getBottomBoundingBox());
     }
 
-    public List<AxisAlignedBB> getTopHitBoxes(){
+    public List<AxisAlignedBB> getTopHitBoxes() {
         return Collections.singletonList(this.getTopBoundingBox());
     }
-
 }

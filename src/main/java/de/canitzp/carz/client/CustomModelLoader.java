@@ -1,7 +1,6 @@
 package de.canitzp.carz.client;
 
 import de.canitzp.carz.Carz;
-import de.canitzp.carz.client.models.ModelRoad;
 import de.canitzp.carz.client.renderer.RenderRoad;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;

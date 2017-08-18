@@ -7,7 +7,6 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -51,7 +50,6 @@ public class EntitySportscar extends EntitySteerableBase {
     protected void writeEntityToNBT(NBTTagCompound compound) {
 
     }
-
 
 
 }
