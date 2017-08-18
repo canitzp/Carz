@@ -281,7 +281,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             boolean flag = this.onGround || origY != y && origY < 0.0D;
 
             //TODO: stepHeight
-            if (this.stepHeight > 0.0F && flag && (origX != x || origZ != z) && false) {
+            if (this.stepHeight > 0.0F && flag && (origX != x || origZ != z) ) {
                 double curX = x;
                 double curY = y;
                 double curZ = z;
@@ -327,9 +327,8 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     for (AxisAlignedBB bb : list) {
                         d19 = bb.calculateZOffset(axisalignedbb2[i], d19);
                     }
-
-
                 }
+
                 AxisAlignedBB[] axisalignedbb4 = new AxisAlignedBB[this.collidingParts.length + 1];
                 double d20 = y;
                 for (int i = 0; i < backup1.length; ++i) {

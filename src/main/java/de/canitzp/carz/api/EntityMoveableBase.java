@@ -3,6 +3,7 @@ package de.canitzp.carz.api;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.network.MessageCarSpeed;
 import de.canitzp.carz.network.NetworkHandler;
+import de.canitzp.carz.util.TimedCache;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -31,13 +32,14 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
     protected int spinningTicks = 0; //Out of control
 
     public double speedSqAbs, speedSq;
-    public double angle, centrifugalForce;
+    public double angle, centrifugalForce, centrifugalV2;
 
     protected final static DataParameter<Float> SPEED = EntityDataManager.createKey(EntityMoveableBase.class, DataSerializers.FLOAT);
     private float remoteSpeed = 0;
 
     private double lastColX = 0, lastColZ = 0;
-    private int lastColTime;
+//    private int lastColTime;
+    private TimedCache<Integer> collisionCache = new TimedCache<>(1000);
 
 
     public EntityMoveableBase(World worldIn) {
@@ -93,6 +95,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
         this.motionZ *= (double) this.momentum;
         this.motionY += this.hasNoGravity() ? 0.0D : -0.03999999910593033D;
         this.deltaRotation *= this.angularMomentum;
+        this.centrifugalV2 *= this.angularMomentum;
 
         this.speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
         if (this.speedSqAbs > 0.00001) {
@@ -193,10 +196,9 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
         if (entityIn instanceof EntityMoveableBase) {
 
         } else if (entityIn instanceof EntityLiving) {
-            if (this.ticksExisted - this.lastColTime > 10) {
-                this.lastColX = this.posX;
-                this.lastColZ = this.posZ;
-                this.lastColTime = this.ticksExisted;
+            if (collisionCache.contains(entityIn.getEntityId())/*this.ticksExisted - this.lastColTime > 10*/) {
+
+//                this.lastColTime = this.ticksExisted;
             } else if (this.lastColX != 0) {
                 this.updateServerDrivingData();
                 double angle = Math.atan2(this.posZ, this.posX) - Math.atan2(entityIn.posZ, entityIn.posX);
@@ -215,7 +217,12 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
                     }
                 }
                 this.lastColX = this.lastColZ = 0;
-                this.lastColTime += 20;
+//                this.lastColTime += 20;
+                this.collisionCache.add(entityIn.getEntityId());
+            }else{
+                //TODO: Yeah - let's actually use the collision contact point
+                this.lastColX = this.posX;
+                this.lastColZ = this.posZ;
             }
         }
     }
