@@ -112,15 +112,4 @@ public abstract class EntityRenderedBase extends Entity {
         return null;
     }
 
-    /**
-     * Here you're be able to manipulate the hitboxes of the car.
-     * This is done via an event {@link de.canitzp.carz.events.CarEvents#entityCollisionEvent(GetCollisionBoxesEvent)}
-     *
-     * @param aabb The current hit box of the touching entity
-     * @param list The currently defined hit boxes
-     * @return A list of manipulated hit boxes
-     */
-    public List<AxisAlignedBB> getHitBoxes(AxisAlignedBB aabb, final List<AxisAlignedBB> list) {
-        return list;
-    }
 }

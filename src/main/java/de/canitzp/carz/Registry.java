@@ -8,7 +8,9 @@ import de.canitzp.carz.blocks.EnumSigns;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
+import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
 import de.canitzp.carz.entity.EntityBus;
+import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
 import de.canitzp.carz.items.ItemBlockSign;
 import net.minecraft.block.Block;
@@ -107,27 +109,31 @@ public class Registry {
     }
 
     @SubscribeEvent
-    public static void registerModel(ModelRegistryEvent event){
+    public static void registerModel(ModelRegistryEvent event) {
         //for(EnumSigns sign : EnumSigns.values()){
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockSign), 0, new ModelResourceLocation(new ResourceLocation(blockSign.getRegistryName().toString()), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockSign), 0, new ModelResourceLocation(new ResourceLocation(blockSign.getRegistryName().toString()), "inventory"));
         //}
     }
 
     public static void preInit(FMLPreInitializationEvent event) {
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
+        EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
+        if (event.getSide().isClient()) {
+            RenderingRegistry.registerEntityRenderingHandler(EntityInvisibleCarPart.class, new RenderInvisibleCarPart.RenderInvisibleCarPartFactory());
+        }
     }
 
     private static <T extends EntityRenderedBase> void registerEntity(String name, Class<T> entity, Side side) {
         Carz.LOG.info(String.format("Registering '%s'", name));
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, name), entity, name, entityId++, Carz.carz, 64, 5, true);
         if (side.isClient()) {
-           initClientEntity(entity);
+            initClientEntity(entity);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    private static <T extends EntityRenderedBase> void initClientEntity(Class<T> entityClass){
+    private static <T extends EntityRenderedBase> void initClientEntity(Class<T> entityClass) {
         if (renderFactory == null) {
             renderFactory = manager -> {
                 RenderCar<EntityRenderedBase> renderCar = new RenderCar<>(manager);

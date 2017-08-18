@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author MisterErwin
  */
-public abstract class EntityMoveableBase extends EntityRenderedBase {
+public abstract class EntityMoveableBase extends EntityCollideableBase {
     protected float deltaRotation;
     protected float momentum, angularMomentum;
     protected int spinningTicks = 0; //Out of control
@@ -58,7 +58,10 @@ public abstract class EntityMoveableBase extends EntityRenderedBase {
         float speed = getSpeed();
         this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
         this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
+        double mx = this.motionX;
+        double mz = this.motionZ;
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+//        System.out.println((mx!=this.motionX?mx+"x" + this.motionX:"-") + " -- " + (mz!=this.motionZ?"z":"-"));
     }
 
     protected void onUpdate(boolean canPassengerSteer) {
@@ -134,20 +137,20 @@ public abstract class EntityMoveableBase extends EntityRenderedBase {
 
     public void setSpeed(float speed) {
         remoteSpeed = speed;
-        if (world.isRemote){
+        if (world.isRemote) {
             Carz.carz.networkWrapper.sendToServer(new MessageCarSpeed(speed));
-        }else{
+        } else {
             this.dataManager.set(SPEED, speed);
         }
     }
 
     public float getSpeed() {
-        return canPassengerSteer()? remoteSpeed: this.dataManager.get(SPEED);
+        return canPassengerSteer() ? remoteSpeed : this.dataManager.get(SPEED);
     }
 
     @Override
     protected void addPassenger(Entity passenger) {
-        this.remoteSpeed =this.dataManager.get(SPEED);
+        this.remoteSpeed = this.dataManager.get(SPEED);
         super.addPassenger(passenger);
     }
 
@@ -222,9 +225,18 @@ public abstract class EntityMoveableBase extends EntityRenderedBase {
 
     private void blockCollisionCheck() {
         List<AxisAlignedBB> list = this.world.getCollisionBoxes(this, this.getEntityBoundingBox().grow(0.01, -0.01, 0.01));
+//        List<AxisAlignedBB> customHitboxes = this.getHitBoxes();
         Vec3d ourCenter = getCenter(this.getCollisionBoundingBox());
         //TODO: get side of collision and apply damage
         for (AxisAlignedBB bb : list) {
+//            boolean col = false;
+//            for (AxisAlignedBB cHB : customHitboxes)
+//                if (cHB.intersects(bb)) {
+//                    col = true;
+//                    break;
+//                }
+//            if (!col)
+//                continue;
             rayCheck(bb.maxX, ourCenter.y, bb.maxZ, ourCenter);
             rayCheck(bb.maxX, ourCenter.y, bb.minZ, ourCenter);
             rayCheck(bb.minX, ourCenter.y, bb.maxZ, ourCenter);
@@ -240,10 +252,10 @@ public abstract class EntityMoveableBase extends EntityRenderedBase {
     private RayTraceResult rayCheck(double x, double y, double z, Vec3d center) {
         //calculateIntercept(pos, view)
         Vec3d p = new Vec3d(x, y, z);
-        world.spawnParticle(EnumParticleTypes.DRIP_LAVA, x, y, z, 0.1, 0.1, 0.1);
+//        world.spawnParticle(EnumParticleTypes.DRIP_LAVA, x, y, z, 0.1, 0.1, 0.1);
         RayTraceResult rtr = this.getCollisionBoundingBox().calculateIntercept(p, center.subtract(p));
         if (rtr != null)
-            world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, rtr.hitVec.x, rtr.hitVec.y, rtr.hitVec.z, 0.1, 0.1, 0.1);
+            world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, rtr.hitVec.x, rtr.hitVec.y, rtr.hitVec.z, 0, 0.1, 0);
         return rtr;
     }
 
@@ -257,5 +269,6 @@ public abstract class EntityMoveableBase extends EntityRenderedBase {
     private Vec3d getCenter(AxisAlignedBB b) {
         return new Vec3d(b.minX + (b.maxX - b.minX) * 0.5D, b.minY + (b.maxY - b.minY) * 0.5D, b.minZ + (b.maxZ - b.minZ) * 0.5D);
     }
+
 
 }

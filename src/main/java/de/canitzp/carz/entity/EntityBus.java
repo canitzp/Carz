@@ -7,19 +7,32 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
 /**
- * @author canitzp
+ * @author canitzp, MisterErwin
  */
 public class EntityBus extends EntitySteerableBase {
 
     public EntityBus(World worldIn) {
         super(worldIn);
-        this.setSize(3.0F, 2.5F);
+        this.setSize(1.75F, 1.8125F);
+
         this.setDriverSeat(2.75F, -1.6F, -0.9F);
+    }
+
+    @Override
+    protected EntityInvisibleCarPart[] constructPartArray() {
+        EntityInvisibleCarPart[] ret = new EntityInvisibleCarPart[7*3];
+        int i = 0;
+        for (int z=-3;z<=3;++z)
+            for (int x=-1;x<=1;++x)
+                ret[i++] = createPart(x,0,z, 1, 1);
+
+        return ret;
     }
 
     @Override
