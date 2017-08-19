@@ -1,6 +1,7 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFenceGate;
@@ -23,6 +24,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +41,8 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
     private EntityInvisibleCarPart[] collidingParts;
     //TODO: Seperate parts that are only following without the move/rotation collision checks
 
+    private AxisAlignedBB renderBoundingBox;
+
     public EntityPartedBase(World worldIn) {
         super(worldIn);
 
@@ -47,6 +52,16 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
         this.collidingParts = new EntityInvisibleCarPart[col.length];
         for (int i = 0; i < col.length; ++i)
             this.collidingParts[i] = this.partArray[col[i]];
+
+        //Get a bounding box loosely representing our total size
+        float rwidth = 0, rheight = 0;
+        for (EntityInvisibleCarPart p : this.partArray) {
+            rwidth = Math.max(p.getWidthOffset(), rwidth);
+            rheight = Math.max(p.getHeightOffset(), rheight);
+        }
+        rwidth += 0.2;
+        rheight += 0.2;
+        this.renderBoundingBox = new AxisAlignedBB(-rwidth, -rheight, -rwidth, rwidth, rheight, rwidth);
 
     }
 
@@ -89,6 +104,12 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
         return new EntityInvisibleCarPart(this, width, height, offsetX, offsetY, offsetZ);
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    @MethodsReturnNonnullByDefault
+    public AxisAlignedBB getRenderBoundingBox() {
+        return this.renderBoundingBox.offset(posX, posY, posZ);
+    }
 
     @Override
     protected void doBlockCollisions() {
@@ -261,7 +282,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             boolean flag = this.onGround || origY != y && origY < 0.0D;
 
             //TODO: stepHeight
-            if (this.stepHeight > 0.0F && flag && (origX != x || origZ != z) ) {
+            if (this.stepHeight > 0.0F && flag && (origX != x || origZ != z)) {
                 double curX = x;
                 double curY = y;
                 double curZ = z;
@@ -495,7 +516,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             for (int i = 0, l = ret.length; i < l; ++i) {
                 ret[i] = parent.createPart(data[i][0], data[i][1], data[i][2],
                         data[i][3], data[i][4]);
-                if (data[i][5]==0)
+                if (data[i][5] == 0)
                     ret[i].colliding = false;
             }
             return ret;
@@ -515,17 +536,17 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
 
         public PartBuilder addPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
-            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height,1}, false));
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height, 1}, false));
             return this;
         }
 
         public PartBuilder addCollidingPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
-            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height,1}, true));
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height, 1}, true));
             return this;
         }
 
         public PartBuilder addInteractOnlyPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
-            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height,0}, false));
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height, 0}, false));
             return this;
         }
 
