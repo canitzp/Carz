@@ -27,7 +27,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID){
             case ID_PIXELMESHER: {
-                return new GuiPixelMesher();
+                return new GuiPixelMesher(player);
             }
             default: return null;
         }

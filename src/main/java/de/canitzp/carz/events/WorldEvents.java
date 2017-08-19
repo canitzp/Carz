@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class WorldEvents {
                 if (!meshDir.exists()) {
                     meshDir.mkdirs();
                 } else {
-                    MESHES_LOADED_INTO_WORLD.putAll(PixelMeshParser.readMeshFile(meshDir.listFiles()));
+                    MESHES_LOADED_INTO_WORLD.putAll(PixelMeshParser.readMeshFile(meshDir.listFiles((dir, name) -> name.endsWith(".mesh"))));
                 }
             }
         } catch (IOException e) {
@@ -74,6 +75,7 @@ public class WorldEvents {
 
     @Nullable
     public static PixelMesh getMeshByUUID(UUID id) {
+        System.out.println("Search for: " + id + "   " + MESHES_LOADED_INTO_WORLD);
         return MESHES_LOADED_INTO_WORLD.getOrDefault(id, null);
     }
 

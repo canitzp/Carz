@@ -11,7 +11,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
@@ -21,6 +24,7 @@ import java.io.IOException;
 /**
  * @author canitzp
  */
+@SideOnly(Side.CLIENT)
 public class GuiPixelMesher extends GuiScreen {
 
     public static final ResourceLocation LOC = new ResourceLocation(Carz.MODID, "textures/gui/gui_pixel_mesher.png");
@@ -30,20 +34,22 @@ public class GuiPixelMesher extends GuiScreen {
     public GuiTextField nameField, colorField;
     private Robot robot;
     private PixelMeshScrollPane scrollPane;
+    private EntityPlayer player;
 
-    public GuiPixelMesher(){
+    public GuiPixelMesher(EntityPlayer player){
         try {
             this.robot = new Robot();
         } catch (AWTException e) {
             e.printStackTrace();
         }
+        this.player = player;
     }
 
     @Override
     public void initGui() {
         this.guiLeft = (this.width - 256) / 2;
         this.guiTop = (this.height - 256) / 2;
-        this.nameField = new GuiTextField(0, this.mc.fontRenderer, this.guiLeft + 157, this.guiTop + 35, 92, 10);
+        this.nameField = new GuiTextField(0, this.mc.fontRenderer, this.guiLeft + 157, this.guiTop + 7, 92, 10);
         this.nameField.setMaxStringLength(25);
         if(this.currentMesh != null){
             this.nameField.setText(this.currentMesh.getName());
@@ -52,7 +58,7 @@ public class GuiPixelMesher extends GuiScreen {
         this.colorField.setText("#" + Integer.toHexString(this.currentColor));
         this.colorField.setMaxStringLength(9);
         this.colorField.setValidator(input -> input != null && input.matches("^[0-9A-F]+$"));
-        this.scrollPane = new PixelMeshScrollPane(this, this.guiLeft + 6, this.guiTop + 156, 147, 94, 10, 256, 256);
+        this.scrollPane = new PixelMeshScrollPane(this, this.guiLeft + 6, this.guiTop + 156, 133, 94, 256, 256);
     }
 
     @Override
@@ -61,10 +67,9 @@ public class GuiPixelMesher extends GuiScreen {
         this.drawDefaultBackground();
         this.mc.getTextureManager().bindTexture(LOC);
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, 256, 256);
-        String textNew = "New", textOpen = "Open", textSave = "Save"; //TODO localize
-        font.drawString(textNew, (int) (this.guiLeft + 178 - (font.getStringWidth(textNew) / 2.0F)), this.guiTop + 9, 0xFFFFFF);
-        font.drawString(textOpen, (int) (this.guiLeft + 228 - (font.getStringWidth(textOpen) / 2.0F)), this.guiTop + 9, 0xFFFFFF);
-        font.drawString(textSave, (int) (this.guiLeft + 203 - (font.getStringWidth(textSave) / 2.0F)), this.guiTop + 23, 0xFFFFFF);
+        String textNew = this.currentMesh == null ? "New" : "Change Name", textOpen = "Open"; //TODO localize
+        font.drawString(textNew, (int) (this.guiLeft + 203 - (font.getStringWidth(textNew) / 2.0F)), this.guiTop + 22, 0xFFFFFF);
+        font.drawString(textOpen, (int) (this.guiLeft + 203 - (font.getStringWidth(textOpen) / 2.0F)), this.guiTop + 36, 0xFFFFFF);
         this.nameField.drawTextBox();
         this.scrollPane.drawScreen(mouseX, mouseY, partialTicks);
         Gui.drawRect(this.guiLeft + 157, this.guiTop + 48, this.guiLeft + 249, this.guiTop + 58, this.currentColor);
@@ -97,47 +102,59 @@ public class GuiPixelMesher extends GuiScreen {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if(mouseButton == 0){
-            if(mouseX >= this.guiLeft + 156 && mouseY >= this.guiTop + 6 && mouseX <= this.guiLeft + 200 && mouseY <= this.guiTop + 18){
-                if(!this.nameField.getText().isEmpty()){
-                    this.currentMesh = new PixelMesh(this.nameField.getText(), 16);
-                }
-            } else if(mouseX >= this.guiLeft + 205 && mouseY >= this.guiTop + 6 && mouseX <= this.guiLeft + 249 && mouseY <= this.guiTop + 18){
-                if(this.scrollPane.getCurrentMesh() != null){
-                    this.currentMesh = this.scrollPane.getCurrentMesh();
-                    this.nameField.setText(this.currentMesh.getName());
-                }
-            } else if(mouseX >= this.guiLeft + 156 && mouseY >= this.guiTop + 20 && mouseX <= this.guiLeft + 249 && mouseY <= this.guiTop + 32){
-                if(this.currentMesh != null){
+            if(isMouseBetween(mouseX, mouseY, 156, 19, 94, 13)){ // New / Change Name
+                if(this.currentMesh != null){ // Change Name
                     if(!this.nameField.getText().isEmpty()){
                         this.currentMesh.setName(this.nameField.getText());
                     }
-                    NetworkHandler.net.sendToServer(new MessageSendPixelMeshesToServer(this.currentMesh));
-                    WorldEvents.change(this.currentMesh);
                     this.initGui();
+                } else { // New
+                    if(!this.nameField.getText().isEmpty()){
+                        this.setCurrentMesh(new PixelMesh(this.nameField.getText(), 16, this.player.getGameProfile().getId()));
+                    }
+                }
+            } else if(isMouseBetween(mouseX, mouseY, 156, 33, 94, 13)){ // Open
+                if(this.scrollPane.getCurrentMesh() != null){
+                    if(this.scrollPane.getCurrentMesh().canBeEditedBy(this.player)){
+                        this.setCurrentMesh(this.scrollPane.getCurrentMesh());
+                        this.nameField.setText(this.currentMesh.getName());
+                    }
                 }
             }
-            if(mouseX >= this.guiLeft + 156 && mouseY >= this.guiTop + 35 && mouseX <= this.guiLeft + 249 && mouseY <= this.guiTop + 45){
+            if(isMouseBetween(mouseX, mouseY, 156, 6, 94, 12)){
                 this.nameField.setFocused(true);
             } else {
                 this.nameField.setFocused(false);
             }
+            /*
             if(mouseX >= this.guiLeft + 157 && mouseY >= this.guiTop + 48 && mouseX <= this.guiLeft + 248 && mouseY <= this.guiTop + 57){
                 this.colorField.setFocused(true);
             } else {
                 this.colorField.setFocused(false);
             }
-            if(this.currentMesh != null && mouseX >= this.guiLeft + 8 && mouseY >= this.guiTop + 8 && mouseX <= this.guiLeft + 151 && mouseY <= this.guiTop + 151){
+            */
+            if(this.currentMesh != null && isMouseBetween(mouseX, mouseY, 8, 8, 143, 143)){
                 updateMesh(mouseX, mouseY);
             }
-            if(mouseX >= this.guiLeft + 157 && mouseY >= this.guiTop + 59 && mouseX <= this.guiLeft + 248 && mouseY <= this.guiTop + 150){
+            if(isMouseBetween(mouseX, mouseY, 157, 59, 92, 92)){ // Update color
                 updateColor();
             }
+            if(isMouseBetween(mouseX, mouseY, 142, 156, 11, 11)){ // Offset y up
+                if(this.currentMesh != null){
+                    this.currentMesh.offset(0, 1);
+                }
+            }
+            if(isMouseBetween(mouseX, mouseY, 142, 169, 11, 11)){ // Offset y down
+                if(this.currentMesh != null){
+                    this.currentMesh.offset(0, -1);
+                }
+            }
         } else if(mouseButton == 1){
-            if(this.currentMesh != null && mouseX >= this.guiLeft + 8 && mouseY >= this.guiTop + 8 && mouseX <= this.guiLeft + 151 && mouseY <= this.guiTop + 151){
+            if(this.currentMesh != null && isMouseBetween(mouseX, mouseY, 8, 8, 143, 143)){
                 this.setPixelUnderMouse(mouseX, mouseY, Pixel.EMPTY);
             }
         } else if(mouseButton == 2){
-            if(this.currentMesh != null && mouseX >= this.guiLeft + 8 && mouseY >= this.guiTop + 8 && mouseX <= this.guiLeft + 151 && mouseY <= this.guiTop + 151){
+            if(this.currentMesh != null && isMouseBetween(mouseX, mouseY, 8, 8, 143, 143)){
                 this.currentColor = this.getPixelUnderMouse(mouseX, mouseY).toHex();
             }
         }
@@ -147,14 +164,14 @@ public class GuiPixelMesher extends GuiScreen {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         if(clickedMouseButton == 0){
-            if(this.currentMesh != null && mouseX >= this.guiLeft + 8 && mouseY >= this.guiTop + 8 && mouseX <= this.guiLeft + 151 && mouseY <= this.guiTop + 151){
+            if(this.currentMesh != null && isMouseBetween(mouseX, mouseY, 8, 8, 143, 143)){
                 updateMesh(mouseX, mouseY);
             }
-            if(mouseX >= this.guiLeft + 157 && mouseY >= this.guiTop + 58 && mouseX <= this.guiLeft + 248 && mouseY <= this.guiTop + 149){
+            if(isMouseBetween(mouseX, mouseY, 157, 59, 92, 92)){ // Update color
                 updateColor();
             }
         } else if(clickedMouseButton == 1){
-            if(this.currentMesh != null && mouseX >= this.guiLeft + 8 && mouseY >= this.guiTop + 8 && mouseX <= this.guiLeft + 151 && mouseY <= this.guiTop + 151){
+            if(this.currentMesh != null && isMouseBetween(mouseX, mouseY, 8, 8, 143, 143)){
                 this.setPixelUnderMouse(mouseX, mouseY, Pixel.EMPTY);
             }
         }
@@ -183,6 +200,15 @@ public class GuiPixelMesher extends GuiScreen {
         return false;
     }
 
+    @Override
+    public void onGuiClosed() {
+        if(this.currentMesh != null){
+            NetworkHandler.net.sendToServer(new MessageSendPixelMeshesToServer(this.currentMesh));
+            WorldEvents.change(this.currentMesh);
+        }
+        super.onGuiClosed();
+    }
+
     private void updateMesh(int mouseX, int mouseY){
         this.setPixelUnderMouse(mouseX, mouseY, new Pixel(this.currentColor));
     }
@@ -208,6 +234,14 @@ public class GuiPixelMesher extends GuiScreen {
         if(column >= 0 && row >= 0){
             this.currentMesh.getPixels()[row][column] = pixel;
         }
+    }
+
+    private void setCurrentMesh(PixelMesh mesh){
+        this.currentMesh = mesh;
+    }
+
+    private boolean isMouseBetween(int mouseX, int mouseY, int x, int y, int width, int height){
+        return mouseX >= this.guiLeft + x && mouseY >= this.guiTop + y && mouseX <= this.guiLeft + x + width && mouseY <= this.guiTop + y + height;
     }
 
 }

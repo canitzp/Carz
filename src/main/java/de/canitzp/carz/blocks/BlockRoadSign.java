@@ -2,11 +2,15 @@ package de.canitzp.carz.blocks;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
+import de.canitzp.carz.api.IPaintableBlock;
+import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.renderer.RenderRoadSign;
 import de.canitzp.carz.tile.TileSign;
+import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -29,21 +33,24 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static net.minecraft.block.BlockDirectional.FACING;
+
 /**
  * @author canitzp
  */
-public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
+public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements IPaintableBlock{
 
     public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(1 / 16D, 0.0D, 7 / 16D, 15 / 16D, 1.0D, 9 / 16D);
     public static final AxisAlignedBB SIGN_DEFAULT_TOP = new AxisAlignedBB(0.0D, 0.0D, 7 / 16D, 1.0D, 1.0F, 9 / 16D);
 
     public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
-    public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
 
     public BlockRoadSign() {
         super(Material.IRON, TileSign.class);
@@ -51,6 +58,7 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
         this.setDefaultState(this.blockState.getBaseState().withProperty(BOTTOM, true).withProperty(FACING, EnumFacing.NORTH));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void registerClient() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileSign.class, new RenderRoadSign());
@@ -167,6 +175,14 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> {
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return state.getValue(BOTTOM);
+    }
+
+    @Override
+    public void clickedWithPainter(World world, BlockPos pos, IBlockState state, PixelMesh mesh){
+        TileSign tile = getTileFromSign(world, pos);
+        if(tile != null){
+            tile.clickedWithPainter(mesh, state.getValue(BOTTOM));
+        }
     }
 
     @Nullable

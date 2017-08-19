@@ -20,7 +20,7 @@ public class PixelMeshScrollPane extends GuiScrollingList {
     private PixelMesh currentMesh = null;
     private int selected = -1;
 
-    public PixelMeshScrollPane(GuiScreen parent, int x, int y, int width, int height, int entryHeight, int xSize, int ySize) {
+    public PixelMeshScrollPane(GuiScreen parent, int x, int y, int width, int height, int xSize, int ySize) {
         super(parent.mc, width, height, y, y + height, x, 22, xSize, ySize);
     }
 
@@ -61,4 +61,5 @@ public class PixelMeshScrollPane extends GuiScrollingList {
     public PixelMesh getCurrentMesh() {
         return currentMesh;
     }
+
 }

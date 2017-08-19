@@ -22,12 +22,9 @@ public class PixelMeshParser {
                 for (String line : FileUtils.readLines(file, "UTF-8")) {
                     if (line.startsWith("Pixel Mesh")) {
                         String[] split = line.split("~");
-                        if (split.length == 4) {
-                            mesh = new PixelMesh(split[1], Integer.parseInt(split[2]), UUID.fromString(split[3]));
-                            mesh.setFileNameLoadedFrom(file.getName());
-                        } else if (split.length == 3) {
-                            mesh = new PixelMesh(split[1], Integer.parseInt(split[2]));
-                            mesh.setFileNameLoadedFrom(file.getName());
+                        if (split.length == 7) {
+                            mesh = new PixelMesh(split[1], Integer.parseInt(split[2]), UUID.fromString(split[5]), UUID.fromString(split[6]));
+                            mesh.setOffset(Integer.parseInt(split[3]), Integer.parseInt(split[4]));
                         }
                     } else if(mesh != null){
                         if(line.contains(",") && line.contains(";")){
@@ -52,19 +49,14 @@ public class PixelMeshParser {
 
     public static void writeMeshFile(File meshDir, Collection<PixelMesh> meshes) throws IOException {
         for (PixelMesh mesh : meshes) {
-            if(mesh.getFileNameLoadedFrom() != null){
-                File oldFile = new File(meshDir, mesh.getFileNameLoadedFrom());
-                if (oldFile.exists()) {
-                    oldFile.delete();
-                }
-            }
-            File file = new File(meshDir, mesh.getId().toString() + ".txt");
+            File file = new File(meshDir, mesh.getId().toString() + ".mesh");
             if (file.exists()) {
                 file.delete();
             }
             file.createNewFile();
             List<String> lines = new ArrayList<>();
-            lines.add(String.format("Pixel Mesh~%s~%d~%s", mesh.getName(), mesh.getPixels().length, mesh.getId().toString()));
+            System.out.println(mesh.getOffsetY());
+            lines.add(String.format("Pixel Mesh~%s~%d~%d~%d~%s~%s", mesh.getName(), mesh.getPixels().length, mesh.getOffsetX(), mesh.getOffsetY(), mesh.getId().toString(), mesh.getOwner().toString()));
             for(Pixel[] pixels : mesh.getPixels()){
                 StringBuilder builder = new StringBuilder();
                 for(Pixel pixel : pixels){

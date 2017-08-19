@@ -1,5 +1,6 @@
 package de.canitzp.carz;
 
+import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraftforge.fml.common.Mod;

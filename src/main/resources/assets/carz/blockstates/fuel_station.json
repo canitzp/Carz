@@ -7,17 +7,27 @@
     }
   },
   "variants": {
-    "normal": [
-      {}
-    ],
-    "inventory": [
-      {}
-    ],
+    "normal": [{}],
+    "inventory": [{}],
     "bottom": {
       "false": {
         "model": "carz:empty"
       },
       "true": {}
+    },
+    "facing": {
+      "up": {},
+      "down": {},
+      "north": {},
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      },
+      "east": {
+        "y": 90
+      }
     }
   }
 }
