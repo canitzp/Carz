@@ -8,6 +8,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +49,7 @@ public class MessageSendPixelMeshesToClient implements IMessage, IMessageHandler
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public MessageSendPixelMeshesToClient onMessage(MessageSendPixelMeshesToClient message, MessageContext ctx) {
         Minecraft.getMinecraft().addScheduledTask(() -> {

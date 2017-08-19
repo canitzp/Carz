@@ -51,7 +51,7 @@ public class MessageUpdatePainter implements IMessage, IMessageHandler<MessageUp
                 ItemStack stack = ctx.getServerHandler().player.inventory.getStackInSlot(message.slotID);
                 if(!stack.isEmpty() && stack.getItem() instanceof ItemPainter){
                     NBTTagCompound nbt = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
-                    nbt.setUniqueId("PixelMesh", message.meshID);
+                    nbt.setUniqueId("PixelMeshUUID", message.meshID);
                     stack.setTagCompound(nbt);
                 }
             }

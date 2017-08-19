@@ -2,10 +2,12 @@ package de.canitzp.carz.client;
 
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.WorldServer;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -14,21 +16,27 @@ import java.util.UUID;
  */
 public class PixelMesh {
 
-    private Pixel[][] pixels;
-    private String name, fileNameLoadedFrom;
-    private UUID id;
+    public static final UUID EMPTY_UUID = new UUID(0, 0);
 
-    public PixelMesh(String name, int size, UUID id) {
+    private Pixel[][] pixels;
+    private String name;
+    private UUID id, owner = EMPTY_UUID;
+    private int offsetX = 0, offsetY = 0;
+
+    public PixelMesh(String name, int size, UUID id, UUID owner) {
         this.name = name;
         this.id = id;
+        if(owner != null){
+            this.owner = owner;
+        }
         this.pixels = new Pixel[size][size];
         for(int i = 0; i < this.pixels.length; i++){
             this.pixels[i] = getUniqueFilledPixelArray(size);
         }
     }
 
-    public PixelMesh(String name, int size) {
-        this(name, size, UUID.randomUUID());
+    public PixelMesh(String name, int size, UUID owner) {
+        this(name, size, UUID.randomUUID(), owner);
     }
 
     public PixelMesh(String name, PacketBuffer buf) {
@@ -54,16 +62,16 @@ public class PixelMesh {
         return id;
     }
 
+    public UUID getOwner() {
+        return owner;
+    }
+
+    public void setOwner(@Nonnull UUID owner) {
+        this.owner = owner;
+    }
+
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getFileNameLoadedFrom() {
-        return fileNameLoadedFrom;
-    }
-
-    public void setFileNameLoadedFrom(String fileNameLoadedFrom) {
-        this.fileNameLoadedFrom = fileNameLoadedFrom;
     }
 
     private boolean isInRange(int line) {
@@ -90,6 +98,24 @@ public class PixelMesh {
         return this;
     }
 
+    public void setOffset(int x, int y) {
+        this.offsetX = x;
+        this.offsetY = y;
+    }
+
+    public void offset(int x, int y){
+        this.offsetX += x;
+        this.offsetY += y;
+    }
+
+    public int getOffsetX() {
+        return offsetX;
+    }
+
+    public int getOffsetY() {
+        return offsetY;
+    }
+
     @Override
     public String toString() {
         return Arrays.deepToString(this.getPixels());
@@ -97,7 +123,10 @@ public class PixelMesh {
 
     public void toBytes(PacketBuffer buf) {
         buf.writeUniqueId(this.id);
+        buf.writeUniqueId(this.owner);
         buf.writeInt(this.pixels.length);
+        buf.writeInt(this.offsetX);
+        buf.writeInt(this.offsetY);
         for (Pixel[] px : this.pixels) {
             for (Pixel p : px) {
                 p.toBytes(buf);
@@ -107,7 +136,10 @@ public class PixelMesh {
 
     public void fromBytes(PacketBuffer buf) {
         this.id = buf.readUniqueId();
+        this.owner = buf.readUniqueId();
         int amount = buf.readInt();
+        this.offsetX = buf.readInt();
+        this.offsetY = buf.readInt();
         this.pixels = new Pixel[amount][amount];
         for (int i = 0; i < amount; i++) {
             for (int j = 0; j < amount; j++) {
@@ -136,6 +168,10 @@ public class PixelMesh {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+    }
+
+    public boolean canBeEditedBy(EntityPlayer player){
+        return player.isCreative() || (player.world instanceof WorldServer && player.world.getMinecraftServer().getPlayerList().getOppedPlayers().getPermissionLevel(player.getGameProfile()) == 4) || player.getGameProfile().getId().equals(this.owner);
     }
 
 }

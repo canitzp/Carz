@@ -6,6 +6,8 @@ import de.canitzp.carz.network.MessageUpdatePainter;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.io.IOException;
 /**
  * @author canitzp
  */
+@SideOnly(Side.CLIENT)
 public class GuiMeshChooser extends GuiScreen{
 
     public int guiLeft, guiTop, painterSlot;
@@ -29,7 +32,7 @@ public class GuiMeshChooser extends GuiScreen{
     public void initGui() {
         this.guiLeft = (this.width - 128) / 2;
         this.guiTop = (this.height - 192) / 2;
-        this.scrollPane = new PixelMeshScrollPane(this, this.guiLeft, this.guiTop, 128, 192, 0, 128, 192);
+        this.scrollPane = new PixelMeshScrollPane(this, this.guiLeft, this.guiTop, 128, 192, 128, 192);
         if(this.currentMesh != null){
             this.scrollPane.setCurrentMesh(this.currentMesh);
         }
@@ -50,6 +53,8 @@ public class GuiMeshChooser extends GuiScreen{
             this.scrollPane.handleMouseInput(mouseX, mouseY);
         }
     }
+
+
 
     @Override
     public boolean doesGuiPauseGame() {

@@ -119,6 +119,7 @@ public class Registry {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModel(ModelRegistryEvent event) {
         ModelLoaderRegistry.registerLoader(new CustomModelLoader());

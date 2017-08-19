@@ -110,4 +110,8 @@ public class Pixel {
         buffer.pos(x + 1, y + 1, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
         tessy.draw();
     }
+
+    public Pixel copy(){
+        return new Pixel(this.r, this.g, this.b, this.a);
+    }
 }

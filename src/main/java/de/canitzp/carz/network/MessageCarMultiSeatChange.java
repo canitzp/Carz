@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Package to sync the seating-position to the clients
@@ -42,24 +43,24 @@ public class MessageCarMultiSeatChange implements IMessage, IMessageHandler<Mess
         buf.writeInt(entityID);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public IMessage onMessage(MessageCarMultiSeatChange message, MessageContext ctx) {
-        if (ctx.side != Side.CLIENT)
-            return null;
-
-        EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
-        Entity vehicle = entityPlayer.world.getEntityByID(message.carID);
-        if (vehicle instanceof EntityBus) { //TODO: Generify
-            if (message.entityID == -1)
-                ((EntityBus) vehicle).passengerSeats.remove(message.seatID);
-            else if (message.seatID == -1) {
-                Entity e = entityPlayer.world.getEntityByID(message.entityID);
-                ((EntityBus) vehicle).passengerSeats.inverse().remove(e);
-            } else {
-                Entity e = entityPlayer.world.getEntityByID(message.entityID);
-                ((EntityBus) vehicle).passengerSeats.put(message.seatID, e);
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            Entity vehicle = player.world.getEntityByID(message.carID);
+            if (vehicle instanceof EntityBus) { //TODO: Generify
+                if (message.entityID == -1)
+                    ((EntityBus) vehicle).passengerSeats.remove(message.seatID);
+                else if (message.seatID == -1) {
+                    Entity e = player.world.getEntityByID(message.entityID);
+                    ((EntityBus) vehicle).passengerSeats.inverse().remove(e);
+                } else {
+                    Entity e = player.world.getEntityByID(message.entityID);
+                    ((EntityBus) vehicle).passengerSeats.put(message.seatID, e);
+                }
             }
-        }
+        });
         return null;
     }
 }

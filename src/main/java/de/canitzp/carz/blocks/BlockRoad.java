@@ -18,6 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * @author canitzp
@@ -34,6 +36,7 @@ public class BlockRoad extends BlockBase<BlockRoad> {
         this.setRegistryName(new ResourceLocation(Carz.MODID, "road"));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void registerClient() {
         StateMapperBase ignoreState = new StateMapperBase() {
@@ -45,6 +48,7 @@ public class BlockRoad extends BlockBase<BlockRoad> {
         ModelLoader.setCustomStateMapper(this, ignoreState);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void registerClientInit() {
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(this), 0, new ModelResourceLocation(this.getRegistryName().toString(), "inventory"));
