@@ -36,7 +36,7 @@ public enum EnumSignTypes {
             }
             PixelMesh lower = tile.getLowerMesh();
             if(lower != null){
-                float f = 1/10F;
+                float f = 1/9.815F;
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(-(f*8) + (lower.getOffsetX() * f), -0.55F + (lower.getOffsetY() * f), -0.14F);
                 GlStateManager.scale(f, f, f);

@@ -75,7 +75,6 @@ public class WorldEvents {
 
     @Nullable
     public static PixelMesh getMeshByUUID(UUID id) {
-        System.out.println("Search for: " + id + "   " + MESHES_LOADED_INTO_WORLD);
         return MESHES_LOADED_INTO_WORLD.getOrDefault(id, null);
     }
 

@@ -5,7 +5,6 @@ import de.canitzp.carz.blocks.BlockBase;
 import de.canitzp.carz.blocks.BlockFuelStation;
 import de.canitzp.carz.blocks.BlockRoad;
 import de.canitzp.carz.blocks.BlockRoadSign;
-import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.models.signs.ModelRoadSign;
@@ -122,7 +121,6 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModel(ModelRegistryEvent event) {
-        ModelLoaderRegistry.registerLoader(new CustomModelLoader());
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
         }

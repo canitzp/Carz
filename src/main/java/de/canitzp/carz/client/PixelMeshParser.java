@@ -55,7 +55,6 @@ public class PixelMeshParser {
             }
             file.createNewFile();
             List<String> lines = new ArrayList<>();
-            System.out.println(mesh.getOffsetY());
             lines.add(String.format("Pixel Mesh~%s~%d~%d~%d~%s~%s", mesh.getName(), mesh.getPixels().length, mesh.getOffsetX(), mesh.getOffsetY(), mesh.getId().toString(), mesh.getOwner().toString()));
             for(Pixel[] pixels : mesh.getPixels()){
                 StringBuilder builder = new StringBuilder();

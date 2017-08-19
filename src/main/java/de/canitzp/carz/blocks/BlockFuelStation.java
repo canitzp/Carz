@@ -148,4 +148,9 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
             }
         }
     }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return state.getValue(BOTTOM);
+    }
 }

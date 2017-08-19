@@ -19,8 +19,8 @@ public class RenderRoadSign extends TileEntitySpecialRenderer<TileSign> {
 
     @Override
     public void render(TileSign te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        this.setLightmapDisabled(false);
         GlStateManager.pushMatrix();
-        RenderHelper.disableStandardItemLighting();
         GlStateManager.translate(x + 0.5F, y + 0.75F, z + 0.5F);
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
         GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
@@ -50,9 +50,10 @@ public class RenderRoadSign extends TileEntitySpecialRenderer<TileSign> {
         this.bindTexture(model.getTexture());
         model.render(1 / 16F);
 
+        this.setLightmapDisabled(true);
         signType.render(this, te, x, y, z, partialTicks, destroyStage, alpha);
 
-        RenderHelper.enableStandardItemLighting();
+        //RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
         super.render(te, x, y, z, partialTicks, destroyStage, alpha);
     }

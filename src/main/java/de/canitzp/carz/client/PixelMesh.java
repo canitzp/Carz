@@ -2,6 +2,7 @@ package de.canitzp.carz.client;
 
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.WorldServer;
@@ -26,9 +27,7 @@ public class PixelMesh {
     public PixelMesh(String name, int size, UUID id, UUID owner) {
         this.name = name;
         this.id = id;
-        if(owner != null){
-            this.owner = owner;
-        }
+        this.owner = owner;
         this.pixels = new Pixel[size][size];
         for(int i = 0; i < this.pixels.length; i++){
             this.pixels[i] = getUniqueFilledPixelArray(size);
@@ -149,6 +148,7 @@ public class PixelMesh {
     }
 
     public void render(int x, int y){
+        RenderHelper.disableStandardItemLighting();
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -164,10 +164,8 @@ public class PixelMesh {
                 }
             }
         }
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+        //RenderHelper.enableStandardItemLighting();
     }
 
     public boolean canBeEditedBy(EntityPlayer player){

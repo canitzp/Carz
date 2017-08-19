@@ -1,6 +1,7 @@
 package de.canitzp.carz.items;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.api.IPaintableBlock;
 import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.gui.GuiMeshChooser;
@@ -11,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -51,10 +53,10 @@ public class ItemPainter extends ItemBase<ItemPainter> {
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof BlockRoadSign) {
+        if (state.getBlock() instanceof IPaintableBlock) {
             PixelMesh mesh = getPixelMeshFromStack(player.getHeldItem(hand));
             if (mesh != null) {
-                ((BlockRoadSign) state.getBlock()).clickedWithPainter(world, pos, state, mesh);
+                ((IPaintableBlock) state.getBlock()).clickedWithPainter(world, pos, player, state, hand, facing, mesh, hitX, hitY, hitZ);
                 return EnumActionResult.SUCCESS;
             }
             return this.onItemRightClick(world, player, hand).getType();
@@ -63,6 +65,26 @@ public class ItemPainter extends ItemBase<ItemPainter> {
             this.openChooseGui(player.getHeldItem(hand), player, player.inventory.currentItem);
         }
         return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
+        World world = player.world;
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() instanceof IPaintableBlock) {
+            return ((IPaintableBlock) state.getBlock()).hitWithPainter(world, pos, player, state, itemstack);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player) {
+        return true;
+    }
+
+    @Override
+    public float getStrVsBlock(ItemStack stack, IBlockState state) {
+        return 0.0F;
     }
 
     @Override
