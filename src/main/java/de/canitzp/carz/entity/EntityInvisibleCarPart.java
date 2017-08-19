@@ -164,4 +164,12 @@ public class EntityInvisibleCarPart extends Entity {
             parent.applyEntityCollision(entityIn);
         }
     }
+
+    public float getWidthOffset() {
+        return Math.max(Math.abs(this.offsetX), Math.abs(this.offsetZ)) + 0.5f * this.width;
+    }
+
+    public float getHeightOffset() {
+        return Math.abs(this.offsetY) + 0.5f * this.height;
+    }
 }

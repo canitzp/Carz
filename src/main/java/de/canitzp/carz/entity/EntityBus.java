@@ -1,24 +1,25 @@
 package de.canitzp.carz.entity;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.EntitySteerableBase;
-import de.canitzp.carz.network.MessageCarMultiSeatChange;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 /**
  * @author canitzp, MisterErwin
@@ -62,21 +63,22 @@ public class EntityBus extends EntitySteerableBase {
         }
 
         //Driver
-        builder.addInteractOnlyPart(.9f, 0.4f, 2.9f, .8f, .7f);
+        builder.addInteractOnlyPart(.9f, 0.4f, 2.9f, .8f, 1.1f);
 
         //first row
-        builder.addInteractOnlyPart(.9f, 0.4f, 1.4f, .8f, .7f);
-        builder.addInteractOnlyPart(-.9f, 0.4f, 1.4f, .8f, .7f);
+        builder.addInteractOnlyPart(.9f, 0.4f, 1.4f, .8f, 1.1f);
+        builder.addInteractOnlyPart(-.9f, 0.4f, 1.4f, .8f, 1.1f);
 
         //2nd row
-        builder.addInteractOnlyPart(.9f, 0.3f, 0.3f, .8f, .7f);
-        builder.addInteractOnlyPart(-.9f, 0.3f, 0.3f, .8f, .7f);
+        builder.addInteractOnlyPart(.9f, 0.3f, 0.3f, .8f, 1.1f);
+        builder.addInteractOnlyPart(-.9f, 0.3f, 0.3f, .8f, 1.1f);
 
         partData = builder.build();
     }
 
-    public BiMap<Integer, Entity> passengerSeats = HashBiMap.create();
-    //TODO: Yeah - sync this data, otherwise nothing will move
+//    public BiMap<Integer, Entity> passengerSeats = HashBiMap.create();
+
+    private final static DataParameter<int[]> SEATING_DATA = EntityDataManager.createKey(EntityBus.class, NetworkHandler.VARINT_ARRAY);
 
     public EntityBus(World worldIn) {
         super(worldIn);
@@ -90,14 +92,27 @@ public class EntityBus extends EntitySteerableBase {
         this.addSeat(0.05F, -1.6F, 0.9F);
     }
 
+    @Override
+    protected void entityInit() {
+        super.entityInit();
+        this.dataManager.register(SEATING_DATA, new int[]{-1});
+    }
+
     @Nullable
     public Entity getControllingPassenger() {
-        return this.passengerSeats.getOrDefault(0, null);
+        int[] seats = this.dataManager.get(SEATING_DATA);
+        return seats.length > 0 && seats[0] != -1 ? world.getEntityByID(seats[0]) : null;
+//        return this.passengerSeats.getOrDefault(0, null);
     }
 
     @Override
     protected int getSeatByPassenger(Entity passenger) {
-        return this.passengerSeats.inverse().getOrDefault(passenger, -1);
+        int[] seats = this.dataManager.get(SEATING_DATA);
+        for (int i = 0; i < seats.length; ++i) {
+            if (seats[i] == passenger.getEntityId())
+                return i;
+        }
+        return -1;
     }
 
     @Override
@@ -105,14 +120,24 @@ public class EntityBus extends EntitySteerableBase {
         //The DriverSeat is hitbox No 54
         if (!world.isRemote && partIndex >= 54 && !player.isSneaking()) {
             int seatIndex = partIndex - 54;
-            if (this.passengerSeats.containsKey(seatIndex))
+//            if (this.passengerSeats.containsKey(seatIndex))
+            int[] seats = this.dataManager.get(SEATING_DATA);
+            if (seats.length > seatIndex && seats[seatIndex] != -1)
                 return false;
+            if (player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer) {
+                ItemStack spawnEgg = player.getHeldItem(player.getActiveHand());
+                Entity entity = ItemMonsterPlacer.spawnCreature(this.world, ItemMonsterPlacer.getNamedIdFrom(spawnEgg), this.posX, this.posY, this.posZ);
+                if (entity != null) {
+                    if (entity.startRiding(this)) {
+                        this.setSeatingData(seats, seatIndex, entity.getEntityId());
+                        return true;
+                    }
+                }
+            }
+
             boolean b = player.startRiding(this);
             if (b) {
-                this.passengerSeats.put(seatIndex, player);
-                //ToDo: maybe use the EntityDataManager instead?
-                NetworkHandler.net.sendToAllAround(new MessageCarMultiSeatChange(this.getEntityId(), seatIndex, player.getEntityId()),
-                        new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 128));
+                this.setSeatingData(seats, seatIndex, player.getEntityId());
             }
             return b;
         }
@@ -120,11 +145,25 @@ public class EntityBus extends EntitySteerableBase {
         return false;
     }
 
+    private void setSeatingData(int[] seats, int index, int value) {
+        //The EntityDataManager only syncs if the old data != new data, so we have to clone the array
+        int[] newseats = new int[Math.max(index + 1, seats.length)];
+        System.arraycopy(seats, 0, newseats, 0, seats.length);
+        newseats[index] = value;
+        this.dataManager.set(SEATING_DATA, newseats);
+    }
+
+
     @Override
     protected void removePassenger(Entity passenger) {
-        this.passengerSeats.inverse().remove(passenger);
-        NetworkHandler.net.sendToAllAround(new MessageCarMultiSeatChange(this.getEntityId(), -1, passenger.getEntityId()),
-                new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 128));
+//        this.passengerSeats.inverse().remove(passenger);
+        int seat = this.getSeatByPassenger(passenger);
+        if (seat != -1) {
+            this.setSeatingData(dataManager.get(SEATING_DATA), seat, -1);
+        } else
+            System.err.println("Seat was -1? " + (world.isRemote ? "remote" : "server"));
+//        NetworkHandler.net.sendToAllAround(new MessageCarMultiSeatChange(this.getEntityId(), -1, passenger.getEntityId()),
+//                new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 128));
         super.removePassenger(passenger);
     }
 
