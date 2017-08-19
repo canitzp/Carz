@@ -26,6 +26,8 @@ public class EntityInvisibleCarPart extends Entity {
 
     protected float offsetX, offsetY, offsetZ;
 
+    public boolean colliding = true;
+
     public EntityInvisibleCarPart(World worldIn) {
         super(worldIn);
     }
@@ -68,7 +70,7 @@ public class EntityInvisibleCarPart extends Entity {
                 this.parent.posY + this.offsetY,
                 this.parent.posZ + this.offsetX * sin + this.offsetZ * cos);
 
-        if (!this.world.isRemote) {
+        if (!this.world.isRemote && colliding) {
             this.collideWithNearbyEntities();
         }
 
@@ -90,7 +92,7 @@ public class EntityInvisibleCarPart extends Entity {
      */
     @Override
     public boolean canBePushed() {
-        return true;
+        return colliding;
     }
 
     /**
@@ -98,7 +100,7 @@ public class EntityInvisibleCarPart extends Entity {
      */
     @Override
     public AxisAlignedBB getCollisionBoundingBox() {
-        return this.getEntityBoundingBox(); //so others can't pass through us
+        return colliding ? this.getEntityBoundingBox() : null; //so others can't pass through us
     }
 
     /**
@@ -139,16 +141,16 @@ public class EntityInvisibleCarPart extends Entity {
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         if (this.parent != null && !this.parent.isDead) {
             int index = -1;
-            for (int i=0;i<this.parent.getPartArray().length;++i){
-                if (parent.getPartArray()[i]==this){
+            for (int i = 0; i < this.parent.getPartArray().length; ++i) {
+                if (parent.getPartArray()[i] == this) {
                     index = i;
                     break;
                 }
             }
             if (world.isRemote) {
                 NetworkHandler.net.sendToServer(new MessageCarPartInteract(this.parent.getEntityId(), hand, index));
-            }else{
-               this.parent.processInitialInteract(player, hand, index);
+            } else {
+                this.parent.processInitialInteract(player, hand, index);
             }
             return true;
         }
@@ -158,7 +160,7 @@ public class EntityInvisibleCarPart extends Entity {
     @Override
     @ParametersAreNonnullByDefault
     public void applyEntityCollision(Entity entityIn) {
-        if (parent != null && !parent.isDead) {
+        if (parent != null && !parent.isDead && colliding) {
             parent.applyEntityCollision(entityIn);
         }
     }

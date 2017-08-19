@@ -1,6 +1,7 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -31,6 +32,14 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 this.controlVehicle();
             }
 //            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ); moved to EntityMoveable
+        }
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger) {
+        super.addPassenger(passenger);
+        if (world.isRemote){
+            this.updateInputs(false,false,false,false);
         }
     }
 
@@ -74,7 +83,10 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 if (this.speedSq > 0) {
                     //TODO: Yeah - find some actual good numbers
                     //OPTION: steering
-                    deltaR *= 5 * Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
+                    deltaR *= 3 * Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
+//                    deltaR *= speedSqAbs;//(float)Math.pow(speedSqAbs, 2.0D);
+//                    deltaR = MathHelper.clamp(deltaR, 0f,5f);
+//                    System.out.println(deltaR);
                 }
 
                 if (this.speedSq > 0 && deltaR == 0 && autoSnapping) {

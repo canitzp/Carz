@@ -21,6 +21,7 @@ public class NetworkHandler {
         net.registerMessage(MessageSendPixelMeshesToServer.class, MessageSendPixelMeshesToServer.class, id++, Side.SERVER);
         net.registerMessage(MessageUpdatePainter.class, MessageUpdatePainter.class, id++, Side.SERVER);
         net.registerMessage(MessageCarPartInteract.class, MessageCarPartInteract.class, id++, Side.SERVER);
+        net.registerMessage(MessageCarMultiSeatChange.class, MessageCarMultiSeatChange.class, id++, Side.CLIENT);
     }
 
 }

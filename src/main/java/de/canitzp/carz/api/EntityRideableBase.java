@@ -1,5 +1,7 @@
 package de.canitzp.carz.api;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import net.minecraft.entity.Entity;
@@ -12,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import scala.actors.threadpool.Arrays;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -90,17 +93,21 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         this.applyYawToEntity(entityToUpdate);
     }
 
+    protected int getSeatByPassenger(Entity passenger) {
+        if (this.getPassengers().size() > 1) {
+            return this.getPassengers().indexOf(passenger);
+        }
+        return 0;
+    }
+
     public void updatePassenger(Entity passenger) {
         if (this.isPassenger(passenger)) {
-            float f = 0.0F;
             float f1 = (float) ((this.isDead ? 0.009999999776482582D : this.getMountedYOffset()) + passenger.getYOffset());
 
-            int index = 0;
-            if (this.getPassengers().size() > 1) {
-                index = this.getPassengers().indexOf(passenger);
-            }
+            int index = getSeatByPassenger(passenger);
             if (index == -1)
                 return;
+
             Vec3d seat = this.seats.get(index);
 
             Vec3d vec3d = seat.rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));

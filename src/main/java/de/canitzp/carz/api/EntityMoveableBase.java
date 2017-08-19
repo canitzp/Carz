@@ -38,7 +38,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
     private float remoteSpeed = 0;
 
     private double lastColX = 0, lastColZ = 0;
-//    private int lastColTime;
+    //    private int lastColTime;
     private TimedCache<Integer> collisionCache = new TimedCache<>(1000);
 
 
@@ -107,6 +107,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
             IBlockState stateBase = this.world.getBlockState(pos);
             float slippery = stateBase.getBlock().getSlipperiness(stateBase, world, pos, this);
             this.centrifugalForce = slippery * this.speedSqAbs * Math.abs(this.angle);
+            this.centrifugalV2 += slippery * this.speedSqAbs * Math.abs(this.angle) * 10;
         } else {
             this.angle = 0;
             this.speedSq = 0;
@@ -219,7 +220,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
                 this.lastColX = this.lastColZ = 0;
 //                this.lastColTime += 20;
                 this.collisionCache.add(entityIn.getEntityId());
-            }else{
+            } else {
                 //TODO: Yeah - let's actually use the collision contact point
                 this.lastColX = this.posX;
                 this.lastColZ = this.posZ;

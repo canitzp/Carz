@@ -51,7 +51,7 @@ public class MessageCarPartInteract implements IMessage, IMessageHandler<Message
         EntityPlayer entityPlayer = ctx.getServerHandler().player;
         Entity e = entityPlayer.world.getEntityByID(message.entityID);
         if (e instanceof EntityPartedBase) {
-            ((EntityPartedBase) e).processInitialInteract(entityPlayer, hand, partIndex);
+            ((EntityPartedBase) e).processInitialInteract(entityPlayer, message.hand, message.partIndex);
         }
         return null;
     }

@@ -68,26 +68,6 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
         return collidingParts;
     }
 
-    protected int[] allPartIndizes() {
-        int[] ret = new int[this.partArray.length];
-        for (int i = 0; i < this.partArray.length; ++i)
-            ret[i] = i;
-        return ret;
-    }
-
-    /**
-     * @param from start Index incl
-     * @param to   end index ecl
-     * @return an array containing these indizes
-     */
-    protected int[] indizesRange(int from, int to) {
-        int[] ret = new int[to - from];
-        int n = 0;
-        for (int i = from; i < to; ++i)
-            ret[n++] = i;
-        return ret;
-    }
-
     /**
      * This method will be only called during the spawning of the parted entity.
      *
@@ -515,6 +495,8 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             for (int i = 0, l = ret.length; i < l; ++i) {
                 ret[i] = parent.createPart(data[i][0], data[i][1], data[i][2],
                         data[i][3], data[i][4]);
+                if (data[i][5]==0)
+                    ret[i].colliding = false;
             }
             return ret;
         }
@@ -533,12 +515,17 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
 
         public PartBuilder addPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
-            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height}, false));
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height,1}, false));
             return this;
         }
 
         public PartBuilder addCollidingPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
-            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height}, true));
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height,1}, true));
+            return this;
+        }
+
+        public PartBuilder addInteractOnlyPart(float offsetX, float offsetY, float offsetZ, float width, float height) {
+            data.add(new AbstractMap.SimpleImmutableEntry<>(new float[]{offsetX, offsetY, offsetZ, width, height,0}, false));
             return this;
         }
 
