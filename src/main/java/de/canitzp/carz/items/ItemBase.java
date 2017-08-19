@@ -35,4 +35,9 @@ public abstract class ItemBase<T extends ItemBase> extends Item {
     public CreativeTabs getCreativeTab() {
         return Registry.TAB;
     }
+
+    @Override
+    public String getUnlocalizedName() {
+        return "item." + this.getRegistryName().toString();
+    }
 }

@@ -1,0 +1,22 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "carz:empty"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "bottom": {
+      "false": {},
+      "true": {}
+    },
+    "facing": {
+      "up": {},
+      "down": {},
+      "north": {},
+      "south": {},
+      "west": {},
+      "east": {}
+    }
+  }
+}

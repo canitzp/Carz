@@ -11,9 +11,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -22,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -51,6 +56,13 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
     @SideOnly(Side.CLIENT)
     @Override
     public void registerClient() {
+        ModelBakery.registerItemVariants(Item.getItemFromBlock(BlockRoadSign.this), new ResourceLocation(Carz.MODID, "signs/triangle"));
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(this), new ItemMeshDefinition() {
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack stack) {
+                return new ModelResourceLocation(new ResourceLocation(Carz.MODID, "signs/triangle"), "inventory");
+            }
+        });
         ClientRegistry.bindTileEntitySpecialRenderer(TileSign.class, new RenderRoadSign());
     }
 
@@ -168,30 +180,27 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
     }
 
     @Override
+    public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
+        TileSign tile = getTileFromSign(world, pos);
+        if(tile != null){
+            if(world.getBlockState(pos).getValue(BOTTOM)){
+                if(tile.getLowerMesh() != null){
+                    tile.setLowerMesh(null);
+                }
+            } else {
+                if(tile.getUpperMesh() != null){
+                    tile.setUpperMesh(null);
+                }
+            }
+        }
+    }
+
+    @Override
     public void clickedWithPainter(World world, BlockPos pos, EntityPlayer player, IBlockState state, EnumHand hand, EnumFacing facing, PixelMesh mesh, float hitX, float hitY, float hitZ){
         TileSign tile = getTileFromSign(world, pos);
         if(tile != null){
             tile.clickedWithPainter(mesh, state.getValue(BOTTOM));
         }
-    }
-
-    @Override
-    public boolean hitWithPainter(World world, BlockPos pos, EntityPlayer player, IBlockState state, ItemStack stack) {
-        TileSign tile = getTileFromSign(world, pos);
-        if(tile != null){
-            if(state.getValue(BOTTOM)){
-                if(tile.getLowerMesh() != null){
-                    tile.setLowerMesh(null);
-                    return true;
-                }
-            } else {
-                if(tile.getUpperMesh() != null){
-                    tile.setUpperMesh(null);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Nullable

@@ -16,6 +16,4 @@ public interface IPaintableBlock {
 
     void clickedWithPainter(World world, BlockPos pos, EntityPlayer player, IBlockState state, EnumHand hand, EnumFacing facing, PixelMesh mesh, float hitX, float hitY, float hitZ);
 
-    boolean hitWithPainter(World world, BlockPos pos, EntityPlayer player, IBlockState state, ItemStack stack);
-
 }

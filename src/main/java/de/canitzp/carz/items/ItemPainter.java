@@ -1,6 +1,7 @@
 package de.canitzp.carz.items;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.IPaintableBlock;
 import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.client.PixelMesh;
@@ -25,6 +26,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -68,18 +70,8 @@ public class ItemPainter extends ItemBase<ItemPainter> {
     }
 
     @Override
-    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
-        World world = player.world;
-        IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof IPaintableBlock) {
-            return ((IPaintableBlock) state.getBlock()).hitWithPainter(world, pos, player, state, itemstack);
-        }
-        return false;
-    }
-
-    @Override
     public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player) {
-        return true;
+        return false;
     }
 
     @Override
@@ -101,6 +93,16 @@ public class ItemPainter extends ItemBase<ItemPainter> {
         return super.itemInteractionForEntity(stack, player, target, hand);
     }
 
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        String def = super.getItemStackDisplayName(stack);
+        PixelMesh mesh = getPixelMeshFromStack(stack);
+        if(mesh != null){
+            def += " " + mesh.getName();
+        }
+        return def;
+    }
+
     @SideOnly(Side.CLIENT)
     private void openCreationGui(EntityPlayer player) {
         Minecraft.getMinecraft().displayGuiScreen(new GuiPixelMesher(player));
@@ -119,7 +121,7 @@ public class ItemPainter extends ItemBase<ItemPainter> {
     }
 
     @Nullable
-    public static PixelMesh getPixelMeshFromStack(ItemStack stack) {
+    public static PixelMesh getPixelMeshFromStack(@Nonnull ItemStack stack) {
         if (stack.hasTagCompound()) {
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt.hasUniqueId("PixelMeshUUID")) {
@@ -127,5 +129,14 @@ public class ItemPainter extends ItemBase<ItemPainter> {
             }
         }
         return null;
+    }
+
+    @Nonnull
+    public static ItemStack getStackWithMesh(@Nonnull PixelMesh mesh){
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setUniqueId("PixelMeshUUID", mesh.getId());
+        ItemStack stack = new ItemStack(Registry.itemPainter);
+        stack.setTagCompound(nbt);
+        return stack;
     }
 }

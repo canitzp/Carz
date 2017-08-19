@@ -4,6 +4,7 @@ import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.IPaintableBlock;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.renderer.RenderRoad;
+import de.canitzp.carz.items.ItemPainter;
 import de.canitzp.carz.tile.TileRoad;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -19,6 +20,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -40,9 +42,37 @@ public class BlockRoad extends BlockContainerBase<BlockRoad> implements IPaintab
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void registerClientInit() {
+    public void registerClient() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(this.getRegistryName(), "inventory"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void registerClientInit() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileRoad.class, new RenderRoad());
+    }
+
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileRoad){
+            if(((TileRoad) tile).getMesh() != null){
+                ((TileRoad) tile).setMesh(null);
+                return false;
+            }
+        }
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileRoad) {
+            if (((TileRoad) tile).getMesh() != null) {
+                return ItemPainter.getStackWithMesh(((TileRoad) tile).getMesh());
+            }
+        }
+        return super.getPickBlock(state, target, world, pos, player);
     }
 
     @Override
@@ -60,18 +90,6 @@ public class BlockRoad extends BlockContainerBase<BlockRoad> implements IPaintab
             ((TileRoad) tile).setMesh(mesh);
             ((TileRoad) tile).setMeshFacing(player.getHorizontalFacing());
         }
-    }
-
-    @Override
-    public boolean hitWithPainter(World world, BlockPos pos, EntityPlayer player, IBlockState state, ItemStack stack) {
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileRoad){
-            if(((TileRoad) tile).getMesh() != null){
-                ((TileRoad) tile).setMesh(null);
-                return true;
-            }
-        }
-        return false;
     }
 
 }
