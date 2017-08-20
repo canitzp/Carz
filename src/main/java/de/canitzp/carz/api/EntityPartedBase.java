@@ -56,14 +56,15 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             this.collidingParts[i] = this.partArray[col[i]];
 
         //Get a bounding box loosely representing our total size
-        float rwidth = 0, rheight = 0;
+        float rwidth = this.width, rheight = this.height;
         for (EntityInvisibleCarPart p : this.partArray) {
             rwidth = Math.max(p.getWidthOffset(), rwidth);
             rheight = Math.max(p.getHeightOffset(), rheight);
         }
         rwidth += 0.2;
         rheight += 0.2;
-        this.renderBoundingBox = new AxisAlignedBB(-rwidth, -rheight, -rwidth, rwidth, rheight, rwidth);
+        this.renderBoundingBox = new AxisAlignedBB(-rwidth*1.3, -rheight, -rwidth*1.3,
+                rwidth*1.3, rheight, rwidth*1.3);
 
     }
 

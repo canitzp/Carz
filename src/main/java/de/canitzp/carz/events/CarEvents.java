@@ -1,17 +1,13 @@
 package de.canitzp.carz.events;
 
-import de.canitzp.carz.api.EntityCollideableBase;
 import de.canitzp.carz.api.EntityPartedBase;
-import de.canitzp.carz.api.EntityRenderedBase;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author canitzp
