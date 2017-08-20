@@ -3,6 +3,7 @@ package de.canitzp.carz.tile;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -40,5 +41,10 @@ public class TileFuelStation extends TileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setTag("FluidTank", this.tank.writeToNBT(new NBTTagCompound()));
         return super.writeToNBT(compound);
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return TileSign.RENDER_BOX;
     }
 }

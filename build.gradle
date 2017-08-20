@@ -9,9 +9,9 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${project.modid}"
+version = "${project.version}"
 group = "de.canitzp.${project.modid}"
-archivesBaseName = "${project.modid}"
+archivesBaseName = "${project.name}"
 
 sourceCompatibility = targetCompatibility = 1.8
 
@@ -20,6 +20,9 @@ minecraft {
     runDir = "run"
     mappings = "${project.forge_mapping}"
     makeObfSourceJar = false
+    replaceIn "de/canitzp/carz/Carz.java"
+    replace "@VERSION@", project.version.toString()
+    replace "@BUILD_DATE@", new Date().format("dd.MM.yy HH:mm")
 }
 
 dependencies {

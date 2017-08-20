@@ -42,7 +42,6 @@ public class TileSign extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         this.signType = EnumSignTypes.values()[compound.getInteger("SignType")];
-        System.out.println(compound);
         if (compound.hasUniqueId("MeshUpperUUID")) {
             this.upperMesh = WorldEvents.getMeshByUUID(compound.getUniqueId("MeshUpperUUID"));
         }

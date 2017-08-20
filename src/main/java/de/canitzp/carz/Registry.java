@@ -5,7 +5,6 @@ import de.canitzp.carz.blocks.BlockBase;
 import de.canitzp.carz.blocks.BlockFuelStation;
 import de.canitzp.carz.blocks.BlockRoad;
 import de.canitzp.carz.blocks.BlockRoadSign;
-import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.models.signs.ModelRoadSign;
@@ -75,15 +74,15 @@ public class Registry {
     /**
      * Blocks:
      */
-    public static BlockFuelStation blockFuelStation;
-    public static BlockRoad blockRoad;
-    public static BlockRoadSign blockRoadSign;
+    public static BlockFuelStation blockFuelStation = new BlockFuelStation().register();
+    public static BlockRoad blockRoad = new BlockRoad().register();
+    public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
 
     /**
      * Items:
      */
-    public static ItemCarPart itemCarPart;
-    public static ItemPainter itemPainter;
+    public static ItemCarPart itemCarPart = new ItemCarPart().register();
+    public static ItemPainter itemPainter = new ItemPainter().register();
 
     /**
      * Models:
@@ -94,8 +93,8 @@ public class Registry {
     /**
      * Statistics:
      */
-    public static StatBase ENTITY_HIT_COUNT = new StatBasic("stat.entity_hit.count", new TextComponentTranslation(Carz.MODID + ".stat.entity_hit.count")).registerStat();
-    public static StatBase ENTITY_HIT_DAMAGE = new StatBasic("stat.entity_hit.dmg", new TextComponentTranslation(Carz.MODID + ".stat.entity_hit.dmg")).registerStat();
+    public static StatBase ENTITY_HIT_COUNT = new StatBasic(Carz.MODID + ":stat.entity_hit.count", new TextComponentTranslation(Carz.MODID + ":stat.entity_hit.count")).registerStat();
+    public static StatBase ENTITY_HIT_DAMAGE = new StatBasic(Carz.MODID + ":stat.entity_hit.dmg", new TextComponentTranslation(Carz.MODID + ":stat.entity_hit.dmg")).registerStat();
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -122,7 +121,6 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModel(ModelRegistryEvent event) {
-        ModelLoaderRegistry.registerLoader(new CustomModelLoader());
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
         }
@@ -132,11 +130,6 @@ public class Registry {
     }
 
     public static void preInit(FMLPreInitializationEvent event) {
-        blockFuelStation = new BlockFuelStation().register();
-        blockRoad = new BlockRoad().register();
-        blockRoadSign = new BlockRoadSign().register();
-        itemCarPart = new ItemCarPart().register();
-        itemPainter = new ItemPainter().register();
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
         //ToDo: Register it a better way?
