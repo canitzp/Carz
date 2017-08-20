@@ -1,8 +1,14 @@
 itemGroup.carz=Carz
 
+# Blocks
 tile.carz:fuel_station.name=Fuel Station
 tile.carz:road.name=Road
 tile.carz:road_sign.name=Road Sign
 
+# Items
 item.carz:painter.name=Painter
 item.carz:car_part.engine.name=Car engine
+
+# Statistics
+carz:stat.entity_hit.count=Entity hit with car
+carz:stat.entity_hit.dmg=Damage done with car

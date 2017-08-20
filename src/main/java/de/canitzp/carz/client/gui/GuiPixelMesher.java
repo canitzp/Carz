@@ -84,6 +84,9 @@ public class GuiPixelMesher extends GuiScreen {
                 this.drawHoveringText("You first have to create a mesh file to draw.", mouseX, mouseY);
             }
         } else {
+            if(isMouseBetween(mouseX, mouseY, 142, 208, 11, 11)){
+                this.drawHoveringText("Reset to Default", mouseX, mouseY);
+            }
             Pixel[][] pixels1 = this.currentMesh.getPixels();
             for (int row = 0; row < pixels1.length; row++) {
                 Pixel[] pixels = this.currentMesh.getLine(row);
@@ -143,12 +146,27 @@ public class GuiPixelMesher extends GuiScreen {
             }
             if(isMouseBetween(mouseX, mouseY, 142, 156, 11, 11)){ // Offset y up
                 if(this.currentMesh != null){
+                    this.currentMesh.offset(0, -1);
+                }
+            }
+            if(isMouseBetween(mouseX, mouseY, 142, 169, 11, 11)){ // Offset x left
+                if(this.currentMesh != null){
+                    this.currentMesh.offset(-1, 0);
+                }
+            }
+            if(isMouseBetween(mouseX, mouseY, 142, 182, 11, 11)){ // Offset x right
+                if(this.currentMesh != null){
+                    this.currentMesh.offset(1, 0);
+                }
+            }
+            if(isMouseBetween(mouseX, mouseY, 142, 195, 11, 11)){ // Offset y down
+                if(this.currentMesh != null){
                     this.currentMesh.offset(0, 1);
                 }
             }
-            if(isMouseBetween(mouseX, mouseY, 142, 169, 11, 11)){ // Offset y down
+            if(isMouseBetween(mouseX, mouseY, 142, 208, 11, 11)){ // Offset default
                 if(this.currentMesh != null){
-                    this.currentMesh.offset(0, -1);
+                    this.currentMesh.setOffset(0, 0);
                 }
             }
         } else if(mouseButton == 1){

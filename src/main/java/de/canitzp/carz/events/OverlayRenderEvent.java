@@ -40,7 +40,7 @@ public class OverlayRenderEvent {
         } else if(event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
             if(Carz.MODVERSION.contains("Proof of Concept")){
                 GlStateManager.pushMatrix();
-                GlStateManager.scale(0.54F, 0.5F, 0.5F);
+                GlStateManager.scale(0.5F, 0.5F, 0.5F);
                 Minecraft.getMinecraft().fontRenderer.drawString(pocText, 2, 2, 0xFFFFFF);
                 GlStateManager.popMatrix();
             }
