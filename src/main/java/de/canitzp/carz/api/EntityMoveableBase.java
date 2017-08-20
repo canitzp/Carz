@@ -8,6 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -37,7 +38,6 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
 
     protected final static DataParameter<Float> SPEED = EntityDataManager.createKey(EntityMoveableBase.class, DataSerializers.FLOAT);
     private float remoteSpeed = 0;
-
     private double lastColX = 0, lastColZ = 0;
     //    private int lastColTime;
     private TimedCache<Integer> collisionCache = new TimedCache<>(1000);
@@ -65,8 +65,29 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
         this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+
+        double cos = Math.cos(-this.deltaRotation * 0.017453292F);
+        double sin = Math.sin(this.deltaRotation * 0.017453292F);
+
+
         if (this.isCollidedHorizontally)
             this.rotationYaw = origRotationYaw;
+        else {
+            for (Entity e : movingAlong) {
+                if (world.isRemote || !(e instanceof EntityPlayerMP)) { //TODO: Do I really do not want to move Players?
+                    e.rotationYaw += deltaRotation;
+                    e.setRotationYawHead(e.getRotationYawHead() + deltaRotation);
+
+                    double ox = e.posX - this.posX, oz = e.posZ - this.posZ;
+
+                    //vehiclepos + moved + offset rotated by deltaR
+
+                    e.setPosition(this.posX + this.motionX + ox * cos - oz * sin,
+                            e.posY + motionY,
+                            this.posZ + motionZ + ox * sin + oz * cos);
+                }
+            }
+        }
     }
 
     protected void onUpdate(boolean canPassengerSteer) {
@@ -180,7 +201,6 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         return this.getEntityBoundingBox(); //so others can't pass through us
     }
 
-
     /**
      * Returns a boundingBox used to collide the entity with other entities and blocks. This enables the entity to be
      * pushable on contact, like boats or minecarts.
@@ -194,6 +214,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     @Override
     public void applyEntityCollision(@Nonnull Entity entityIn) {
         if (world.isRemote || this.isPassenger(entityIn)) return;
+        if (true) return; //ToDo: Yeah - let's reuse this :)
         if (entityIn instanceof EntityMoveableBase) {
 
         } else if (entityIn instanceof EntityLiving) {

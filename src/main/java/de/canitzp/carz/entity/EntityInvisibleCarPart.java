@@ -27,7 +27,15 @@ public class EntityInvisibleCarPart extends Entity {
 
     private float offsetX, offsetY, offsetZ;
 
+    /**
+     * Are other entities "allowed" to collide with
+     */
     public boolean colliding = true;
+
+    /**
+     * If true, other entities are able to stand on this part and will be moved along
+     */
+    public boolean moveAlong = true;
 
     @SuppressWarnings("unused")
     public EntityInvisibleCarPart(World worldIn) {
@@ -78,17 +86,27 @@ public class EntityInvisibleCarPart extends Entity {
     public void onUpdate() {
         if (this.parent == null || this.parent.isDead) {
             this.world.removeEntity(this);
-            return;
         }
-        //prev renderYawOffset
-        double cos = Math.cos(this.parent.rotationYaw * (Math.PI / 180.0F));
-        double sin = Math.sin(this.parent.rotationYaw * (Math.PI / 180.0F));
+        //The stuff normally done here is now called from the parent, with "cached" sin/cos
+    }
+
+    /**
+     * Called from the parent (EntityPartedBase)
+     * @param cos the parent cos
+     * @param sin the paren sin
+     */
+    public void onUpdate(double cos, double sin) {
         this.setPositionAndUpdate(this.parent.posX + this.offsetX * cos - this.offsetZ * sin,
                 this.parent.posY + this.offsetY,
                 this.parent.posZ + this.offsetX * sin + this.offsetZ * cos);
 
         if (!this.world.isRemote && colliding) {
+            if (moveAlong) {
+                this.moveAlongNearbyEntities();
+            }
             this.collideWithNearbyEntities();
+        }else if (this.world.isRemote && moveAlong){
+            this.moveAlongNearbyEntities();
         }
 
         super.onUpdate();
@@ -131,8 +149,19 @@ public class EntityInvisibleCarPart extends Entity {
     }
 
     private void collideWithNearbyEntities() {
+        //TODO: (entity instanceof EntityInvisibleCarPart) allow from different parents
         List<Entity> entities = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
-        entities.stream().filter(entity -> entity != this.parent && !(entity instanceof EntityInvisibleCarPart) && entity.canBePushed()).forEach(entity -> entity.applyEntityCollision(this.parent));
+        entities.stream()
+                .filter(entity -> entity != this.parent && !(entity instanceof EntityInvisibleCarPart) && entity.canBePushed() && !this.parent.getPassengers().contains(entity) && !parent.movingAlong.contains(entity))
+                .forEach(entity -> entity.applyEntityCollision(this.parent));
+    }
+
+    private void moveAlongNearbyEntities() {
+        //Collect entities standing on us
+        List<Entity> movingAlong_ = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(-0.01, 0.5D, -0.01));
+        movingAlong_.stream()
+                .filter(entity -> entity != this.parent && !(entity instanceof EntityInvisibleCarPart) && entity.canBePushed() && !this.parent.getPassengers().contains(entity))
+                .forEach(e -> parent.movingAlong.add(e));
     }
 
     @Override

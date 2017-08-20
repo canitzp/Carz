@@ -1,9 +1,6 @@
 package de.canitzp.carz.api;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
-import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMonsterPlacer;
@@ -14,7 +11,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.actors.threadpool.Arrays;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -138,13 +134,6 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             passenger.rotationYaw += this.deltaRotation;
             passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotation);
             this.applyYawToEntity(passenger);
-
-//            if (passenger instanceof EntityAnimal && this.getPassengers().size() > 1) {
-//                int j = passenger.getEntityId() % 2 == 0 ? 90 : 270;
-//                passenger.setRenderYawOffset(((EntityAnimal) passenger).renderYawOffset + (float) j);
-//                passenger.setRotationYawHead(passenger.getRotationYawHead() + (float) j);
-//            }
         }
     }
-
 }

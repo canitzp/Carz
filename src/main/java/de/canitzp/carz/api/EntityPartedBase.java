@@ -1,7 +1,6 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFenceGate;
@@ -13,16 +12,11 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,6 +39,8 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
     protected float horizontalCollisionModifier = 0.2f;
 
+    public Set<Entity> movingAlong = new HashSet<>();
+
     public EntityPartedBase(World worldIn) {
         super(worldIn);
 
@@ -63,18 +59,27 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
         }
         rwidth += 0.2;
         rheight += 0.2;
-        this.renderBoundingBox = new AxisAlignedBB(-rwidth*1.3, -rheight, -rwidth*1.3,
-                rwidth*1.3, rheight, rwidth*1.3);
+        this.renderBoundingBox = new AxisAlignedBB(-rwidth * 1.3, -rheight, -rwidth * 1.3,
+                rwidth * 1.3, rheight, rwidth * 1.3);
 
     }
 
     @Override
     public void onUpdate() {
-        super.onUpdate();
-        //TODO: Check collision for rotation
+        //Reset the movingAlong collection, as we will re-add them in onUpdate if needed
+        movingAlong.clear();
+        //prev renderYawOffset
+        double cos = Math.cos(this.rotationYaw * (Math.PI / 180.0F));
+        double sin = Math.sin(this.rotationYaw * (Math.PI / 180.0F));
         for (EntityInvisibleCarPart part : partArray) {
-            part.onUpdate();
+            part.onUpdate(cos, sin);
         }
+
+        super.onUpdate();
+    }
+
+    public boolean isMovingAlong(Entity entity) {
+        return movingAlong.contains(entity);
     }
 
     public EntityInvisibleCarPart[] getPartArray() {
@@ -109,7 +114,8 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public @Nonnull AxisAlignedBB getRenderBoundingBox() {
+    public @Nonnull
+    AxisAlignedBB getRenderBoundingBox() {
         return this.renderBoundingBox.offset(posX, posY, posZ);
     }
 
