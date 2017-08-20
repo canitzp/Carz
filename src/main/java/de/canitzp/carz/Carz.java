@@ -19,7 +19,8 @@ public class Carz {
 
     public static final String MODID = "carz";
     public static final String MODNAME = "Carz";
-    public static final String MODVERSION = "%VERSION%";
+    public static final String MODVERSION = "@VERSION@";
+    public static final String BUILDDATE = "@BUILD_DATE@";
     public static final Logger LOG = LogManager.getFormatterLogger(MODNAME);
 
     @Mod.Instance(MODID)
