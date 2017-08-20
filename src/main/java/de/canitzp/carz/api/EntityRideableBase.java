@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import scala.actors.threadpool.Arrays;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -33,10 +34,22 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         super(worldIn);
     }
 
+    /**
+     * Add a seat position.
+     * @param x offset from entity center
+     * @param y offset from entity center
+     * @param z offset from entity center
+     */
     protected void addSeat(double x, double y, double z) {
         this.seats.add(new Vec3d(x, y, z));
     }
 
+    /**
+     * Sets the position of the driver seat
+     * @param x offset from entity center
+     * @param y offset from entity center
+     * @param z offset from entity center
+     */
     protected void setDriverSeat(double x, double y, double z) {
         this.seats.set(0, new Vec3d(x, y, z));
     }
@@ -47,6 +60,11 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         return list.isEmpty() ? null : list.get(0);
     }
 
+    /**
+     * Can an entity enter this vehicle?
+     * @param passenger entity
+     * @return true if said entity may enter this vehicle as a passenger
+     */
     @Override
     protected boolean canFitPassenger(Entity passenger) {
         return this.getPassengers().size() < getMaxPassengerAmount();
@@ -93,6 +111,11 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         this.applyYawToEntity(entityToUpdate);
     }
 
+    /**
+     * Get the seat(index) to "place" an entity on.
+     * @param passenger the passenger
+     * @return the index of the seat, or -1 if said entity is not an passenger
+     */
     protected int getSeatByPassenger(Entity passenger) {
         if (this.getPassengers().size() > 1) {
             return this.getPassengers().indexOf(passenger);
@@ -100,7 +123,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         return 0;
     }
 
-    public void updatePassenger(Entity passenger) {
+    public void updatePassenger(@Nonnull Entity passenger) {
         if (this.isPassenger(passenger)) {
             float f1 = (float) ((this.isDead ? 0.009999999776482582D : this.getMountedYOffset()) + passenger.getYOffset());
 

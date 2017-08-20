@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -22,12 +23,13 @@ import java.util.List;
  * In case you need it, ask me ;)
  */
 public class EntityInvisibleCarPart extends Entity {
-    protected EntityPartedBase parent;
+    private EntityPartedBase parent;
 
-    protected float offsetX, offsetY, offsetZ;
+    private float offsetX, offsetY, offsetZ;
 
     public boolean colliding = true;
 
+    @SuppressWarnings("unused")
     public EntityInvisibleCarPart(World worldIn) {
         super(worldIn);
     }
@@ -47,20 +49,35 @@ public class EntityInvisibleCarPart extends Entity {
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound nbtTag) {
-
+    public void readEntityFromNBT(@Nonnull NBTTagCompound nbtTag) {
+        //Empty - do not save me
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound nbtTag) {
+    public void writeEntityToNBT(@Nonnull NBTTagCompound nbtTag) {
+        //Empty - do not save me
+    }
 
+    @Override
+    public boolean writeToNBTAtomically(@Nonnull NBTTagCompound compound) {
+        return false;
+    }
+
+    @Override
+    public boolean writeToNBTOptional(@Nonnull NBTTagCompound compound) {
+        return false;
+    }
+
+    @Override
+    public @Nonnull
+    NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        return compound;
     }
 
     @Override
     public void onUpdate() {
         if (this.parent == null || this.parent.isDead) {
-            this.setDead();
-            super.onUpdate();
+            this.world.removeEntity(this);
             return;
         }
         //prev renderYawOffset

@@ -18,8 +18,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
 /**
  * @author canitzp, MisterErwin
@@ -30,7 +30,7 @@ public class EntityBus extends EntitySteerableBase {
 
     static {
         EntityPartedBase.PartBuilder builder = builder();
-        //Unterboden
+        //Under**fucking**ground
         for (int z = -3; z <= 3; ++z)
             for (int x = -1; x <= 1; ++x)
                 builder.addCollidingPart(x, 0, z, 1, 0.2f);
@@ -40,6 +40,7 @@ public class EntityBus extends EntitySteerableBase {
         for (float z = -3; z <= 3; z += 0.5f)
             builder.addPart(1.5f, 0, z, 0.2f, wh);
 
+        //Seitenwand
         builder.addPart(-1.5f, wo, -3.0f, 0.2f, wh);
         builder.addPart(-1.5f, wo, -2.5f, 0.2f, wh);
         builder.addPart(-1.5f, wo, -2.0f, 0.2f, wh);
@@ -76,8 +77,6 @@ public class EntityBus extends EntitySteerableBase {
         partData = builder.build();
     }
 
-//    public BiMap<Integer, Entity> passengerSeats = HashBiMap.create();
-
     private final static DataParameter<int[]> SEATING_DATA = EntityDataManager.createKey(EntityBus.class, NetworkHandler.VARINT_ARRAY);
 
     public EntityBus(World worldIn) {
@@ -102,7 +101,6 @@ public class EntityBus extends EntitySteerableBase {
     public Entity getControllingPassenger() {
         int[] seats = this.dataManager.get(SEATING_DATA);
         return seats.length > 0 && seats[0] != -1 ? world.getEntityByID(seats[0]) : null;
-//        return this.passengerSeats.getOrDefault(0, null);
     }
 
     @Override
@@ -120,7 +118,6 @@ public class EntityBus extends EntitySteerableBase {
         //The DriverSeat is hitbox No 54
         if (!world.isRemote && partIndex >= 54 && !player.isSneaking()) {
             int seatIndex = partIndex - 54;
-//            if (this.passengerSeats.containsKey(seatIndex))
             int[] seats = this.dataManager.get(SEATING_DATA);
             if (seats.length > seatIndex && seats[seatIndex] != -1)
                 return false;
@@ -156,14 +153,10 @@ public class EntityBus extends EntitySteerableBase {
 
     @Override
     protected void removePassenger(Entity passenger) {
-//        this.passengerSeats.inverse().remove(passenger);
         int seat = this.getSeatByPassenger(passenger);
         if (seat != -1) {
             this.setSeatingData(dataManager.get(SEATING_DATA), seat, -1);
-        } else
-            System.err.println("Seat was -1? " + (world.isRemote ? "remote" : "server"));
-//        NetworkHandler.net.sendToAllAround(new MessageCarMultiSeatChange(this.getEntityId(), -1, passenger.getEntityId()),
-//                new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 128));
+        }
         super.removePassenger(passenger);
     }
 
@@ -207,12 +200,12 @@ public class EntityBus extends EntitySteerableBase {
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {
+    protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
 
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {
+    protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
 
     }
 }

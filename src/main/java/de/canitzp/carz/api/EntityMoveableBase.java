@@ -15,6 +15,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import java.util.List;
  *
  * @author MisterErwin
  */
-public abstract class EntityMoveableBase extends EntityCollideableBase {
+public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollideableBase*/ {
     protected float deltaRotation;
     protected float momentum, angularMomentum;
     protected int spinningTicks = 0; //Out of control
@@ -58,9 +59,14 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
         this.doBlockCollisions();
 
         float speed = getSpeed();
+        float origRotationYaw = this.rotationYaw;
+        if (speedSqAbs > 0.001 && this.isBeingRidden())
+            this.rotationYaw += this.deltaRotation;
         this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
         this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+        if (this.isCollidedHorizontally)
+            this.rotationYaw = origRotationYaw;
     }
 
     protected void onUpdate(boolean canPassengerSteer) {
@@ -71,12 +77,6 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
             if (world.isRemote)
                 NetworkHandler.net.sendToServer(new MessageCarSpeed(speed));
             setSpeed(speed);
-        } else {
-//            if (this.motionZ != 0)
-//                Carz.LOG.info("MotZ = " + this.motionZ);
-//            this.motionX = 0.0D;
-//            this.motionY = 0.0D;
-//            this.motionZ = 0.0D;
         }
     }
 
@@ -192,7 +192,7 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
     }
 
     @Override
-    public void applyEntityCollision(Entity entityIn) {
+    public void applyEntityCollision(@Nonnull Entity entityIn) {
         if (world.isRemote || this.isPassenger(entityIn)) return;
         if (entityIn instanceof EntityMoveableBase) {
 
@@ -204,6 +204,10 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
                 this.updateServerDrivingData();
                 double angle = Math.atan2(this.posZ, this.posX) - Math.atan2(entityIn.posZ, entityIn.posX);
                 Carz.LOG.info("Hit with angle " + angle + " // " + this.angle + " @ " + this.speedSq);
+
+                //if inside EntityBus: move along
+                //if speed is great enough: deal damage
+                //otherwise: push entity "softly"
 
                 if (angle > -20 && angle < 20) {
                     //Only direct hits count
@@ -224,6 +228,8 @@ public abstract class EntityMoveableBase extends EntityCollideableBase {
                 //TODO: Yeah - let's actually use the collision contact point
                 this.lastColX = this.posX;
                 this.lastColZ = this.posZ;
+                entityIn.addVelocity(0, 2, 0);
+//                this.collisionCache.add(entityIn.getEntityId());
             }
         }
     }

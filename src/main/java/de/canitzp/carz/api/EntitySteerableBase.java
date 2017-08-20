@@ -94,9 +94,9 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     double rotmod = MathHelper.positiveModulo(rotYaw, 90);
 
                     if (rotmod < 5) {
-                        deltaR -= 0.04 * (rotmod + 0.00001);//  -0.15;
+                        deltaR -= 0.03 * (rotmod + 0.00001);//  -0.15;
                     } else if (rotmod > 85) {
-                        deltaR += 0.04 * (90 - rotmod);//  +0.15;
+                        deltaR += 0.03 * (90 - rotmod);//  +0.15;
                     }
                 }
 
@@ -109,7 +109,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 if (speedSqAbs > 0.001) {
                     //Apply the rotation if the car is moving.
                     this.deltaRotation += deltaR;
-                    this.rotationYaw += this.deltaRotation;
+//                    this.rotationYaw += this.deltaRotation; //MOVED: EntityMoveABle
                 }
             } else {
                 this.deltaRotation += 0.01;

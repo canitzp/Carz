@@ -37,11 +37,13 @@ import java.util.*;
  * @author MisterErwin
  */
 public abstract class EntityPartedBase extends EntityRenderedBase {
-    protected EntityInvisibleCarPart[] partArray;
+    private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
     //TODO: Seperate parts that are only following without the move/rotation collision checks
 
     private AxisAlignedBB renderBoundingBox;
+
+    protected float horizontalCollisionModifier = 0.2f;
 
     public EntityPartedBase(World worldIn) {
         super(worldIn);
@@ -106,8 +108,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    @MethodsReturnNonnullByDefault
-    public AxisAlignedBB getRenderBoundingBox() {
+    public @Nonnull AxisAlignedBB getRenderBoundingBox() {
         return this.renderBoundingBox.offset(posX, posY, posZ);
     }
 
@@ -273,6 +274,16 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, 0.0D, z));
                 }
             }
+
+            //On impact: reduce
+            if (x != origX && z == origZ) {
+                z *= horizontalCollisionModifier;
+                origZ *= horizontalCollisionModifier;
+            } else if (x == origX && z != origZ) {
+                x *= horizontalCollisionModifier;
+                origX *= horizontalCollisionModifier;
+            }
+
 //        }
 
 
