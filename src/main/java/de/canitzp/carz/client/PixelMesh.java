@@ -117,7 +117,7 @@ public class PixelMesh {
 
     @Override
     public String toString() {
-        return Arrays.deepToString(this.getPixels());
+        return "PixelMesh{" + this.getName() + " " + this.pixels.length + " " + this.getOwner() + "}";
     }
 
     public void toBytes(PacketBuffer buf) {
