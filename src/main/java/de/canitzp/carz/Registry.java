@@ -21,7 +21,9 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,6 +35,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -42,6 +45,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +100,21 @@ public class Registry {
     public static StatBase ENTITY_HIT_COUNT = new StatBasic(Carz.MODID + ":stat.entity_hit.count", new TextComponentTranslation(Carz.MODID + ":stat.entity_hit.count")).registerStat();
     public static StatBase ENTITY_HIT_DAMAGE = new StatBasic(Carz.MODID + ":stat.entity_hit.dmg", new TextComponentTranslation(Carz.MODID + ":stat.entity_hit.dmg")).registerStat();
 
+    /**
+     * Keys:
+     * They can't be initialized here, cause then the server would crash on startup, although we use {@link SideOnly}
+     */
+    @SideOnly(Side.CLIENT)
+    public static KeyBinding keyForward;
+    @SideOnly(Side.CLIENT)
+    public static KeyBinding keyBackward;
+    @SideOnly(Side.CLIENT)
+    public static KeyBinding keyLeft;
+    @SideOnly(Side.CLIENT)
+    public static KeyBinding keyRight;
+    @SideOnly(Side.CLIENT)
+    public static KeyBinding keyStartEngine;
+
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> reg = event.getRegistry();
@@ -132,10 +151,13 @@ public class Registry {
     public static void preInit(FMLPreInitializationEvent event) {
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
-        //ToDo: Register it a better way?
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
         if (event.getSide().isClient()) {
-            RenderingRegistry.registerEntityRenderingHandler(EntityInvisibleCarPart.class, new RenderInvisibleCarPart.RenderInvisibleCarPartFactory());
+            keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
+            keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
+            keyLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft;
+            keyRight = Minecraft.getMinecraft().gameSettings.keyBindRight;
+            ClientRegistry.registerKeyBinding(keyStartEngine = new KeyBinding(I18n.format("carz:key.start_engine.desc"), Keyboard.KEY_R, Carz.MODNAME));
         }
     }
 

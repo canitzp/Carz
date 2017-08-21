@@ -1,8 +1,10 @@
 package de.canitzp.carz.events;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntitySteerableBase;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import org.lwjgl.input.Keyboard;
 
 /**
  * Controls
@@ -19,11 +22,6 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Carz.MODID)
 public class KeyListener {
 
-    private static KeyBinding keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
-    private static KeyBinding keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
-    private static KeyBinding keyLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft;
-    private static KeyBinding keyRight = Minecraft.getMinecraft().gameSettings.keyBindRight;
-
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
         EntityPlayer p = Minecraft.getMinecraft().player;
@@ -32,6 +30,6 @@ public class KeyListener {
             return;
         }
         EntitySteerableBase steerable = (EntitySteerableBase) riding;
-        steerable.updateInputs(keyLeft.isKeyDown(), keyRight.isKeyDown(), keyForward.isKeyDown(), keyBackward.isKeyDown());
+        steerable.updateInputs(Registry.keyLeft.isKeyDown(), Registry.keyRight.isKeyDown(), Registry.keyForward.isKeyDown(), Registry.keyBackward.isKeyDown());
     }
 }

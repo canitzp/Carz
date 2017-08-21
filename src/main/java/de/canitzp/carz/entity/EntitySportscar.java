@@ -6,8 +6,11 @@ import de.canitzp.carz.api.EntitySteerableBase;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 
@@ -15,6 +18,8 @@ import javax.annotation.Nullable;
  * @author canitzp
  */
 public class EntitySportscar extends EntitySteerableBase {
+
+    private FluidTank tank = new FluidTank(10000);
 
     public EntitySportscar(World worldIn) {
         super(worldIn);
@@ -51,5 +56,9 @@ public class EntitySportscar extends EntitySteerableBase {
 
     }
 
-
+    @Nullable
+    @Override
+    protected IFluidHandler getFluidHandler(@Nullable EnumFacing facing) {
+        return this.tank;
+    }
 }

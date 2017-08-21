@@ -36,9 +36,7 @@ public class GuiMeshChooser extends GuiScreen{
 
 
     public int guiLeft, guiTop, xSize = 195, ySize = 136, painterSlot;
-    private PixelMesh currentMesh = null;
     private EntityPlayer player;
-    private PixelMeshPane pane;
 
     public GuiMeshChooser(EntityPlayer player, int painterSlot) {
         this.painterSlot = painterSlot;
@@ -56,15 +54,13 @@ public class GuiMeshChooser extends GuiScreen{
         this.lines.clear();
         List<PixelMesh> meshes = new ArrayList<>(WorldEvents.MESHES_LOADED_INTO_WORLD.values());
         Map<UUID, Integer> tabRowMap = new HashMap<>();
-        for(int i = 0; i < meshes.size(); i++){
-            PixelMesh mesh = meshes.get(i);
+        for (PixelMesh mesh : meshes) {
             int tabIndex = tabRowMap.getOrDefault(mesh.getOwner(), 0);
             int row = tabIndex / 8;
             tabRowMap.put(mesh.getOwner(), ++tabIndex);
-            System.out.println(row);
             Map<Integer, List<PixelMesh>> tab = this.lines.getOrDefault(mesh.getOwner(), new HashMap<>());
             List<PixelMesh> lineMeshes = tab.getOrDefault(row, new ArrayList<>());
-            lineMeshes.add(meshes.get(i));
+            lineMeshes.add(mesh);
             tab.put(row, lineMeshes);
             this.lines.put(mesh.getOwner(), tab);
         }
@@ -173,7 +169,4 @@ public class GuiMeshChooser extends GuiScreen{
         return false;
     }
 
-    public void setCurrentMesh(PixelMesh currentMesh) {
-        this.currentMesh = currentMesh;
-    }
 }

@@ -112,10 +112,6 @@ public class ItemPainter extends ItemBase<ItemPainter> {
     private void openChooseGui(ItemStack stack, EntityPlayer player, int painterSlot) {
         if (!stack.isEmpty() && stack.getItem() == this) {
             GuiMeshChooser gui = new GuiMeshChooser(player, painterSlot);
-            PixelMesh mesh = getPixelMeshFromStack(stack);
-            if (mesh != null) {
-                gui.setCurrentMesh(mesh);
-            }
             Minecraft.getMinecraft().displayGuiScreen(gui);
         }
     }

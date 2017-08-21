@@ -12,3 +12,6 @@ item.carz:car_part.engine.name=Car engine
 # Statistics
 carz:stat.entity_hit.count=Entity hit with car
 carz:stat.entity_hit.dmg=Damage done with car
+
+# Keys
+carz:key.start_engine.desc=Start/Stop engine
