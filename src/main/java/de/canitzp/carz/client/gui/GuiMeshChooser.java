@@ -5,6 +5,7 @@ import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.PixelMeshScrollPane;
 import de.canitzp.carz.client.gui.meshpane.PixelMeshPane;
 import de.canitzp.carz.events.WorldEvents;
+import de.canitzp.carz.items.ItemPainter;
 import de.canitzp.carz.network.MessageUpdatePainter;
 import de.canitzp.carz.network.NetworkHandler;
 import de.canitzp.carz.util.GuiUtil;
@@ -31,7 +32,7 @@ public class GuiMeshChooser extends GuiScreen{
 
     private Map<UUID, Map<Integer, List<PixelMesh>>> lines = new HashMap<>();
     private Map<Pair<Integer, Integer>, UUID> tabCoords = new HashMap<>();
-    private UUID activeTab = new UUID(0, 1);
+    private UUID activeTab = PixelMesh.INTERNAL_UUID;
 
 
     public int guiLeft, guiTop, xSize = 195, ySize = 136, painterSlot;
@@ -42,6 +43,10 @@ public class GuiMeshChooser extends GuiScreen{
     public GuiMeshChooser(EntityPlayer player, int painterSlot) {
         this.painterSlot = painterSlot;
         this.player = player;
+        PixelMesh mesh = ItemPainter.getPixelMeshFromStack(player.inventory.getStackInSlot(painterSlot));
+        if(mesh != null){
+            this.activeTab = mesh.getOwner();
+        }
     }
 
     @Override
@@ -50,12 +55,17 @@ public class GuiMeshChooser extends GuiScreen{
         this.guiTop = (this.height - this.ySize) / 2;
         this.lines.clear();
         List<PixelMesh> meshes = new ArrayList<>(WorldEvents.MESHES_LOADED_INTO_WORLD.values());
+        Map<UUID, Integer> tabRowMap = new HashMap<>();
         for(int i = 0; i < meshes.size(); i++){
             PixelMesh mesh = meshes.get(i);
+            int tabIndex = tabRowMap.getOrDefault(mesh.getOwner(), 0);
+            int row = tabIndex / 8;
+            tabRowMap.put(mesh.getOwner(), ++tabIndex);
+            System.out.println(row);
             Map<Integer, List<PixelMesh>> tab = this.lines.getOrDefault(mesh.getOwner(), new HashMap<>());
-            List<PixelMesh> lineMeshes = tab.getOrDefault(i / 8, new ArrayList<>());
+            List<PixelMesh> lineMeshes = tab.getOrDefault(row, new ArrayList<>());
             lineMeshes.add(meshes.get(i));
-            tab.put(i / 8, lineMeshes);
+            tab.put(row, lineMeshes);
             this.lines.put(mesh.getOwner(), tab);
         }
 
@@ -66,13 +76,12 @@ public class GuiMeshChooser extends GuiScreen{
             this.tabCoords.put(Pair.of(x, y), tab);
             x += 30;
         }
-
-        //this.pane = new PixelMeshPane(this, this.guiLeft + 9, this.guiTop + 18, 160, 110);
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        String tooltip = "";
         this.mc.getTextureManager().bindTexture(TAB);
         for(Map.Entry<Pair<Integer, Integer>, UUID> entry : this.tabCoords.entrySet()){
             boolean isActive = entry.getValue().equals(this.activeTab);
@@ -86,9 +95,7 @@ public class GuiMeshChooser extends GuiScreen{
                 this.drawTexturedModalRect(x, y, isLeft ? 0 : isRight ? 140 : 28, isTop ? 2 : 64, 28, isLeft ? 31 : 28);
                 List<PixelMesh> meshes = this.lines.get(entry.getValue()).getOrDefault(0, new ArrayList<>());
                 if(!meshes.isEmpty()){
-                    GlStateManager.pushMatrix();
                     meshes.get(0).render(x + 6, y + 8);
-                    GlStateManager.popMatrix();
                 }
             }
         }
@@ -106,9 +113,7 @@ public class GuiMeshChooser extends GuiScreen{
                 this.drawTexturedModalRect(x, y, isLeft ? 0 : isRight ? 140 : 28, isTop ? 32 : 96, 28, 32);
                 List<PixelMesh> meshes = this.lines.get(entry.getValue()).getOrDefault(0, new ArrayList<>());
                 if(!meshes.isEmpty()){
-                    GlStateManager.pushMatrix();
                     meshes.get(0).render(x + 6, y + 8);
-                    GlStateManager.popMatrix();
                 }
             }
         }
@@ -126,28 +131,46 @@ public class GuiMeshChooser extends GuiScreen{
                }
            }
         }
-
-        //this.pane.draw(mouseX, mouseY);
+        PixelMesh underMouse = getMeshUnderMouse(mouseX, mouseY);
+        if(underMouse != null){
+            this.drawHoveringText(underMouse.getName(), mouseX, mouseY);
+        }
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
-        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-        super.handleMouseInput();
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if(mouseButton == 0){
+            if(mouseY < this.guiTop || mouseY > this.guiTop + this.ySize){
+                for(Map.Entry<Pair<Integer, Integer>, UUID> entry : this.tabCoords.entrySet()){
+                    int x = entry.getKey().getKey();
+                    int y = entry.getKey().getValue();
+                    if(mouseX >= x && mouseX <= x + 28){
+                        this.activeTab = entry.getValue();
+                    }
+                }
+            }
+            PixelMesh underMouse = getMeshUnderMouse(mouseX, mouseY);
+            if(underMouse != null){
+                NetworkHandler.net.sendToServer(new MessageUpdatePainter(this.painterSlot, this.player.getEntityId(), underMouse.getId()));
+            }
+        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    private PixelMesh getMeshUnderMouse(int mouseX, int mouseY){
+        if(GuiUtil.isMouseBetween(this.guiLeft, this.guiTop, mouseX, mouseY, 9, 18, 160, 110)){
+            int row = (mouseY - this.guiTop - 18) / 20;
+            int col = (mouseX - this.guiLeft - 9) / 20;
+            Map<Integer, List<PixelMesh>> tabContent = this.lines.getOrDefault(this.activeTab, new HashMap<>());
+            List<PixelMesh> meshesInRow = tabContent.getOrDefault(row, new ArrayList<>());
+            return meshesInRow.size() > col ? meshesInRow.get(col) : null;
+        }
+        return null;
     }
 
     @Override
     public boolean doesGuiPauseGame() {
         return false;
-    }
-
-    @Override
-    public void onGuiClosed() {
-        //if(this.scrollPane.getCurrentMesh() != null){
-          //  NetworkHandler.net.sendToServer(new MessageUpdatePainter(this.painterSlot, this.player.getEntityId(), this.scrollPane.getCurrentMesh().getId()));
-        //}
-        super.onGuiClosed();
     }
 
     public void setCurrentMesh(PixelMesh currentMesh) {

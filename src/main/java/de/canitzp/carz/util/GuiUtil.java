@@ -14,4 +14,8 @@ public class GuiUtil {
         Gui.drawRect(x, y + height - 1, x + width, y + height, color); // ===
     }
 
+    public static boolean isMouseBetween(int guiLeft, int guiTop, int mouseX, int mouseY, int x, int y, int width, int height){
+        return mouseX >= guiLeft + x && mouseY >= guiTop + y && mouseX <= guiLeft + x + width && mouseY <= guiTop + y + height;
+    }
+
 }

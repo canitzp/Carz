@@ -18,6 +18,7 @@ import java.util.UUID;
 public class PixelMesh {
 
     public static final UUID EMPTY_UUID = new UUID(0, 0);
+    public static final UUID INTERNAL_UUID = new UUID(0, 1);
 
     private Pixel[][] pixels;
     private String name;
