@@ -15,6 +15,7 @@ import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
 import de.canitzp.carz.items.ItemBase;
 import de.canitzp.carz.items.ItemCarPart;
+import de.canitzp.carz.items.ItemOilProbe;
 import de.canitzp.carz.items.ItemPainter;
 
 import net.minecraft.block.Block;
@@ -87,6 +88,7 @@ public class Registry {
      */
     public static ItemCarPart itemCarPart = new ItemCarPart().register();
     public static ItemPainter itemPainter = new ItemPainter().register();
+    public static ItemOilProbe itemOilProbe = new ItemOilProbe().register();
 
     /**
      * Models:

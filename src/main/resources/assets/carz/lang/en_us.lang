@@ -8,6 +8,8 @@ tile.carz:road_sign.name=Road Sign
 # Items
 item.carz:painter.name=Painter
 item.carz:car_part.engine.name=Car engine
+item.carz:oil_probe.name=Oil probe
+item.carz:oil_probe.found=Found %smB oil in this chunk
 
 # Statistics
 carz:stat.entity_hit.count=Entity hit with car
