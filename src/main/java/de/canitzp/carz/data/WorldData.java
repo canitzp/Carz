@@ -72,9 +72,7 @@ public class WorldData extends WorldSavedData {
     public static int getOilInChunk(@Nonnull World world, int x, int z){
         List<Triple<Integer, Integer, Integer>> chunks = OIL_CHUNKS.getOrDefault(world.provider.getDimension(), new ArrayList<>());
         for(Triple<Integer, Integer, Integer> coords : chunks){
-            System.out.println(coords.getMiddle());
             if(coords.getLeft() == x && coords.getMiddle() == z){
-                System.out.println(coords);
                 return coords.getRight();
             }
         }

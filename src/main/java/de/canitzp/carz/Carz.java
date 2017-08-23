@@ -1,6 +1,7 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.client.PixelMesh;
+import de.canitzp.carz.gen.OilChunkGen;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -8,6 +9,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +43,7 @@ public class Carz {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
         proxy.init(event);
     }
 

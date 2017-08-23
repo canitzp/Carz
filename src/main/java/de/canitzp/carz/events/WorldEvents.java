@@ -106,17 +106,6 @@ public class WorldEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void onChunkGenerate(ChunkGeneratorEvent.ReplaceBiomeBlocks event){ // TODO use another event, since this gets called for nearly every block instead of chunk
-        World world = event.getWorld();
-        if(world != null && !world.isRemote){
-            // Don't use the World::rand here, otherwise the amount of oil would be the same if the coordinates are the same
-            if(MathHelper.getInt(new Random(), 0, 23) == 0){ // TODO config
-                WorldData.addOilChunk(world.provider.getDimension(), event.getX(), event.getZ(), MathHelper.getInt(new Random(), 1000000, 10000000));
-            }
-        }
-    }
-
     @Nullable
     public static PixelMesh getMeshByUUID(UUID id) {
         return MESHES_LOADED_INTO_WORLD.getOrDefault(id, null);
