@@ -17,3 +17,9 @@ carz:stat.entity_hit.dmg=Damage done with car
 
 # Keys
 carz:key.start_engine.desc=Start/Stop engine
+
+# Configs
+carz:config.general=General
+carz:config.general.tooltip=Set the general values for Carz
+carz:config.generation=Generation
+carz:config.generation.tooltip=Set the values for Carz world generation
