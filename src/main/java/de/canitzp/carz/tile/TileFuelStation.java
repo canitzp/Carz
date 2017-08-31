@@ -8,6 +8,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -18,13 +19,14 @@ public class TileFuelStation extends TileEntity {
     private FluidTank tank = new FluidTank(30000);
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return ((T) this.tank);
         }
@@ -37,12 +39,14 @@ public class TileFuelStation extends TileEntity {
         super.readFromNBT(compound);
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setTag("FluidTank", this.tank.writeToNBT(new NBTTagCompound()));
         return super.writeToNBT(compound);
     }
 
+    @Nonnull
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return TileSign.RENDER_BOX;

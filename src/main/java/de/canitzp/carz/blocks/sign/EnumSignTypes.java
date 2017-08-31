@@ -8,7 +8,6 @@ import de.canitzp.carz.client.renderer.RenderRoadSign;
 import de.canitzp.carz.tile.TileSign;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -50,6 +49,7 @@ public enum EnumSignTypes {
     private MapColor color;
     private AxisAlignedBB bottomBB, topBB;
 
+    @SuppressWarnings("SameParameterValue")
     EnumSignTypes(ModelRoadSign model, MapColor color, AxisAlignedBB bottomBB, AxisAlignedBB topBB) {
         this.model = model;
         this.color = color;

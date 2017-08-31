@@ -20,7 +20,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -40,6 +43,7 @@ import static net.minecraft.block.BlockDirectional.FACING;
 /**
  * @author canitzp
  */
+@SuppressWarnings({"deprecation", "WeakerAccess"})
 public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements IPaintableBlock{
 
     public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(1 / 16D, 0.0D, 7 / 16D, 15 / 16D, 1.0D, 9 / 16D);
@@ -58,14 +62,16 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
     public void registerClient() {
         ModelBakery.registerItemVariants(Item.getItemFromBlock(BlockRoadSign.this), new ResourceLocation(Carz.MODID, "signs/triangle"));
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(this), new ItemMeshDefinition() {
+            @Nonnull
             @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
+            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
                 return new ModelResourceLocation(new ResourceLocation(Carz.MODID, "signs/triangle"), "inventory");
             }
         });
         ClientRegistry.bindTileEntitySpecialRenderer(TileSign.class, new RenderRoadSign());
     }
 
+    @Nonnull
     @Override
     public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = getTileFromSign(world, pos);
@@ -75,11 +81,13 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
         return super.getMapColor(state, world, pos);
     }
 
+    @Nonnull
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = this.getDefaultState();
@@ -94,6 +102,7 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
         return state.getValue(FACING).ordinal() + (state.getValue(BOTTOM) ? EnumFacing.values().length : 0);
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, BOTTOM, FACING);
@@ -106,6 +115,7 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
         }
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(BOTTOM, true).withProperty(FACING, placer.getHorizontalFacing());
@@ -137,6 +147,7 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
         return false;
     }
 
+    @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileSign tile = getTileFromSign(world, pos);
@@ -156,21 +167,23 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
 
     @Override
     public void addCollisionBoxToList(IBlockState state, @Nonnull World world, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
-        TileEntity tile = getTileFromSign(world, pos);
-        if (tile != null) {
-            for (AxisAlignedBB typeAABB : ((TileSign) tile).getHitBoxes(state.getValue(BOTTOM))) {
-                switch (state.getValue(FACING)){
-                    case NORTH: case SOUTH:{
-                        break;
+        if(pos != null){
+            TileEntity tile = getTileFromSign(world, pos);
+            if (tile != null) {
+                for (AxisAlignedBB typeAABB : ((TileSign) tile).getHitBoxes(state.getValue(BOTTOM))) {
+                    switch (state.getValue(FACING)){
+                        case NORTH: case SOUTH:{
+                            break;
+                        }
+                        case WEST: case EAST:{
+                            typeAABB = new AxisAlignedBB(typeAABB.minZ, typeAABB.minY, typeAABB.minX, typeAABB.maxZ, typeAABB.maxY, typeAABB.maxX);
+                        }
                     }
-                    case WEST: case EAST:{
-                        typeAABB = new AxisAlignedBB(typeAABB.minZ, typeAABB.minY, typeAABB.minX, typeAABB.maxZ, typeAABB.maxY, typeAABB.maxX);
-                    }
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, typeAABB);
                 }
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, typeAABB);
+            } else {
+                super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entityIn, bool);
             }
-        } else {
-            super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entityIn, bool);
         }
     }
 

@@ -12,6 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -29,12 +30,12 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(T entity) {
+    protected ResourceLocation getEntityTexture(@Nonnull T entity) {
         return null;
     }
 
     @Override
-    public void doRender(T car, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(@Nonnull T car, double x, double y, double z, float entityYaw, float partialTicks) {
         if (this.model == null) {
             this.model = car.getCarModel();
             this.texture = car.getCarTexture();
@@ -60,7 +61,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
         this.model = null;
         this.texture = null;
     }

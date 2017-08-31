@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 public class ModelBus extends ModelBase {
 
     public ModelRenderer bottom_plate;

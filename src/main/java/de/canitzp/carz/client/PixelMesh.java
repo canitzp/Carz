@@ -15,6 +15,7 @@ import java.util.UUID;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 public class PixelMesh {
 
     public static final UUID EMPTY_UUID = new UUID(0, 0);
@@ -169,6 +170,7 @@ public class PixelMesh {
         //RenderHelper.enableStandardItemLighting();
     }
 
+    @SuppressWarnings("ConstantConditions")
     public boolean canBeEditedBy(EntityPlayer player){
         return player.isCreative() || (player.world instanceof WorldServer && player.world.getMinecraftServer().getPlayerList().getOppedPlayers().getPermissionLevel(player.getGameProfile()) == 4) || player.getGameProfile().getId().equals(this.owner);
     }

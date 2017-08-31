@@ -1,6 +1,5 @@
 package de.canitzp.carz;
 
-import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.config.ConfigCarz;
 import de.canitzp.carz.gen.OilChunkGen;
 import de.canitzp.carz.network.CommonProxy;
@@ -17,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 @Mod(modid = Carz.MODID, name = Carz.MODNAME, version = Carz.MODVERSION)
 public class Carz {
 

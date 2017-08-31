@@ -3,6 +3,7 @@ package de.canitzp.carz;
 /**
  * @author canitzp
  */
+@SuppressWarnings("SameParameterValue")
 public enum EnumCarParts {
 
     ENGINE(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);

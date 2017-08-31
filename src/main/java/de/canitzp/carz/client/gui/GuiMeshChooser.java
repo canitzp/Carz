@@ -2,21 +2,17 @@ package de.canitzp.carz.client.gui;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.client.PixelMesh;
-import de.canitzp.carz.client.PixelMeshScrollPane;
-import de.canitzp.carz.client.gui.meshpane.PixelMeshPane;
 import de.canitzp.carz.events.WorldEvents;
 import de.canitzp.carz.items.ItemPainter;
 import de.canitzp.carz.network.MessageUpdatePainter;
 import de.canitzp.carz.network.NetworkHandler;
 import de.canitzp.carz.util.GuiUtil;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.*;
@@ -24,6 +20,7 @@ import java.util.*;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 @SideOnly(Side.CLIENT)
 public class GuiMeshChooser extends GuiScreen{
 

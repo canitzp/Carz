@@ -27,6 +27,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author canitzp
  */
@@ -40,6 +42,7 @@ public class BlockRoad extends BlockContainerBase<BlockRoad> implements IPaintab
         this.setRegistryName(new ResourceLocation(Carz.MODID, "road"));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @SideOnly(Side.CLIENT)
     @Override
     public void registerClient() {
@@ -53,7 +56,7 @@ public class BlockRoad extends BlockContainerBase<BlockRoad> implements IPaintab
     }
 
     @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+    public boolean removedByPlayer(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
         TileEntity tile = world.getTileEntity(pos);
         if(tile instanceof TileRoad){
             if(((TileRoad) tile).getMesh() != null){
@@ -64,8 +67,9 @@ public class BlockRoad extends BlockContainerBase<BlockRoad> implements IPaintab
         return super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
+    @Nonnull
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(@Nonnull IBlockState state, RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, EntityPlayer player) {
         TileEntity tile = world.getTileEntity(pos);
         if(tile instanceof TileRoad) {
             if (((TileRoad) tile).getMesh() != null) {

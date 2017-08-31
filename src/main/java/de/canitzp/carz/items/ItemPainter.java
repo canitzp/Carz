@@ -3,17 +3,14 @@ package de.canitzp.carz.items;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.IPaintableBlock;
-import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.gui.GuiMeshChooser;
 import de.canitzp.carz.client.gui.GuiPixelMesher;
 import de.canitzp.carz.events.WorldEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -22,7 +19,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,13 +30,15 @@ import javax.annotation.Nullable;
  */
 public class ItemPainter extends ItemBase<ItemPainter> {
 
+    @SuppressWarnings("ConstantConditions")
     public ItemPainter() {
         this.setRegistryName(Carz.MODID, "painter");
         this.setUnlocalizedName(this.getRegistryName().toString());
     }
 
+    @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
         if (world.isRemote) {
             if (player.isSneaking()) {
                 this.openChooseGui(player.getHeldItem(hand), player, player.inventory.currentItem);
@@ -52,6 +50,7 @@ public class ItemPainter extends ItemBase<ItemPainter> {
         return super.onItemRightClick(world, player, hand);
     }
 
+    @Nonnull
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         IBlockState state = world.getBlockState(pos);
@@ -93,8 +92,9 @@ public class ItemPainter extends ItemBase<ItemPainter> {
         return super.itemInteractionForEntity(stack, player, target, hand);
     }
 
+    @Nonnull
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         String def = super.getItemStackDisplayName(stack);
         PixelMesh mesh = getPixelMeshFromStack(stack);
         if(mesh != null){
@@ -116,6 +116,7 @@ public class ItemPainter extends ItemBase<ItemPainter> {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     public static PixelMesh getPixelMeshFromStack(@Nonnull ItemStack stack) {
         if (stack.hasTagCompound()) {

@@ -44,6 +44,7 @@ public class MessageUpdatePainter implements IMessage, IMessageHandler<MessageUp
         buffer.writeUniqueId(this.meshID);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public MessageUpdatePainter onMessage(MessageUpdatePainter message, MessageContext ctx) {
         FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {

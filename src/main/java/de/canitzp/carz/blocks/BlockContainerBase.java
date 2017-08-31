@@ -4,24 +4,18 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * @author canitzp
  */
+@SuppressWarnings({"deprecation", "WeakerAccess"})
 public abstract class BlockContainerBase<T extends BlockContainerBase> extends BlockBase<T> implements ITileEntityProvider {
 
     private Class<? extends TileEntity> tileClass;
@@ -36,6 +30,7 @@ public abstract class BlockContainerBase<T extends BlockContainerBase> extends B
         this(materialIn, materialIn.getMaterialMapColor(), tileClass);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public T register() {
         GameRegistry.registerTileEntity(this.tileClass, this.getRegistryName().toString());
@@ -46,34 +41,9 @@ public abstract class BlockContainerBase<T extends BlockContainerBase> extends B
      * Called serverside after this block is replaced with another in Chunk, but before the Tile Entity is updated
      */
     @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         super.breakBlock(worldIn, pos, state);
         worldIn.removeTileEntity(pos);
-    }
-
-    /**
-     * Spawns the block's drops in the world. By the time this is called the Block has possibly been set to air via
-     * Block.removedByPlayer
-     */
-    @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
-        if (te instanceof IWorldNameable && ((IWorldNameable) te).hasCustomName()) {
-            player.addStat(StatList.getBlockStats(this));
-            player.addExhaustion(0.005F);
-            if (worldIn.isRemote) {
-                return;
-            }
-            int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-            Item item = this.getItemDropped(state, worldIn.rand, i);
-            if (item == Items.AIR) {
-                return;
-            }
-            ItemStack itemstack = new ItemStack(item, this.quantityDropped(worldIn.rand));
-            itemstack.setStackDisplayName(((IWorldNameable) te).getName());
-            spawnAsEntity(worldIn, pos, itemstack);
-        } else {
-            super.harvestBlock(worldIn, player, pos, state, (TileEntity) null, stack);
-        }
     }
 
     /**
@@ -90,7 +60,7 @@ public abstract class BlockContainerBase<T extends BlockContainerBase> extends B
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
         try {
             return this.tileClass.newInstance();
         } catch (Exception e) {

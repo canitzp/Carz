@@ -1,7 +1,6 @@
 package de.canitzp.carz.network;
 
 import de.canitzp.carz.api.EntityPartedBase;
-import de.canitzp.carz.api.EntitySteerableBase;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

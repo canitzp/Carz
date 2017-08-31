@@ -1,6 +1,5 @@
 package de.canitzp.carz.tile;
 
-import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.blocks.sign.EnumSignTypes;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.events.WorldEvents;
@@ -11,11 +10,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 public class TileSign extends TileEntity {
 
     private EnumSignTypes signType = EnumSignTypes.TRIANGLE;
@@ -50,6 +51,7 @@ public class TileSign extends TileEntity {
         }
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setInteger("SignType", this.signType.ordinal());
@@ -62,18 +64,20 @@ public class TileSign extends TileEntity {
         return super.writeToNBT(compound);
     }
 
+    @Nonnull
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return RENDER_BOX.offset(this.pos);
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {
         return this.writeToNBT(new NBTTagCompound());
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
+    public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
         this.readFromNBT(tag);
     }
 

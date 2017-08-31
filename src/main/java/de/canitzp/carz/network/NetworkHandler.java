@@ -11,9 +11,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * @author canitzp
@@ -23,13 +23,13 @@ public class NetworkHandler {
     public static SimpleNetworkWrapper net = NetworkRegistry.INSTANCE.newSimpleChannel(Carz.MODID);
 
     public static final DataSerializer<int[]> VARINT_ARRAY = new DataSerializer<int[]>() {
-        @ParametersAreNonnullByDefault
-        public void write(PacketBuffer buf, int[] value) {
+
+        public void write(@Nonnull PacketBuffer buf, @Nonnull int[] value) {
             buf.writeVarIntArray(value);
         }
 
-        @ParametersAreNonnullByDefault
-        public int[] read(PacketBuffer buf) throws IOException {
+        @Nonnull
+        public int[] read(@Nonnull PacketBuffer buf) throws IOException {
             return buf.readVarIntArray();
         }
 
@@ -37,6 +37,7 @@ public class NetworkHandler {
             return new DataParameter<>(id, this);
         }
 
+        @Nonnull
         @Override
         @MethodsReturnNonnullByDefault
         @ParametersAreNonnullByDefault

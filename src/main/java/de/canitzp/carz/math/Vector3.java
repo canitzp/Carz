@@ -77,6 +77,7 @@ public class Vector3 {
         return this.mul(1 / magnitude());
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public Vector3 clone() {
         return new Vector3(x, y, z);
     }

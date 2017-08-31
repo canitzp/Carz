@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 public class GuiHandler implements IGuiHandler {
 
     public static final int ID_PIXELMESHER = 0;

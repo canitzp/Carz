@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 public class ModelRoadSignTriangle extends ModelRoadSign {
 
     public ModelRenderer pole;

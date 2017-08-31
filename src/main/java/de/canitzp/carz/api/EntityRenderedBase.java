@@ -2,15 +2,12 @@ package de.canitzp.carz.api;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,7 +15,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * This class does provide the main function for a renderable object.
@@ -31,6 +27,7 @@ import java.util.List;
  * @see EntityRideableBase
  * @see EntitySteerableBase
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class EntityRenderedBase extends Entity {
 
     public EntityRenderedBase(World worldIn) {
@@ -42,6 +39,7 @@ public abstract class EntityRenderedBase extends Entity {
         return this.getCapability(capability, facing) != null;
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {

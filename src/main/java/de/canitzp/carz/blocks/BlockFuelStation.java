@@ -30,6 +30,7 @@ import static net.minecraft.block.BlockDirectional.FACING;
 /**
  * @author canitzp
  */
+@SuppressWarnings({"WeakerAccess", "deprecation"})
 public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
 
     public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
@@ -54,6 +55,7 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(new ResourceLocation(this.getRegistryName().toString()), "inventory"));
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = this.getDefaultState();
@@ -68,6 +70,7 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
         return state.getValue(FACING).ordinal() + (state.getValue(BOTTOM) ? EnumFacing.values().length : 0);
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, BOTTOM, FACING);
@@ -80,6 +83,7 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
         }
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(BOTTOM, true).withProperty(FACING, placer.getHorizontalFacing());
@@ -111,6 +115,7 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
         return false;
     }
 
+    @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if (!state.getValue(BOTTOM)) {
@@ -126,25 +131,27 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
 
     @Override
     public void addCollisionBoxToList(IBlockState state, @Nonnull World worldIn, @Nullable BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean bool) {
-        if (state.getValue(BOTTOM)) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BASE_PLATE);
-        }
-        switch (state.getValue(FACING)){
-            case NORTH: {
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_N);
-                break;
+        if(pos != null){
+            if (state.getValue(BOTTOM)) {
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BASE_PLATE);
             }
-            case SOUTH: {
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_S);
-                break;
-            }
-            case EAST: {
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_E);
-                break;
-            }
-            case WEST: {
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_W);
-                break;
+            switch (state.getValue(FACING)){
+                case NORTH: {
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_N);
+                    break;
+                }
+                case SOUTH: {
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_S);
+                    break;
+                }
+                case EAST: {
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_E);
+                    break;
+                }
+                case WEST: {
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_STAND_W);
+                    break;
+                }
             }
         }
     }

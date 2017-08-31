@@ -7,9 +7,7 @@ import de.canitzp.carz.blocks.BlockRoad;
 import de.canitzp.carz.blocks.BlockRoadSign;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
-import de.canitzp.carz.client.models.signs.ModelRoadSign;
 import de.canitzp.carz.client.renderer.RenderCar;
-import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
 import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
@@ -17,11 +15,8 @@ import de.canitzp.carz.items.ItemBase;
 import de.canitzp.carz.items.ItemCarPart;
 import de.canitzp.carz.items.ItemOilProbe;
 import de.canitzp.carz.items.ItemPainter;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
@@ -33,8 +28,6 @@ import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -54,6 +47,7 @@ import java.util.List;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 @Mod.EventBusSubscriber
 public class Registry {
 

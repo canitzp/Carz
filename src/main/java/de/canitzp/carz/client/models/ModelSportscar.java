@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 public class ModelSportscar extends ModelBase {
 
     public ModelRenderer bottom_plate;

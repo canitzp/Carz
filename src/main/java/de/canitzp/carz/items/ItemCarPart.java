@@ -2,8 +2,6 @@ package de.canitzp.carz.items;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.EnumCarParts;
-import de.canitzp.carz.Registry;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,7 +10,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,6 +20,7 @@ import javax.annotation.Nullable;
 /**
  * @author canitzp
  */
+@SuppressWarnings("WeakerAccess")
 public class ItemCarPart extends ItemBase<ItemCarPart> {
 
     public ItemCarPart() {
@@ -36,13 +34,14 @@ public class ItemCarPart extends ItemBase<ItemCarPart> {
         }
         ModelLoader.setCustomMeshDefinition(this, stack -> {
             EnumCarParts part = getPartFromStack(stack);
-            if(part != null){
-                return new ModelResourceLocation(new ResourceLocation(Carz.MODID, "parts/" + part.name()), "inventory");
+            if(part == null){
+                throw new RuntimeException("The Item " + this + " has no valid Car Part assigned! This is impossible");
             }
-            return null;
+            return new ModelResourceLocation(new ResourceLocation(Carz.MODID, "parts/" + part.name()), "inventory");
         });
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nonnull
     @Override
     public String getUnlocalizedName(@Nonnull ItemStack stack) {

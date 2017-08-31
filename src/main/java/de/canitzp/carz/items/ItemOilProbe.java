@@ -11,6 +11,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author canitzp
  */
@@ -21,12 +23,12 @@ public class ItemOilProbe extends ItemBase<ItemOilProbe> {
         this.setMaxStackSize(1);
     }
 
+    @Nonnull
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if(!world.isRemote){
             Chunk chunk = world.getChunkFromBlockCoords(pos);
             if(WorldData.hasChunkOil(world, chunk.x, chunk.z)){
-                System.out.println(chunk);
                 player.sendStatusMessage(new TextComponentTranslation("item.carz:oil_probe.found", WorldData.getOilInChunk(world, chunk.x, chunk.z)), false);
             }
         }

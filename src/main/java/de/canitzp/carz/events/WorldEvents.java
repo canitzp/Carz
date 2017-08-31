@@ -1,6 +1,5 @@
 package de.canitzp.carz.events;
 
-import de.canitzp.carz.client.Pixel;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.PixelMeshParser;
 import de.canitzp.carz.data.WorldData;
@@ -8,22 +7,19 @@ import de.canitzp.carz.network.MessageSendPixelMeshesToClient;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

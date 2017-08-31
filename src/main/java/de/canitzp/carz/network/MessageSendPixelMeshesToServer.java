@@ -3,17 +3,11 @@ package de.canitzp.carz.network;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.events.WorldEvents;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * @author canitzp

@@ -1,21 +1,16 @@
 package de.canitzp.carz.tile;
 
-import de.canitzp.carz.blocks.sign.EnumSignTypes;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.events.WorldEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author canitzp
@@ -34,6 +29,7 @@ public class TileRoad extends TileEntity{
         }
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setInteger("MeshFacing", this.meshFacing.ordinal());
@@ -43,13 +39,14 @@ public class TileRoad extends TileEntity{
         return super.writeToNBT(compound);
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {
         return this.writeToNBT(new NBTTagCompound());
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
+    public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
         this.readFromNBT(tag);
     }
 

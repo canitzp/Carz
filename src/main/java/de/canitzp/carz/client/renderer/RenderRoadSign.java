@@ -1,12 +1,9 @@
 package de.canitzp.carz.client.renderer;
 
 import de.canitzp.carz.blocks.sign.EnumSignTypes;
-import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.models.signs.ModelRoadSign;
 import de.canitzp.carz.tile.TileSign;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -47,12 +48,12 @@ public class EntitySportscar extends EntitySteerableBase {
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {
+    protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
 
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {
+    protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
 
     }
 
