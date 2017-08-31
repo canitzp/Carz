@@ -1,6 +1,7 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.client.PixelMesh;
+import de.canitzp.carz.config.ConfigCarz;
 import de.canitzp.carz.gen.OilChunkGen;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
@@ -43,7 +44,9 @@ public class Carz {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
+        if(ConfigCarz.Generation.OIL_CHUNKS_ACTIVE){
+            GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
+        }
         proxy.init(event);
     }
 

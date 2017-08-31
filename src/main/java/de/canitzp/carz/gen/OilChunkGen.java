@@ -19,7 +19,7 @@ public class OilChunkGen implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
         if(!world.isRemote){
             if(MathHelper.getInt(random, 0, ConfigCarz.Generation.OIL_CHUNK_CHANCE) == 0){
-                WorldData.addOilChunk(world.provider.getDimension(), chunkX, chunkZ, MathHelper.getInt(random, 1000000, 10000000));
+                WorldData.addOilChunk(world.provider.getDimension(), chunkX, chunkZ, MathHelper.getInt(random, ConfigCarz.Generation.OIL_MIN, ConfigCarz.Generation.OIL_MAX));
             }
         }
     }
