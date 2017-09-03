@@ -1,13 +1,11 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
-import de.canitzp.carz.blocks.BlockBase;
-import de.canitzp.carz.blocks.BlockFuelStation;
-import de.canitzp.carz.blocks.BlockRoad;
-import de.canitzp.carz.blocks.BlockRoadSign;
+import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
+import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
 import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
@@ -74,7 +72,8 @@ public class Registry {
      * Blocks:
      */
     public static BlockFuelStation blockFuelStation = new BlockFuelStation().register();
-    public static BlockRoad blockRoad = new BlockRoad().register();
+    public static BlockRoad blockRoad = new BlockRoad<>("road").register();
+    public static BlockRoadSlope blockRoadSlope = new BlockRoadSlope().register();
     public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
 
     /**
@@ -149,6 +148,7 @@ public class Registry {
         registerEntity("bus", EntityBus.class, event.getSide());
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
         if (event.getSide().isClient()) {
+            RenderingRegistry.registerEntityRenderingHandler(EntityInvisibleCarPart.class, new RenderInvisibleCarPart.RenderInvisibleCarPartFactory());
             keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
             keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
             keyLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft;

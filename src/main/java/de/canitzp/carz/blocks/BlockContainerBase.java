@@ -68,4 +68,9 @@ public abstract class BlockContainerBase<T extends BlockContainerBase> extends B
         }
         return null;
     }
+
+    protected T overrideTileClass(Class<? extends TileEntity> tileClass){
+        this.tileClass = tileClass;
+        return (T) this;
+    }
 }

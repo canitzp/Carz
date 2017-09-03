@@ -3,6 +3,7 @@ package de.canitzp.carz.tile;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.events.WorldEvents;
+import de.canitzp.carz.util.BlockProps;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -15,15 +16,13 @@ import javax.annotation.Nonnull;
 /**
  * @author canitzp
  */
-public class TileRoad extends TileEntity{
+public class TileRoad extends TileRoadBase{
 
     private PixelMesh mesh = null;
-    private EnumFacing meshFacing = EnumFacing.NORTH;
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.meshFacing = EnumFacing.values()[compound.getInteger("MeshFacing")];
         if (compound.hasUniqueId("MeshUUID")) {
             this.mesh = WorldEvents.getMeshByUUID(compound.getUniqueId("MeshUUID"));
         }
@@ -32,22 +31,10 @@ public class TileRoad extends TileEntity{
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setInteger("MeshFacing", this.meshFacing.ordinal());
         if (this.mesh != null) {
             compound.setUniqueId("MeshUUID", this.mesh.getId());
         }
         return super.writeToNBT(compound);
-    }
-
-    @Nonnull
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return this.writeToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
-        this.readFromNBT(tag);
     }
 
     public void setMesh(PixelMesh mesh) {
@@ -58,48 +45,48 @@ public class TileRoad extends TileEntity{
         return mesh;
     }
 
-    public void setMeshFacing(EnumFacing meshFacing) {
-        this.meshFacing = meshFacing;
-    }
-
-    public EnumFacing getMeshFacing() {
-        return meshFacing;
-    }
-
     @SideOnly(Side.CLIENT)
     public void render(RenderRoad renderRoad, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if(mesh != null){
+        if(this.getMesh() != null){
             float f = 1/16F;
             GlStateManager.pushMatrix();
             GlStateManager.translate(x, y + 1.01F, z);
-
-            switch (meshFacing){
-                case NORTH:{
-                    break;
-                }
-                case SOUTH:{
-                    GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
-                    GlStateManager.translate(-1.0F, 0.0F, -1.0F);
-                    break;
-                }
-                case EAST:{
-                    GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-                    GlStateManager.translate(0.0F, 0.0F, -1.0F);
-                    break;
-                }
-                case WEST:{
-                    GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
-                    GlStateManager.translate(-1.0F, 0.0F, 0.0F);
-                    break;
-                }
-                default: break;
-            }
-            GlStateManager.scale(f, f, f);
-            GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
-            mesh.render(0, 0);
-
+            this.preRender(renderRoad, x, y, z, partialTicks, destroyStage, alpha, f);
+            this.renderMesh(renderRoad, x, y, z, partialTicks, destroyStage, alpha, f);
             GlStateManager.popMatrix();
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void preRender(RenderRoad renderRoad, double x, double y, double z, float partialTicks, int destroyStage, float alpha, float scaleFactor){
+        switch (this.getMeshFacing()){
+            case NORTH:{
+                break;
+            }
+            case SOUTH:{
+                GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+                GlStateManager.translate(-1.0F, 0.0F, -1.0F);
+                break;
+            }
+            case EAST:{
+                GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+                GlStateManager.translate(0.0F, 0.0F, -1.0F);
+                break;
+            }
+            case WEST:{
+                GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+                GlStateManager.translate(-1.0F, 0.0F, 0.0F);
+                break;
+            }
+            default: break;
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void renderMesh(RenderRoad renderRoad, double x, double y, double z, float partialTicks, int destroyStage, float alpha, float scaleFactor){
+        GlStateManager.scale(scaleFactor, scaleFactor, scaleFactor);
+        GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
+        this.getMesh().render(0, 0);
     }
 
 }

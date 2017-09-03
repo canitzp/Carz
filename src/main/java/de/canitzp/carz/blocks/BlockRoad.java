@@ -32,14 +32,14 @@ import javax.annotation.Nonnull;
 /**
  * @author canitzp
  */
-public class BlockRoad extends BlockContainerBase<BlockRoad> implements IPaintableBlock{
+public class BlockRoad<T extends BlockRoad> extends BlockContainerBase<T> implements IPaintableBlock{
 
-    public BlockRoad() {
+    public BlockRoad(String name) {
         super(Material.ROCK, MapColor.BLACK, TileRoad.class);
         this.setHarvestLevel("pickaxe", 1);
         this.setHardness(2.0F);
         this.setResistance(10.0F);
-        this.setRegistryName(new ResourceLocation(Carz.MODID, "road"));
+        this.setRegistryName(new ResourceLocation(Carz.MODID, name));
     }
 
     @SuppressWarnings("ConstantConditions")

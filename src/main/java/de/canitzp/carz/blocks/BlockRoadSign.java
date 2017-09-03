@@ -38,6 +38,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static de.canitzp.carz.util.BlockProps.BOTTOM;
 import static net.minecraft.block.BlockDirectional.FACING;
 
 /**
@@ -48,8 +49,6 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
 
     public static final AxisAlignedBB SIGN_DEFAULT_BOTTOM = new AxisAlignedBB(1 / 16D, 0.0D, 7 / 16D, 15 / 16D, 1.0D, 9 / 16D);
     public static final AxisAlignedBB SIGN_DEFAULT_TOP = new AxisAlignedBB(0.0D, 0.0D, 7 / 16D, 1.0D, 1.0F, 9 / 16D);
-
-    public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
 
     public BlockRoadSign() {
         super(Material.IRON, TileSign.class);

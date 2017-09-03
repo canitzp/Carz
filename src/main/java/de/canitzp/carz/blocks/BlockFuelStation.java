@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static de.canitzp.carz.util.BlockProps.BOTTOM;
 import static net.minecraft.block.BlockDirectional.FACING;
 
 /**
@@ -33,7 +34,6 @@ import static net.minecraft.block.BlockDirectional.FACING;
 @SuppressWarnings({"WeakerAccess", "deprecation"})
 public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
 
-    public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
     public static final AxisAlignedBB AABB_BASE_PLATE = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D);
     public static final AxisAlignedBB AABB_STAND_N = new AxisAlignedBB(0.0D, 0.0D, 3 / 16D, 7 / 8D, 1.0D, 13 / 16D);
     public static final AxisAlignedBB AABB_STAND_S = new AxisAlignedBB(1-AABB_STAND_N.minX, AABB_STAND_N.minY, AABB_STAND_N.minZ, 1-AABB_STAND_N.maxX, AABB_STAND_N.maxY, AABB_STAND_N.maxZ);
