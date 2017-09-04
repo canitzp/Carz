@@ -117,8 +117,6 @@ public class TileRoadSlope extends TileRoad {
     @SideOnly(Side.CLIENT)
     @Override
     protected void renderMesh(RenderRoad renderRoad, double x, double y, double z, float partialTicks, int destroyStage, float alpha, float scaleFactor) {
-
-
         GlStateManager.scale(1.0F, 1.0F, 1.035F);
         super.renderMesh(renderRoad, x, y, z, partialTicks, destroyStage, alpha, scaleFactor);
     }

@@ -18,7 +18,6 @@ public abstract class TileRoadBase extends TileEntity {
 
     public void setMeshFacing(EnumFacing meshFacing) {
         this.meshFacing = meshFacing;
-        System.out.println(this.meshFacing);
     }
 
     public EnumFacing getMeshFacing() {

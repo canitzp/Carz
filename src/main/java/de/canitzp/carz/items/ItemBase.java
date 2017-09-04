@@ -4,6 +4,7 @@ import de.canitzp.carz.Registry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -43,5 +44,11 @@ public abstract class ItemBase<T extends ItemBase> extends Item {
     @Override
     public String getUnlocalizedName() {
         return "item." + this.getRegistryName().toString();
+    }
+
+    @Nonnull
+    @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        return this.getUnlocalizedName();
     }
 }

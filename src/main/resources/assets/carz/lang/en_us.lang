@@ -4,6 +4,7 @@ itemGroup.carz=Carz
 tile.carz:fuel_station.name=Fuel Station
 tile.carz:road.name=Road
 tile.carz:road_sign.name=Road Sign
+tile.carz:plant_fermenter.name=Plant Fermenter
 
 # Items
 item.carz:painter.name=Painter

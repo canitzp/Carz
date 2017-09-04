@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "normal": [
+      {
+        "model": "carz:road_slope"
+      }
+    ]
+  }
+}

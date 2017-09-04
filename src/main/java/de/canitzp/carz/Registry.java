@@ -2,6 +2,7 @@ package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
 import de.canitzp.carz.blocks.*;
+import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
@@ -26,6 +27,7 @@ import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -75,6 +77,7 @@ public class Registry {
     public static BlockRoad blockRoad = new BlockRoad<>("road").register();
     public static BlockRoadSlope blockRoadSlope = new BlockRoadSlope().register();
     public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
+    public static BlockPlantFermenter blockPlantFermenter = new BlockPlantFermenter().register();
 
     /**
      * Items:
@@ -135,6 +138,7 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModel(ModelRegistryEvent event) {
+        ModelLoaderRegistry.registerLoader(new CustomModelLoader());
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
         }

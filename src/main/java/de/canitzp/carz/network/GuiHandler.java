@@ -1,6 +1,8 @@
 package de.canitzp.carz.network;
 
 import de.canitzp.carz.client.gui.GuiPixelMesher;
+import de.canitzp.carz.client.gui.GuiPlantFermenter;
+import de.canitzp.carz.inventory.ContainerPlantFermenter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -14,11 +16,15 @@ import javax.annotation.Nullable;
 public class GuiHandler implements IGuiHandler {
 
     public static final int ID_PIXELMESHER = 0;
+    public static final int ID_PLANT_FERMENTER = 1;
 
     @Nullable
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID){
+            case ID_PLANT_FERMENTER:{
+                return new ContainerPlantFermenter(player, x, y, z);
+            }
             default: return null;
         }
     }
@@ -29,6 +35,9 @@ public class GuiHandler implements IGuiHandler {
         switch (ID){
             case ID_PIXELMESHER: {
                 return new GuiPixelMesher(player);
+            }
+            case ID_PLANT_FERMENTER: {
+                return new GuiPlantFermenter(player, x, y, z);
             }
             default: return null;
         }
