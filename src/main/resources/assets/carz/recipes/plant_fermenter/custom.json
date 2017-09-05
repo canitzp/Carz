@@ -1,0 +1,11 @@
+{
+  "type": "carz:plant_fermenter",
+  "items": {
+    "input": "carz:road",
+    "output": "carz:fuel_station"
+  },
+  "fluid": {
+    "name": "minecraft:water",
+    "amount": 1000
+  }
+}

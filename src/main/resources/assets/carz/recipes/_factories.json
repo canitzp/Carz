@@ -1,0 +1,5 @@
+{
+  "recipes": {
+    "plant_fermenter": "de.canitzp.carz.recipes.FactoryPlantFermenter"
+  }
+}

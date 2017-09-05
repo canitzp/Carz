@@ -1,6 +1,7 @@
 package de.canitzp.carz.blocks;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.network.GuiHandler;
 import de.canitzp.carz.tile.TilePlantFermenter;
 import de.canitzp.carz.util.BlockProps;
 import net.minecraft.block.material.Material;
@@ -8,8 +9,10 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -67,5 +70,13 @@ public class BlockPlantFermenter extends BlockContainerBase<BlockPlantFermenter>
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(FACING, placer.getHorizontalFacing());
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if(!world.isRemote){
+            player.openGui(Carz.carz, GuiHandler.ID_PLANT_FERMENTER, world, pos.getX(), pos.getY(), pos.getZ());
+        }
+        return true;
     }
 }
