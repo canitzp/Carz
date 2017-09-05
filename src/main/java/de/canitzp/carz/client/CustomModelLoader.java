@@ -25,7 +25,7 @@ public class CustomModelLoader implements ICustomModelLoader{
     private static final IModel RENDERER = new IModel() {
         @Override
         public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-            return new ModelRoadSlope(state, format, bakedTextureGetter);
+            return new ModelRoadSlope(format, bakedTextureGetter);
         }
 
         @Override

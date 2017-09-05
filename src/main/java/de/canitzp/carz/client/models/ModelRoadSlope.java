@@ -3,6 +3,7 @@ package de.canitzp.carz.client.models;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.util.BlockProps;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -32,7 +33,7 @@ public class ModelRoadSlope implements IBakedModel {
     private TextureAtlasSprite sprite;
     private VertexFormat format;
 
-    public ModelRoadSlope(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    public ModelRoadSlope(VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         this.format = format;
         this.sprite = bakedTextureGetter.apply(new ResourceLocation(Carz.MODID, "blocks/road"));
     }
@@ -40,17 +41,85 @@ public class ModelRoadSlope implements IBakedModel {
     @Nonnull
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        if(state != null){
-            switch (state.getValue(BlockProps.FACING)){
-                case NORTH:{
-                    break;
+        if (state != null) {
+            switch (state.getValue(BlockProps.FACING)) {
+                case NORTH: {
+                    switch (state.getValue(BlockProps.SLOPE_NUMBER)) {
+                        case 0: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 0.25, 0, 1, 0, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 0, 1, 0, 0.25, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 0, 1, 1, 0.25, 0, 0, 0.25, 0, 0, 0, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            return quads;
+                        }
+                        case 1: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 0.5, 0, 1, 0.25, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 0.25, 1, 0, 0.5, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 0.25, 1, 1, 0.5, 0, 0, 0.5, 0, 0, 0.25, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            return quads;
+                        }
+                        case 2: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 0.75, 0, 1, 0.5, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 0.5, 1, 0, 0.75, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 0.5, 1, 1, 0.75, 0, 0, 0.75, 0, 0, 0.5, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            return quads;
+                        }
+                        case 3: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 1, 0, 1, 0.75, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 0.75, 1, 0, 1, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 0.75, 1, 1, 1, 0, 0, 1, 0, 0, 0.75, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            quads.add(createQuad(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0)); // Back
+                            return quads;
+                        }
+                    }
                 }
-                case SOUTH:{
-                    break;
+                case SOUTH: {
+                    switch (state.getValue(BlockProps.SLOPE_NUMBER)) {
+                        case 0: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 0, 0, 1, 0.25, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 0.25, 1, 0, 0, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 0.25, 1, 1, 0, 0, 0, 0, 0, 0, 0.25, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            return quads;
+                        }
+                        case 1: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 0.25, 0, 1, 0.5, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 0.5, 1, 0, 0.25, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 0.5, 1, 1, 0.25, 0, 0, 0.25, 0, 0, 0.5, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            return quads;
+                        }
+                        case 2: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 0.5, 0, 1, 0.75, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 0.75, 1, 0, 0.5, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 0.75, 1, 1, 0.5, 0, 0, 0.5, 0, 0, 0.75, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            return quads;
+                        }
+                        case 3: {
+                            List<BakedQuad> quads = new ArrayList<>();
+                            quads.add(createQuad(1, 0, 0, 1, 0.75, 0, 1, 1, 1, 1, 0, 1));
+                            quads.add(createQuad(0, 0, 1, 0, 1, 1, 0, 0.75, 0, 0, 0, 0));
+                            quads.add(createQuad(1, 1, 1, 1, 0.75, 0, 0, 0.75, 0, 0, 1, 1)); // Top
+                            quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
+                            quads.add(createQuad(1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1)); // Back
+                            return quads;
+                        }
+                    }
                 }
                 case EAST:
-                    switch (state.getValue(BlockProps.SLOPE_NUMBER)){
-                        case 0:{
+                    switch (state.getValue(BlockProps.SLOPE_NUMBER)) {
+                        case 0: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createQuad(0, 0, 0, 0, 0, 0, 1, 0.25, 0, 1, 0, 0));
                             quads.add(createQuad(1, 0, 1, 1, 0.25, 1, 0, 0, 1, 0, 0, 1));
@@ -58,7 +127,7 @@ public class ModelRoadSlope implements IBakedModel {
                             quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
                             return quads;
                         }
-                        case 1:{
+                        case 1: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createQuad(0, 0, 0, 0, 0.25, 0, 1, 0.5, 0, 1, 0, 0));
                             quads.add(createQuad(1, 0, 1, 1, 0.5, 1, 0, 0.25, 1, 0, 0, 1));
@@ -66,7 +135,7 @@ public class ModelRoadSlope implements IBakedModel {
                             quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
                             return quads;
                         }
-                        case 2:{
+                        case 2: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createQuad(0, 0, 0, 0, 0.5, 0, 1, 0.75, 0, 1, 0, 0));
                             quads.add(createQuad(1, 0, 1, 1, 0.75, 1, 0, 0.5, 1, 0, 0, 1));
@@ -74,7 +143,7 @@ public class ModelRoadSlope implements IBakedModel {
                             quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
                             return quads;
                         }
-                        case 3:{
+                        case 3: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createQuad(0, 0, 0, 0, 0.75, 0, 1, 1, 0, 1, 0, 0));
                             quads.add(createQuad(1, 0, 1, 1, 1, 1, 0, 0.75, 1, 0, 0, 1));
@@ -84,9 +153,9 @@ public class ModelRoadSlope implements IBakedModel {
                             return quads;
                         }
                     }
-                case WEST:{ // 1:5 2:2 3:11 4:8
-                    switch (state.getValue(BlockProps.SLOPE_NUMBER)){
-                        case 0:{
+                case WEST: {
+                    switch (state.getValue(BlockProps.SLOPE_NUMBER)) {
+                        case 0: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createTriangle(0, 0, 0, 0, 0.25, 0, 1, 0, 0));
                             quads.add(createTriangle(1, 0, 1, 0, 0.25, 1, 0, 0, 1));
@@ -94,7 +163,7 @@ public class ModelRoadSlope implements IBakedModel {
                             quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
                             return quads;
                         }
-                        case 1:{
+                        case 1: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createQuad(0, 0, 0, 0, 0.5, 0, 1, 0.25, 0, 1, 0, 0));
                             quads.add(createQuad(1, 0, 1, 1, 0.25, 1, 0, 0.5, 1, 0, 0, 1));
@@ -102,7 +171,7 @@ public class ModelRoadSlope implements IBakedModel {
                             quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
                             return quads;
                         }
-                        case 2:{
+                        case 2: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createQuad(0, 0, 0, 0, 0.75, 0, 1, 0.5, 0, 1, 0, 0));
                             quads.add(createQuad(1, 0, 1, 1, 0.5, 1, 0, 0.75, 1, 0, 0, 1));
@@ -110,7 +179,7 @@ public class ModelRoadSlope implements IBakedModel {
                             quads.add(createQuad(0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1)); // Bottom
                             return quads;
                         }
-                        case 3:{
+                        case 3: {
                             List<BakedQuad> quads = new ArrayList<>();
                             quads.add(createQuad(0, 0, 0, 0, 1, 0, 1, 0.75, 0, 1, 0, 0));
                             quads.add(createQuad(1, 0, 1, 1, 0.75, 1, 0, 1, 1, 0, 0, 1));
@@ -121,7 +190,8 @@ public class ModelRoadSlope implements IBakedModel {
                         }
                     }
                 }
-                default: break;
+                default:
+                    break;
             }
         }
         return Collections.emptyList();
@@ -177,18 +247,6 @@ public class ModelRoadSlope implements IBakedModel {
         putVertex(builder, normal, x2, y2, z2, 0, 16);
         putVertex(builder, normal, x3, y3, z3, 16, 16);
         putVertex(builder, normal, x4, y4, z4, 16, 0);
-        return builder.build();
-    }
-
-    private BakedQuad createQuad(Vec3d v1, Vec3d v2, Vec3d v3, Vec3d v4) {
-        Vec3d normal = v3.subtract(v2).crossProduct(v1.subtract(v2)).normalize();
-
-        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
-        builder.setTexture(sprite);
-        putVertex(builder, normal, v1.x, v1.y, v1.z, 0, 0);
-        putVertex(builder, normal, v2.x, v2.y, v2.z, 0, 16);
-        putVertex(builder, normal, v3.x, v3.y, v3.z, 16, 16);
-        putVertex(builder, normal, v4.x, v4.y, v4.z, 16, 0);
         return builder.build();
     }
 
