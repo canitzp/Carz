@@ -11,6 +11,7 @@ import net.minecraft.inventory.SlotFurnaceOutput;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nonnull;
 
@@ -32,6 +33,7 @@ public class ContainerPlantFermenter extends Container {
                 return false;
             }
         });
+        this.addSlotToContainer(new FluidContainerSlot(inventory, 5, 129, 57));
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
                 this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
@@ -47,6 +49,13 @@ public class ContainerPlantFermenter extends Container {
         return true;
     }
 
+    @Nonnull
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        // TODO
+        return ItemStack.EMPTY;
+    }
+
     private class PlantSlot extends Slot{
         public PlantSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
             super(inventoryIn, index, xPosition, yPosition);
@@ -55,6 +64,17 @@ public class ContainerPlantFermenter extends Container {
         @Override
         public boolean isItemValid(ItemStack stack) {
             return CarzAPI.isStackValidPlant(stack);
+        }
+    }
+
+    private class FluidContainerSlot extends Slot{
+        public FluidContainerSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
+            super(inventoryIn, index, xPosition, yPosition);
+        }
+
+        @Override
+        public boolean isItemValid(ItemStack stack) {
+            return stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         }
     }
 }

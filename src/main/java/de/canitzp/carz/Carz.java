@@ -4,6 +4,7 @@ import de.canitzp.carz.config.ConfigCarz;
 import de.canitzp.carz.gen.OilChunkGen;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -25,6 +26,10 @@ public class Carz {
     public static final String MODVERSION = "@VERSION@";
     public static final String BUILDDATE = "@BUILD_DATE@";
     public static final Logger LOG = LogManager.getFormatterLogger(MODNAME);
+
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
 
     @Mod.Instance(MODID)
     public static Carz carz;
@@ -54,5 +59,6 @@ public class Carz {
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
     }
+
 
 }

@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,16 @@ public class FactoryPlantFermenter implements IRecipeFactory {
         }
 
         return new RecipeFake();
+    }
+
+    @Nonnull
+    public static RecipePlantFermenter getRecipeOrDefault(@Nonnull ItemStack input){
+        for(RecipePlantFermenter recipe : PLANT_FERMENTER_RECIPES){
+            if(ItemStack.areItemStacksEqual(recipe.getInput(), input)){
+                return recipe;
+            }
+        }
+        return RecipePlantFermenter.DEFAULT;
     }
 
 }

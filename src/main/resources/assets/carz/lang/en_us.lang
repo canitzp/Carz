@@ -12,6 +12,9 @@ item.carz:car_part.engine.name=Car engine
 item.carz:oil_probe.name=Oil probe
 item.carz:oil_probe.found=Found %smB oil in this chunk
 
+# Fluids
+fluid.carz:bio_fuel.name=Bio fuel
+
 # Statistics
 carz:stat.entity_hit.count=Entity hit with car
 carz:stat.entity_hit.dmg=Damage done with car

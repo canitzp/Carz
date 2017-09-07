@@ -10,12 +10,18 @@ import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
 import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
+import de.canitzp.carz.fluid.FluidBase;
 import de.canitzp.carz.items.ItemBase;
 import de.canitzp.carz.items.ItemCarPart;
 import de.canitzp.carz.items.ItemOilProbe;
 import de.canitzp.carz.items.ItemPainter;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
@@ -27,8 +33,10 @@ import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -41,6 +49,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +96,11 @@ public class Registry {
     public static ItemOilProbe itemOilProbe = new ItemOilProbe().register();
 
     /**
+     * Fluids:
+     */
+    public static Fluid fluidBioFuel = new FluidBase("bio_fuel", 0xFF008d12).setViscosity(6000);
+
+    /**
      * Models:
      */
     public static final ModelSportscar MODEL_SPORTSCAR = new ModelSportscar();
@@ -120,6 +134,7 @@ public class Registry {
             Carz.LOG.info("Registering Block: " + block.getRegistryName());
             reg.register(block);
         }
+        registerFluids(reg);
     }
 
     @SubscribeEvent
@@ -145,6 +160,13 @@ public class Registry {
         for (ItemBase item : ITEMS_FOR_REGISTERING) {
             item.registerClient();
         }
+        registerFluidRenderer(fluidBioFuel);
+    }
+
+    private static void registerFluids(IForgeRegistry<Block> registry){
+        FluidRegistry.registerFluid(fluidBioFuel);
+        FluidRegistry.addBucketForFluid(fluidBioFuel);
+        registry.register(new BlockFluid(fluidBioFuel));
     }
 
     public static void preInit(FMLPreInitializationEvent event) {
@@ -179,6 +201,23 @@ public class Registry {
             };
         }
         RenderingRegistry.registerEntityRenderingHandler(entityClass, renderFactory);
+    }
+
+    private static void registerFluidRenderer(Fluid fluid) {
+        Block block = fluid.getBlock();
+        Item item = Item.getItemFromBlock(block);
+        final ModelResourceLocation loc = new ModelResourceLocation(new ResourceLocation(Carz.MODID, "fluids"), fluid.getName());
+        ItemMeshDefinition mesh = stack -> loc;
+        StateMapperBase mapper = new StateMapperBase() {
+            @Nonnull
+            @Override
+            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                return loc;
+            }
+        };
+        ModelLoader.registerItemVariants(item);
+        ModelLoader.setCustomMeshDefinition(item, mesh);
+        ModelLoader.setCustomStateMapper(block, mapper);
     }
 
 }
