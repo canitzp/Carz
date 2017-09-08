@@ -51,7 +51,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     public void onUpdate() {
         super.onUpdate();
         this.onUpdate(this.canPassengerSteer());
-        this.stepHeight = 0.2f; //Yeah - config
+        this.stepHeight = 0.4f; //Yeah - config
 
         if (this.isCollidedHorizontally) {
             blockCollisionCheck();
