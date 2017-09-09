@@ -5,12 +5,14 @@ tile.carz:fuel_station.name=Fuel Station
 tile.carz:road.name=Road
 tile.carz:road_sign.name=Road Sign
 tile.carz:plant_fermenter.name=Plant Fermenter
+tile.carz:road_slope.name=Slope
 
 # Items
 item.carz:painter.name=Painter
 item.carz:car_part.engine.name=Car engine
 item.carz:oil_probe.name=Oil probe
 item.carz:oil_probe.found=Found %smB oil in this chunk
+item.carz:pressed_plant.name=Bio waste
 
 # Fluids
 fluid.carz:bio_fuel.name=Bio fuel

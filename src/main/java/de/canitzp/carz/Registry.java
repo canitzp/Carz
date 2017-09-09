@@ -11,10 +11,7 @@ import de.canitzp.carz.entity.EntityBus;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
 import de.canitzp.carz.fluid.FluidBase;
-import de.canitzp.carz.items.ItemBase;
-import de.canitzp.carz.items.ItemCarPart;
-import de.canitzp.carz.items.ItemOilProbe;
-import de.canitzp.carz.items.ItemPainter;
+import de.canitzp.carz.items.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -94,11 +91,12 @@ public class Registry {
     public static ItemCarPart itemCarPart = new ItemCarPart().register();
     public static ItemPainter itemPainter = new ItemPainter().register();
     public static ItemOilProbe itemOilProbe = new ItemOilProbe().register();
+    public static ItemBaseDefault itemPressedPlant = new ItemBaseDefault("pressed_plant").register();
 
     /**
      * Fluids:
      */
-    public static Fluid fluidBioFuel = new FluidBase("bio_fuel", 0xFF008d12).setViscosity(6000);
+    public static Fluid fluidBioFuel = new FluidBase("bio_fuel", 0xFFFFFFFF).setViscosity(6000);
 
     /**
      * Models:
@@ -203,6 +201,7 @@ public class Registry {
         RenderingRegistry.registerEntityRenderingHandler(entityClass, renderFactory);
     }
 
+    @SideOnly(Side.CLIENT)
     private static void registerFluidRenderer(Fluid fluid) {
         Block block = fluid.getBlock();
         Item item = Item.getItemFromBlock(block);

@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
  */
 public class RecipePlantFermenter {
 
-    public static RecipePlantFermenter DEFAULT = new RecipePlantFermenter(new ItemStack(Items.APPLE, 1), ItemStack.EMPTY, new FluidStack(Registry.fluidBioFuel, 1000));
+    public static RecipePlantFermenter DEFAULT = new RecipePlantFermenter(new ItemStack(Items.APPLE, 1), new ItemStack(Registry.itemPressedPlant), new FluidStack(Registry.fluidBioFuel, 1000));
 
     private ItemStack input = ItemStack.EMPTY, output = ItemStack.EMPTY;
     @Nullable

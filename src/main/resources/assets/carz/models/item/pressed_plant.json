@@ -1,6 +1,6 @@
 {
   "parent": "carz:item/carz",
   "textures": {
-    "layer0": "carz:items/slope"
+    "layer0": "carz:items/pressed_plant"
   }
 }

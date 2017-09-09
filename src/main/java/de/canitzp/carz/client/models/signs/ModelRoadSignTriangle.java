@@ -50,7 +50,8 @@ public class ModelRoadSignTriangle extends ModelRoadSign {
         this.upper_sign5 = new ModelRenderer(this, 10, 7);
         this.upper_sign5.setRotationPoint(0.0F, -34.0F, -1.0F);
         this.upper_sign5.addBox(-5.0F, 0.0F, -1.0F, 10, 2, 1, 0.0F);
-        this.lower_sign = new ModelRenderer(this, 0, 65);
+        this.lower_sign = new ModelRenderer(this, "lower_sign");
+        this.lower_sign.setTextureOffset(0, 65);
         this.lower_sign.setRotationPoint(0.0F, -4.0F, -2.0F);
         this.lower_sign.addBox(-13.0F, -4.5F, 0.0F, 26, 12, 1, 0.0F);
         this.upper_sign6 = new ModelRenderer(this, 10, 12);

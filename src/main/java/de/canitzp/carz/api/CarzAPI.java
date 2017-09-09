@@ -1,7 +1,11 @@
 package de.canitzp.carz.api;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockFlower;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.IPlantable;
@@ -26,7 +30,11 @@ public class CarzAPI {
     }
 
     public static boolean isStackValidPlant(@Nonnull ItemStack stack){
-        return !stack.isEmpty() && (VALID_PLANT_ITEMS.contains(stack) || stack.getItem() instanceof ItemFood || stack.getItem() instanceof IPlantable || stack.getItem() instanceof IShearable);
+        if(!stack.isEmpty()){
+            Block block = Block.getBlockFromItem(stack.getItem());
+            return VALID_PLANT_ITEMS.contains(stack) || stack.getItem() instanceof ItemFood || block instanceof BlockBush || block instanceof IPlantable || block instanceof IShearable;
+        }
+        return false;
     }
 
 }

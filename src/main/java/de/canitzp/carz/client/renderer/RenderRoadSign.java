@@ -45,7 +45,7 @@ public class RenderRoadSign extends TileEntitySpecialRenderer<TileSign> {
         EnumSignTypes signType = te.getSignType();
         ModelRoadSign model = signType.getModel();
         this.bindTexture(model.getTexture());
-        model.render(1 / 16F);
+        model.render(te, 1 / 16F);
 
         this.setLightmapDisabled(true);
         signType.render(this, te, x, y, z, partialTicks, destroyStage, alpha);

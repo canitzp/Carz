@@ -5,10 +5,13 @@ import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.events.WorldEvents;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.MapColor;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -115,5 +118,10 @@ public class TileSign extends TileEntity {
         } else {
             this.upperMesh = mesh;
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean shouldRenderPart(ModelRenderer part){
+        return !"lower_sign".equals(part.boxName) || this.lowerMesh != null;
     }
 }

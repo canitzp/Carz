@@ -1,6 +1,8 @@
 package de.canitzp.carz.tile;
 
 import de.canitzp.carz.api.CarzAPI;
+import de.canitzp.carz.inventory.SidedInventory;
+import de.canitzp.carz.inventory.SidedInventoryWrapper;
 import de.canitzp.carz.recipes.FactoryPlantFermenter;
 import de.canitzp.carz.recipes.RecipePlantFermenter;
 import de.canitzp.carz.util.StackUtil;
@@ -24,6 +26,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +37,26 @@ import javax.annotation.Nullable;
 public class TilePlantFermenter extends TileEntity implements ITickable{
 
     @Nonnull
-    public InvWrapper inventory = new InvWrapper(new InventoryBasic("Plant Fermenter", false, 6));
+    public SidedInventory inventory = new SidedInventory("Plant Fermenter", 7) {
+        @Override
+        public boolean canInsertItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing side) {
+            return side != EnumFacing.SOUTH && (index == 0 || index == 1 || index == 2 || index == 3 || index == 5);
+        }
+        @Override
+        public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing side) {
+            return side != EnumFacing.NORTH && (index == 4 || index == 6);
+        }
+        @Override
+        public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
+            if(index == 0 || index == 1 || index == 2 || index == 3){
+                return CarzAPI.isStackValidPlant(stack);
+            } else if(index == 5){
+                return stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            }
+            return this.ignoreValidify;
+        }
+    };
+    private SidedInventoryWrapper[] sidedWrapper = inventory.getOneForAllSides();
     @Nonnull
     public FluidTank tank = new FluidTank(10000);
     public int ticksLeft, maxTicks;
@@ -49,8 +71,8 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.inventory);
+        if(facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.sidedWrapper[facing.ordinal()]);
         } else if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this.tank);
         }
@@ -72,11 +94,11 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
             this.outputFluid = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag("OutputFluid"));
         }
         if(compound.hasKey("Inventory", Constants.NBT.TAG_LIST)){
-            if(this.inventory.getSlots() > 0){
+            if(this.inventory.getSizeInventory() > 0){
                 NBTTagList tagList = compound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
-                for(int i = 0; i < this.inventory.getSlots(); i++){
+                for(int i = 0; i < this.inventory.getSizeInventory(); i++){
                     NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
-                    this.inventory.setStackInSlot(i, tagCompound.hasKey("id") ? new ItemStack(tagCompound) : ItemStack.EMPTY);
+                    this.inventory.setInventorySlotContents(i, tagCompound.hasKey("id") ? new ItemStack(tagCompound) : ItemStack.EMPTY);
                 }
             }
         }
@@ -85,9 +107,9 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        if(this.inventory.getSlots() > 0){
+        if(this.inventory.getSizeInventory() > 0){
             NBTTagList tagList = new NBTTagList();
-            for(int i = 0; i < this.inventory.getSlots(); i++){
+            for(int i = 0; i < this.inventory.getSizeInventory(); i++){
                 ItemStack slot = this.inventory.getStackInSlot(i);
                 NBTTagCompound tagCompound = new NBTTagCompound();
                 if(!slot.isEmpty()){
@@ -151,7 +173,9 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
             if(ticksLeft <= 0){
                 if(!this.outputStack.isEmpty() || this.outputFluid != null){
                     if(!this.outputStack.isEmpty()){
-                        this.inventory.getStackInSlot(4).grow(this.outputStack.getCount());
+                        this.inventory.setIgnoreValidifyFlag(true);
+                        this.inventory.insertItem(4, this.outputStack, false);
+                        this.inventory.setIgnoreValidifyFlag(false);
                         this.outputStack = ItemStack.EMPTY;
                     }
                     if(this.outputFluid != null){
@@ -165,15 +189,20 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
                         if(!stackInInputSlot.isEmpty()){
                             RecipePlantFermenter recipe = canProduce(stackInInputSlot);
                             if(recipe != null){
-                                this.ticksLeft = this.maxTicks = recipe.getProduceTicks();
-                                stackInInputSlot.shrink(recipe.getInput().getCount());
-                                if(stackInInputSlot.isEmpty()){
-                                    this.inventory.setStackInSlot(i, ItemStack.EMPTY);
+                                ItemStack output = recipe.getOutput();
+                                FluidStack outFluid = recipe.getOutputFluid();
+                                this.inventory.setIgnoreValidifyFlag(true);
+                                if(this.inventory.insertItem(4, this.outputStack, true).isEmpty()){
+                                    if(outFluid == null || this.tank.fill(outFluid, false) == outFluid.amount){
+                                        this.ticksLeft = this.maxTicks = recipe.getProduceTicks();
+                                        this.inventory.extractItem(i, recipe.getInput().getCount(), false);
+                                        this.outputStack = output.copy();
+                                        if(outFluid != null){
+                                            this.outputFluid = outFluid.copy();
+                                        }
+                                    }
                                 }
-                                this.outputStack = recipe.getOutput().copy();
-                                if(recipe.getOutputFluid() != null){
-                                    this.outputFluid = recipe.getOutputFluid().copy();
-                                }
+                                this.inventory.setIgnoreValidifyFlag(false);
                                 break;
                             }
                         }
@@ -182,15 +211,21 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
             }
             // Fill FluidHandler
             if(this.tank.getFluidAmount() > 0){
-                ItemStack bucket = this.inventory.getStackInSlot(5);
-                if(!bucket.isEmpty() && bucket.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)){
+                this.inventory.setIgnoreValidifyFlag(true);
+                ItemStack bucket = this.inventory.extractItem(5, 1, true);
+                if(!bucket.isEmpty()){
                     IFluidHandlerItem handler = bucket.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
                     if(handler != null){
-                        handler.fill(this.tank.drain(this.tank.getFluidAmount(), true), true);
-                        this.inventory.setStackInSlot(5, bucket);
-                        TileUtil.sync(this);
+                        this.tank.drain(handler.fill(this.tank.getFluid(), false), false);
+                        if(this.inventory.insertItem(6, handler.getContainer(), true).isEmpty()){
+                            this.tank.drain(handler.fill(this.tank.getFluid(), true), true);
+                            this.inventory.extractItem(5, 1, false);
+                            this.inventory.insertItem(6, handler.getContainer(), false);
+                            TileUtil.sync(this);
+                        }
                     }
                 }
+                this.inventory.setIgnoreValidifyFlag(false);
             }
         }
     }

@@ -22,7 +22,7 @@ public class ContainerPlantFermenter extends Container {
 
     public ContainerPlantFermenter(EntityPlayer player, int x, int y, int z) {
         TilePlantFermenter tile = Safety.getTile(player.getEntityWorld(), new BlockPos(x, y, z), TilePlantFermenter.class);
-        IInventory inventory = tile.inventory.getInv();
+        IInventory inventory = tile.inventory;
         this.addSlotToContainer(new PlantSlot(inventory, 0, 20, 23));
         this.addSlotToContainer(new PlantSlot(inventory, 1, 38, 23));
         this.addSlotToContainer(new PlantSlot(inventory, 2, 20, 41));
@@ -30,10 +30,16 @@ public class ContainerPlantFermenter extends Container {
         this.addSlotToContainer(new Slot(inventory, 4, 81, 32) {
             @Override
             public boolean isItemValid(ItemStack stack) {
+                return inventory.isItemValidForSlot(this.slotNumber, stack);
+            }
+        });
+        this.addSlotToContainer(new FluidContainerSlot(inventory, 5, 129, 8));
+        this.addSlotToContainer(new Slot(inventory, 6, 129, 57){
+            @Override
+            public boolean isItemValid(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlotToContainer(new FluidContainerSlot(inventory, 5, 129, 57));
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
                 this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));

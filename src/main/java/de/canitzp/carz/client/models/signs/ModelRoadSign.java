@@ -1,5 +1,6 @@
 package de.canitzp.carz.client.models.signs;
 
+import de.canitzp.carz.tile.TileSign;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -18,12 +19,14 @@ public abstract class ModelRoadSign extends ModelBase {
     private List<ModelRenderer> parts = new ArrayList<>();
 
     @SideOnly(Side.CLIENT)
-    public void render(float scale) {
+    public void render(TileSign tile, float scale) {
         if (this.parts.isEmpty()) {
             scanParts();
         } else {
             for (ModelRenderer part : this.parts) {
-                part.render(scale);
+                if(tile.shouldRenderPart(part)){
+                    part.render(scale);
+                }
             }
         }
     }

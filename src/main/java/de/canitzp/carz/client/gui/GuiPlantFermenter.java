@@ -1,5 +1,6 @@
 package de.canitzp.carz.client.gui;
 
+import com.google.common.collect.Lists;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.Safety;
 import de.canitzp.carz.inventory.ContainerPlantFermenter;
@@ -9,6 +10,8 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 
 /**
  * @author canitzp
@@ -29,6 +32,12 @@ public class GuiPlantFermenter extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
+        if(GuiUtil.isMouseBetween(this.guiLeft, this.guiTop, mouseX, mouseY, 150, 8, 16, 65)){
+            FluidStack fluid = this.tile.tank.getFluid();
+            if(fluid != null && fluid.getFluid() != null && fluid.amount > 0){
+                this.drawHoveringText(Lists.newArrayList(fluid.getLocalizedName(), TextFormatting.GRAY.toString() + fluid.amount + "/" + this.tile.tank.getCapacity()), mouseX, mouseY);
+            }
+        }
     }
 
     @Override
