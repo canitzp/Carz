@@ -25,8 +25,23 @@ minecraft {
     replace "@BUILD_DATE@", new Date().format("dd.MM.yy HH:mm")
 }
 
+repositories {
+    maven { // Actually Additions
+        url = "http://maven.chaosfield.at"
+    }
+    maven { // JEI
+        url = "http://dvs1.progwml6.com/files/maven"
+    }
+    maven { // CommonCapabilities
+        url "https://dl.bintray.com/cyclopsmc/dev/"
+    }
+}
+
 dependencies {
-   
+    deobfCompile "mezz.jei:jei_${project.jei_version}"
+    deobfCompile "de.ellpeck.actuallyadditions:ActuallyAdditions:${project.actadd_version}"
+    deobfCompile "org.cyclops.commoncapabilities:CommonCapabilities:${project.cc_version}"
+    deobfCompile "de.canitzp.tumat:TUMAT:${project.tumat_version}"
 }
 
 processResources {

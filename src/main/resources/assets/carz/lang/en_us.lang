@@ -13,6 +13,7 @@ item.carz:car_part.engine.name=Car engine
 item.carz:oil_probe.name=Oil probe
 item.carz:oil_probe.found=Found %smB oil in this chunk
 item.carz:pressed_plant.name=Bio waste
+item.carz:key.name=Key
 
 # Fluids
 fluid.carz:bio_fuel.name=Bio fuel

@@ -72,7 +72,7 @@ public class Registry {
     public static final CreativeTabs TAB = new CreativeTabs(Carz.MODID) {
         @Override
         public ItemStack getTabIconItem() {
-            return new ItemStack(blockFuelStation);
+            return new ItemStack(itemKey);
         }
     };
 
@@ -84,6 +84,7 @@ public class Registry {
     public static BlockRoadSlope blockRoadSlope = new BlockRoadSlope().register();
     public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
     public static BlockPlantFermenter blockPlantFermenter = new BlockPlantFermenter().register();
+    public static BlockBasic blockBasic = new BlockBasic().register();
 
     /**
      * Items:
@@ -91,7 +92,8 @@ public class Registry {
     public static ItemCarPart itemCarPart = new ItemCarPart().register();
     public static ItemPainter itemPainter = new ItemPainter().register();
     public static ItemOilProbe itemOilProbe = new ItemOilProbe().register();
-    public static ItemBaseDefault itemPressedPlant = new ItemBaseDefault("pressed_plant").register();
+    public static ItemBaseDefault itemPressedPlant = new ItemBaseDefault<>("pressed_plant").register();
+    public static ItemKey itemKey = new ItemKey().register();
 
     /**
      * Fluids:

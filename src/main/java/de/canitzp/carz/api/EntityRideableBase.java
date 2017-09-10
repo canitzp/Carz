@@ -84,7 +84,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             }
             return player.startRiding(this);
         }
-        return false;
+        return super.processInitialInteract(player, hand);
     }
 
     /**

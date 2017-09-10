@@ -1,7 +1,9 @@
 package de.canitzp.carz.network;
 
+import de.canitzp.carz.client.gui.GuiCar;
 import de.canitzp.carz.client.gui.GuiPixelMesher;
 import de.canitzp.carz.client.gui.GuiPlantFermenter;
+import de.canitzp.carz.inventory.ContainerCar;
 import de.canitzp.carz.inventory.ContainerPlantFermenter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -17,6 +19,7 @@ public class GuiHandler implements IGuiHandler {
 
     public static final int ID_PIXELMESHER = 0;
     public static final int ID_PLANT_FERMENTER = 1;
+    public static final int ID_CAR = 2;
 
     @Nullable
     @Override
@@ -24,6 +27,9 @@ public class GuiHandler implements IGuiHandler {
         switch (ID){
             case ID_PLANT_FERMENTER:{
                 return new ContainerPlantFermenter(player, x, y, z);
+            }
+            case ID_CAR:{
+                return new ContainerCar(player, x);
             }
             default: return null;
         }
@@ -38,6 +44,9 @@ public class GuiHandler implements IGuiHandler {
             }
             case ID_PLANT_FERMENTER: {
                 return new GuiPlantFermenter(player, x, y, z);
+            }
+            case ID_CAR: {
+                return new GuiCar(player, x);
             }
             default: return null;
         }

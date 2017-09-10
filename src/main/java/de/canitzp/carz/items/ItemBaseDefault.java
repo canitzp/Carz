@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * @author canitzp
  */
-public class ItemBaseDefault extends ItemBase<ItemBaseDefault> {
+public class ItemBaseDefault<T extends ItemBaseDefault> extends ItemBase<T> {
 
     public ItemBaseDefault(String name){
         this.setRegistryName(new ResourceLocation(Carz.MODID, name));

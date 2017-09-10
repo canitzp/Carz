@@ -7,26 +7,20 @@ import de.canitzp.carz.recipes.FactoryPlantFermenter;
 import de.canitzp.carz.recipes.RecipePlantFermenter;
 import de.canitzp.carz.util.StackUtil;
 import de.canitzp.carz.util.TileUtil;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +28,7 @@ import javax.annotation.Nullable;
 /**
  * @author canitzp
  */
-public class TilePlantFermenter extends TileEntity implements ITickable{
+public class TilePlantFermenter extends TileBase implements ITickable{
 
     @Nonnull
     public SidedInventory inventory = new SidedInventory("Plant Fermenter", 7) {
@@ -64,13 +58,13 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
     private FluidStack outputFluid;
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        return this.getCapability(capability, facing) != null;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if(facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.sidedWrapper[facing.ordinal()]);
         } else if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
@@ -226,6 +220,9 @@ public class TilePlantFermenter extends TileEntity implements ITickable{
                     }
                 }
                 this.inventory.setIgnoreValidifyFlag(false);
+            }
+            if(this.world.getTotalWorldTime() % 20 == 0){
+                TileUtil.sync(this);
             }
         }
     }

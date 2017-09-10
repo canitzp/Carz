@@ -5,12 +5,15 @@ import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntitySteerableBase;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,6 +24,7 @@ import javax.annotation.Nullable;
 public class EntitySportscar extends EntitySteerableBase {
 
     private FluidTank tank = new FluidTank(10000);
+    private InvWrapper inventory = new InvWrapper(new InventoryBasic("Sportscar", false, 37));
 
     public EntitySportscar(World worldIn) {
         super(worldIn);
@@ -59,7 +63,13 @@ public class EntitySportscar extends EntitySteerableBase {
 
     @Nullable
     @Override
-    protected IFluidHandler getFluidHandler(@Nullable EnumFacing facing) {
+    public IFluidHandler getFluidHandler(@Nullable EnumFacing facing) {
         return this.tank;
+    }
+
+    @Nullable
+    @Override
+    public IItemHandler getInventory(@Nullable EnumFacing facing) {
+        return this.inventory;
     }
 }

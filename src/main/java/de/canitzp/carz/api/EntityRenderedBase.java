@@ -1,8 +1,12 @@
 package de.canitzp.carz.api;
 
+import de.canitzp.carz.Carz;
+import de.canitzp.carz.network.GuiHandler;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -12,6 +16,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,24 +41,38 @@ public abstract class EntityRenderedBase extends Entity {
     }
 
     @Override
+    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
+        if(!this.world.isRemote && player.isSneaking()){
+            player.openGui(Carz.carz, GuiHandler.ID_CAR, this.world, this.getEntityId(), 0, 0);
+            return true;
+        }
+        return super.processInitialInteract(player, hand);
+    }
+
+    @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return this.getCapability(capability, facing) != null;
     }
 
-    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             IFluidHandler fluidHandler = this.getFluidHandler(facing);
             if (fluidHandler != null) {
-                return (T) fluidHandler;
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler);
             }
         }
         if (capability == CapabilityEnergy.ENERGY) {
             IEnergyStorage energyStorage = this.getEnergyStorage(facing);
             if (energyStorage != null) {
-                return (T) energyStorage;
+                return CapabilityEnergy.ENERGY.cast(energyStorage);
+            }
+        }
+        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+            IItemHandler itemHandler = this.getInventory(facing);
+            if(itemHandler != null){
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
             }
         }
         return super.getCapability(capability, facing);
@@ -96,7 +116,7 @@ public abstract class EntityRenderedBase extends Entity {
      * @return The corresponding {@link IFluidHandler} for the {@link EnumFacing}
      */
     @Nullable
-    protected IFluidHandler getFluidHandler(@Nullable EnumFacing facing) {
+    public IFluidHandler getFluidHandler(@Nullable EnumFacing facing) {
         return null;
     }
 
@@ -108,7 +128,19 @@ public abstract class EntityRenderedBase extends Entity {
      * @return The corresponding {@link IEnergyStorage} for the {@link EnumFacing}
      */
     @Nullable
-    protected IEnergyStorage getEnergyStorage(@Nullable EnumFacing facing) {
+    public IEnergyStorage getEnergyStorage(@Nullable EnumFacing facing) {
+        return null;
+    }
+
+    /**
+     * This is for the inventory of the car. Define here a {@link IItemHandler} as inventory,
+     * so that the car can interact with other {@link IItemHandler}
+     *
+     * @param facing The side from which another {@link IItemHandler} wants to interact with.
+     * @return The corresponding {@link IItemHandler} for the {@link EnumFacing}
+     */
+    @Nullable
+    public IItemHandler getInventory(@Nullable EnumFacing facing){
         return null;
     }
 

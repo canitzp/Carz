@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_all",
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "type": {
+      "pylon_european": {
+        "model": "carz:pylon_european",
+        "textures": {
+          "all": "carz:blocks/basic/pylon_european"
+        }
+      }
+    }
+  }
+}
