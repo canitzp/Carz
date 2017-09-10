@@ -87,32 +87,13 @@ public class TilePlantFermenter extends TileBase implements ITickable{
         if(compound.hasKey("OutputFluid", Constants.NBT.TAG_COMPOUND)){
             this.outputFluid = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag("OutputFluid"));
         }
-        if(compound.hasKey("Inventory", Constants.NBT.TAG_LIST)){
-            if(this.inventory.getSizeInventory() > 0){
-                NBTTagList tagList = compound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
-                for(int i = 0; i < this.inventory.getSizeInventory(); i++){
-                    NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
-                    this.inventory.setInventorySlotContents(i, tagCompound.hasKey("id") ? new ItemStack(tagCompound) : ItemStack.EMPTY);
-                }
-            }
-        }
+        this.inventory.readTag(compound);
     }
 
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        if(this.inventory.getSizeInventory() > 0){
-            NBTTagList tagList = new NBTTagList();
-            for(int i = 0; i < this.inventory.getSizeInventory(); i++){
-                ItemStack slot = this.inventory.getStackInSlot(i);
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                if(!slot.isEmpty()){
-                    slot.writeToNBT(tagCompound);
-                }
-                tagList.appendTag(tagCompound);
-            }
-            compound.setTag("Inventory", tagList);
-        }
+        this.inventory.writeTag(compound);
         compound.setTag("FluidTank", this.tank.writeToNBT(new NBTTagCompound()));
         compound.setInteger("TicksLeft", this.ticksLeft);
         compound.setInteger("MaxTicks", this.maxTicks);
