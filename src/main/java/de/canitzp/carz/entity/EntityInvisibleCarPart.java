@@ -57,6 +57,13 @@ public class EntityInvisibleCarPart extends Entity {
     }
 
     @Override
+    public @Nonnull String getName() {
+        if (parent != null)
+            return parent.getName();
+        return super.getName();
+    }
+
+    @Override
     public void readEntityFromNBT(@Nonnull NBTTagCompound nbtTag) {
         //Empty - do not save me
     }
