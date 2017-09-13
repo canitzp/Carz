@@ -39,7 +39,6 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     protected final static DataParameter<Float> SPEED = EntityDataManager.createKey(EntityMoveableBase.class, DataSerializers.FLOAT);
     private float remoteSpeed = 0;
     private double lastColX = 0, lastColZ = 0;
-    //    private int lastColTime;
     private TimedCache<Integer> collisionCache = new TimedCache<>(1000);
 
 
@@ -60,8 +59,9 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
 
         float speed = getSpeed();
         float origRotationYaw = this.rotationYaw;
-        if (speedSqAbs > 0.001 && this.isBeingRidden())
+        if (speedSqAbs > 0.001 && this.isBeingRidden()) {
             this.rotationYaw += this.deltaRotation;
+        }
         this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
         this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
@@ -114,7 +114,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         }
         this.motionX *= (double) this.momentum;
         this.motionZ *= (double) this.momentum;
-        this.motionY += this.hasNoGravity() ? 0.0D : -0.03999999910593033D;
+        this.motionY += this.hasNoGravity() ? 0.0D : -0.2; // -0.03999999910593033D;
         this.deltaRotation *= this.angularMomentum;
         this.centrifugalV2 *= this.angularMomentum;
 
@@ -150,6 +150,12 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
             this.angle = 0;
             this.speedSq = 0;
         }
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger) {
+        super.removePassenger(passenger);
+        this.deltaRotation=0;
     }
 
     @Override
