@@ -71,12 +71,15 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 //Steering
                 if (this.speedSqAbs > 0) {
                     deltaR = Math.abs(steeringMod / this.speedSqAbs);
-                    deltaR *= this.speedSq > 0 ? 1 : -1;
 
                     //Maybe use this for something?
                     double segment = Math.PI * 6 * deltaR / 180;
 
-                    deltaR = Math.min(deltaR, Math.sqrt(this.speedSqAbs)); //2
+                    deltaR = Math.min(deltaR, Math.sqrt(this.speedSqAbs));
+
+                    //Rotate if driving backwards
+                    deltaR *= this.speedSq > 0 ? 1 : -1;
+
                     if (inputLeftDown)
                         deltaR = -deltaR;
                     else if (inputRightDown)

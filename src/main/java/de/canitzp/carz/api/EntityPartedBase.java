@@ -180,9 +180,6 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             this.resetPositionToBB();
         } else {
             this.world.profiler.startSection("move");
-            double d10 = this.posX;
-            double d11 = this.posY;
-            double d1 = this.posZ;
 
             if (this.isInWeb) {
                 this.isInWeb = false;
@@ -199,7 +196,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             double origZ = z;
 
 
-            Set<AxisAlignedBB> list1 = this.getWorldCollisionBoxes(this, x, y, z);
+            Set<AxisAlignedBB> worldCollisionBoxes = this.getWorldCollisionBoxes(this, x, y, z);
             AxisAlignedBB[] backup = new AxisAlignedBB[this.collidingParts.length + 1];
 
             double temp;
@@ -210,7 +207,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 backup[i] = e.getEntityBoundingBox();
                 if (y != 0) {
-                    for (AxisAlignedBB aList1 : list1) {
+                    for (AxisAlignedBB aList1 : worldCollisionBoxes) {
                         y = aList1.calculateYOffset(e.getEntityBoundingBox(), y);
                     }
                 }
@@ -221,7 +218,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, y, 0.0D));
                 if (x != 0) {
                     temp = x;
-                    for (AxisAlignedBB aList1 : list1) {
+                    for (AxisAlignedBB aList1 : worldCollisionBoxes) {
                         x = aList1.calculateXOffset(e.getEntityBoundingBox(), x);
                         if (x != temp)
                             collisions.add(aList1);
@@ -235,11 +232,11 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(x, 0.0D, 0.0D));
                 }
                 if (z != 0) {
-                    temp=z;
-                    for (AxisAlignedBB aList1 : list1) {
-                        z = aList1.calculateZOffset(e.getEntityBoundingBox(), z);
+                    temp = z;
+                    for (AxisAlignedBB bb : worldCollisionBoxes) {
+                        z = bb.calculateZOffset(e.getEntityBoundingBox(), z);
                         if (z != temp)
-                            collisions.add(aList1);
+                            collisions.add(bb);
                         temp = z;
                     }
                 }
@@ -248,17 +245,6 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (z != 0) {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, 0.0D, z));
-                }
-            }
-
-            if (x != origX || z != origZ) {
-                double d = (x-origX)*(x-origX) + (z-origZ)*(z-origZ);
-                if (d > 0.09) {
-                    System.out.println("Collision with " + d);
-                    System.out.println(collisions.size());
-                    for (AxisAlignedBB bb : collisions){
-                        world.destroyBlock(new BlockPos(bb.maxX-0.2,bb.maxY-0.2,bb.maxZ-0.2),true);
-                    }
                 }
             }
 
@@ -275,6 +261,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
             //TODO: stepHeight
             if (this.stepHeight > 0.0F && flag && (origX != x || origZ != z)) {
+                collisions.clear(); //Welp - efficiency will be dammed
                 double curX = x;
                 double curY = y;
                 double curZ = z;
@@ -290,7 +277,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 AxisAlignedBB[] axisalignedbb2 = new AxisAlignedBB[this.collidingParts.length + 1];
                 AxisAlignedBB[] backup3 = new AxisAlignedBB[this.collidingParts.length + 1];
                 List<AxisAlignedBB> list = new ArrayList<>();
-                double d8 = y;
+                double potY = y;
                 for (int i = 0; i < backup1.length; ++i) {
                     Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     list.addAll(this.world.getCollisionBoxes(e, e.getEntityBoundingBox().expand(origX, y, origZ)));
@@ -299,72 +286,78 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     AxisAlignedBB axisalignedbb3 = axisalignedbb2[i].expand(origX, 0.0D, origZ);
 
                     for (AxisAlignedBB bb : list) {
-                        d8 = bb.calculateYOffset(axisalignedbb3, d8);
+                        potY = bb.calculateYOffset(axisalignedbb3, potY);
                     }
                 }
-                double d18 = origX;
+                double potX = origX;
                 for (int i = 0; i < backup1.length; ++i) {
-                    axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, d8, 0.0D);
+                    axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, potY, 0.0D);
 
                     for (AxisAlignedBB bb : list) {
-                        d18 = bb.calculateXOffset(axisalignedbb2[i], d18);
+                        temp = potX;
+                        potX = bb.calculateXOffset(axisalignedbb2[i], potX);
+                        if (temp != potX)
+                            collisions.add(bb);
                     }
                 }
-                double d19 = origZ;
+                double potZ = origZ;
 
                 for (int i = 0; i < backup1.length; ++i) {
-                    axisalignedbb2[i] = axisalignedbb2[i].offset(d18, 0.0D, 0.0D);
+                    axisalignedbb2[i] = axisalignedbb2[i].offset(potX, 0.0D, 0.0D);
 
                     for (AxisAlignedBB bb : list) {
-                        d19 = bb.calculateZOffset(axisalignedbb2[i], d19);
+                        temp = potZ;
+                        potZ = bb.calculateZOffset(axisalignedbb2[i], potZ);
+                        if (temp != potZ)
+                            collisions.add(bb);
                     }
                 }
 
                 AxisAlignedBB[] axisalignedbb4 = new AxisAlignedBB[this.collidingParts.length + 1];
-                double d20 = y;
+                double someOtherY = y;
                 for (int i = 0; i < backup1.length; ++i) {
                     Entity e = i == 0 ? this : this.collidingParts[i - 1];
 
-                    axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, 0.0D, d19);
+                    axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, 0.0D, potZ);
 
                     axisalignedbb4[i] = e.getEntityBoundingBox();
 //                    AxisAlignedBB axisalignedbb4 = e.getEntityBoundingBox();
 
 
                     for (AxisAlignedBB bb : list) {
-                        d20 = bb.calculateYOffset(axisalignedbb4[i], d20);
+                        someOtherY = bb.calculateYOffset(axisalignedbb4[i], someOtherY);
                     }
                 }
-                double d21 = origX;
+                double ox = origX;
                 for (int i = 0; i < backup1.length; ++i) {
-                    axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, d20, 0.0D);
+                    axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, someOtherY, 0.0D);
 
 
                     for (AxisAlignedBB bb : list) {
-                        d21 = bb.calculateXOffset(axisalignedbb4[i], d21);
+                        ox = bb.calculateXOffset(axisalignedbb4[i], ox);
                     }
                 }
-                double d22 = origZ;
+                double oz = origZ;
                 for (int i = 0; i < backup1.length; ++i) {
 
-                    axisalignedbb4[i] = axisalignedbb4[i].offset(d21, 0.0D, 0.0D);
+                    axisalignedbb4[i] = axisalignedbb4[i].offset(ox, 0.0D, 0.0D);
 
 
                     for (AxisAlignedBB bb : list) {
-                        d22 = bb.calculateZOffset(axisalignedbb4[i], d22);
+                        oz = bb.calculateZOffset(axisalignedbb4[i], oz);
                     }
                 }
 //                for (int i = 0; i < backup1.length; ++i) {
 //                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
 //                    axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, d22);
 //                }
-                double d23 = d18 * d18 + d19 * d19;
-                double d9 = d21 * d21 + d22 * d22;
+                double potXZLen = potX * potX + potZ * potZ;
+                double oXZLen = ox * ox + oz * oz;
 
-                if (d23 > d9) {
-                    x = d18;
-                    z = d19;
-                    y = -d8;
+                if (potXZLen > oXZLen) {
+                    x = potX;
+                    z = potZ;
+                    y = -potY;
 //                        e.setEntityBoundingBox(axisalignedbb2);
                     for (int i = 0; i < backup1.length; ++i) {
                         Entity e = i == 0 ? this : this.collidingParts[i - 1];
@@ -373,13 +366,13 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     }
 //                    e.setEntityBoundingBox(axisalignedbb2[i]);
                 } else {
-                    x = d21;
-                    z = d22;
-                    y = -d20;
+                    x = ox;
+                    z = oz;
+                    y = -someOtherY;
 //                    e.setEntityBoundingBox(axisalignedbb4);
                     for (int i = 0; i < backup1.length; ++i) {
                         Entity e = i == 0 ? this : this.collidingParts[i - 1];
-                        axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, d22);
+                        axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, oz);
                         e.setEntityBoundingBox(axisalignedbb4[i]);
                     }
                 }
@@ -415,6 +408,17 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 //                }
             }
 
+            if (x != origX || z != origZ) {
+                double d = (x - origX) * (x - origX) + (z - origZ) * (z - origZ);
+                if (d > 0.09) {
+                    System.out.println("Collision with " + d);
+                    System.out.println(collisions.size());
+                    for (AxisAlignedBB bb : collisions) {
+                        System.out.println(bb.maxX + "|"  + bb.minX);
+                        world.destroyBlock(new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2), true);
+                    }
+                }
+            }
 
             this.world.profiler.endSection();
             this.world.profiler.startSection("rest");
