@@ -17,6 +17,8 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
 
     private boolean inputLeftDown, inputRightDown, inputForwardDown, inputBackDown;
 
+    protected double steeringMod = 0.7;
+    protected double steeringMax = 5;
 
     protected boolean autoSnapping = true;
 
@@ -38,8 +40,8 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
     @Override
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
-        if (world.isRemote){
-            this.updateInputs(false,false,false,false);
+        if (world.isRemote) {
+            this.updateInputs(false, false, false, false);
         }
     }
 
@@ -58,10 +60,6 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
 
             if (this.spinningTicks <= 10) {
                 double deltaR = 0; //rotation
-                if (this.inputLeftDown)
-                    deltaR -= 1;
-                if (this.inputRightDown)
-                    deltaR += 1;
 
                 if (this.inputForwardDown)
                     fwd += 0.04; //OPTION: forward (0.04)
@@ -70,23 +68,21 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
 
                 setSpeed(getSpeed() + fwd);
 
-//                double speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
+                //Steering
+                if (this.speedSqAbs > 0) {
+                    deltaR = Math.abs(steeringMod / this.speedSqAbs);
+                    deltaR *= this.speedSq > 0 ? 1 : -1;
 
-//                double momYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.motionZ, this.motionX) * 180 / Math.PI) - 90;
-//                double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
-//                double angle = MathHelper.wrapDegrees(rotYaw - momYaw);
-//                double speedSq = (angle > 170 || angle < -170) ? -speedSqAbs : speedSqAbs;
+                    //Maybe use this for something?
+                    double segment = Math.PI * 6 * deltaR / 180;
 
-
-                //times 2.5 and reverse if driving backwards
-                deltaR *= 2.5 * this.speedSq > 0 ? 1 : -1;
-                if (this.speedSq > 0) {
-                    //TODO: Yeah - find some actual good numbers
-                    //OPTION: steering
-                    deltaR *= 3 * Math.pow(Math.max(5, Math.min(30, Math.abs(angle)) - 4), -1.001);
-//                    deltaR *= speedSqAbs;//(float)Math.pow(speedSqAbs, 2.0D);
-//                    deltaR = MathHelper.clamp(deltaR, 0f,5f);
-//                    System.out.println(deltaR);
+                    deltaR = Math.min(deltaR, Math.sqrt(this.speedSqAbs)); //2
+                    if (inputLeftDown)
+                        deltaR = -deltaR;
+                    else if (inputRightDown)
+                        deltaR = deltaR;
+                    else
+                        deltaR = 0;
                 }
 
                 if (this.speedSq > 0 && deltaR == 0 && autoSnapping) {

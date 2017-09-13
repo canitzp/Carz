@@ -89,6 +89,9 @@ public class EntityBus extends EntitySteerableBase {
 
         this.addSeat(0.05F, -1.6F, -0.9F);
         this.addSeat(0.05F, -1.6F, 0.9F);
+
+        this.steeringMax = 2;
+        this.steeringMod = 0.07;
     }
 
     @Override
