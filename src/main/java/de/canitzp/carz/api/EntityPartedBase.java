@@ -30,7 +30,7 @@ import java.util.*;
  *
  * @author MisterErwin
  */
-public abstract class EntityPartedBase extends EntityRenderedBase {
+public abstract class EntityPartedBase extends EntityWorldInteractionBase {
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
     //TODO: Seperate parts that are only following without the move/rotation collision checks

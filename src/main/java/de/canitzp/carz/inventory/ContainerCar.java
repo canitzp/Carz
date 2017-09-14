@@ -31,7 +31,7 @@ public class ContainerCar extends Container {
             });
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 9; ++j) {
-                    this.addSlotToContainer(new SlotItemHandler(inv, j + i * 9 + 1, 8 + j * 18, 54 + i * 18));
+                    this.addSlotToContainer(new SlotItemHandler(inv, j + i * 9 + 1 + car.getInventoryIndexOffset(this, inv, i, j), 8 + j * 18, 54 + i * 18));
                 }
             }
         }

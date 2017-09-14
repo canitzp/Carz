@@ -1,6 +1,7 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.inventory.ContainerCar;
 import de.canitzp.carz.network.GuiHandler;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
@@ -40,44 +41,6 @@ public abstract class EntityRenderedBase extends Entity {
         super(worldIn);
     }
 
-    @Override
-    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        if(!this.world.isRemote && player.isSneaking()){
-            player.openGui(Carz.carz, GuiHandler.ID_CAR, this.world, this.getEntityId(), 0, 0);
-            return true;
-        }
-        return super.processInitialInteract(player, hand);
-    }
-
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        return this.getCapability(capability, facing) != null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidHandler fluidHandler = this.getFluidHandler(facing);
-            if (fluidHandler != null) {
-                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler);
-            }
-        }
-        if (capability == CapabilityEnergy.ENERGY) {
-            IEnergyStorage energyStorage = this.getEnergyStorage(facing);
-            if (energyStorage != null) {
-                return CapabilityEnergy.ENERGY.cast(energyStorage);
-            }
-        }
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-            IItemHandler itemHandler = this.getInventory(facing);
-            if(itemHandler != null){
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
-            }
-        }
-        return super.getCapability(capability, facing);
-    }
-
     /**
      * @return The Model for the Car
      */
@@ -107,41 +70,5 @@ public abstract class EntityRenderedBase extends Entity {
      */
     @SideOnly(Side.CLIENT)
     public abstract void setupGL(double x, double y, double z, float entityYaw, float partialTicks);
-
-    /**
-     * This is for the internal FluidTank of the car. Define here a {@link IFluidHandler} as internal tank,
-     * so that the car can interact with other {@link IFluidHandler}
-     *
-     * @param facing The side from which another {@link IFluidHandler} wants to interact with.
-     * @return The corresponding {@link IFluidHandler} for the {@link EnumFacing}
-     */
-    @Nullable
-    public IFluidHandler getFluidHandler(@Nullable EnumFacing facing) {
-        return null;
-    }
-
-    /**
-     * This is for the internal EnergyStorage of the car. Define here a {@link IEnergyStorage} as internal storage,
-     * so that the car can interact with other {@link IEnergyStorage}
-     *
-     * @param facing The side from which another {@link IEnergyStorage} wants to interact with.
-     * @return The corresponding {@link IEnergyStorage} for the {@link EnumFacing}
-     */
-    @Nullable
-    public IEnergyStorage getEnergyStorage(@Nullable EnumFacing facing) {
-        return null;
-    }
-
-    /**
-     * This is for the inventory of the car. Define here a {@link IItemHandler} as inventory,
-     * so that the car can interact with other {@link IItemHandler}
-     *
-     * @param facing The side from which another {@link IItemHandler} wants to interact with.
-     * @return The corresponding {@link IItemHandler} for the {@link EnumFacing}
-     */
-    @Nullable
-    public IItemHandler getInventory(@Nullable EnumFacing facing){
-        return null;
-    }
 
 }
