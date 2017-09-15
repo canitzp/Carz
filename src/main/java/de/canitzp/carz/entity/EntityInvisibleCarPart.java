@@ -3,6 +3,7 @@ package de.canitzp.carz.entity;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.network.MessageCarPartInteract;
 import de.canitzp.carz.network.NetworkHandler;
+import de.canitzp.carz.util.VehiclePackets;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -201,7 +202,7 @@ public class EntityInvisibleCarPart extends Entity {
                 }
             }
             if (world.isRemote) {
-                NetworkHandler.net.sendToServer(new MessageCarPartInteract(this.parent.getEntityId(), hand, index));
+                VehiclePackets.sendCarInteractToServer(this.parent, hand, index);
             } else {
                 this.parent.processInitialInteract(player, hand, index);
             }

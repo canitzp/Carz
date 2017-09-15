@@ -1,6 +1,12 @@
 package de.canitzp.carz.util;
 
+import de.canitzp.carz.api.EntityMoveableBase;
 import de.canitzp.carz.api.EntityWorldInteractionBase;
+import de.canitzp.carz.network.MessageCarPartInteract;
+import de.canitzp.carz.network.MessageCarSpeed;
+import de.canitzp.carz.network.NetworkHandler;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -18,13 +24,38 @@ public class VehiclePackets {
     /**
      * This send the page index update from the client to the server,
      * but it also sets it at the client.
+     *
      * @param vehicle The vehicle with inventory
      * @param newPage The new page index
      */
     @SideOnly(Side.CLIENT)
-    public static void sendInventoryPageToServer(@Nonnull EntityWorldInteractionBase vehicle, int newPage){
+    public static void sendInventoryPageToServer(@Nonnull EntityWorldInteractionBase vehicle, int newPage) {
         vehicle.setInventoryPageIndex(newPage); // Set it at the client
         // TODO send a packet to the server to set it there too
+    }
+
+    /**
+     * This sends an interaction with a car part from the client to the server.
+     *
+     * @param entity    the base car
+     * @param hand      the hand used
+     * @param partIndex The index of the car part
+     */
+    @SideOnly(Side.CLIENT)
+    public static void sendCarInteractToServer(@Nonnull Entity entity, @Nonnull EnumHand hand, int partIndex) {
+        NetworkHandler.net.sendToServer(new MessageCarPartInteract(entity.getEntityId(), hand, partIndex));
+    }
+
+    /**
+     * Sends the vehicle speed from the client to the server.
+     * You may want to use {@link EntityMoveableBase#setSpeed(float)} to sync
+     *
+     * @param speed The speed of the vehicle
+     * @deprecated use {@link EntityMoveableBase#setSpeed(float)}
+     */
+    @SideOnly(Side.CLIENT)
+    public static void sendCarSpeedToServer(float speed) {
+        /* just for documentation */
     }
 
 }
