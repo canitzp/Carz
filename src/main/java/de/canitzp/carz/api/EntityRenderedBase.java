@@ -71,4 +71,12 @@ public abstract class EntityRenderedBase extends Entity {
     @SideOnly(Side.CLIENT)
     public abstract void setupGL(double x, double y, double z, float entityYaw, float partialTicks);
 
+    /**
+     * Provides a rotation around the 3rd axis
+     * @return the rotation
+     */
+    public float getRotationRoll(){
+        //TODO @canitzp
+        return 0;
+    }
 }
