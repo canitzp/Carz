@@ -107,12 +107,12 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                 }
                 if (speedSqAbs > 0.001) {
                     //Apply the rotation if the car is moving.
-                    this.deltaRotation += deltaR;
-//                    this.rotationYaw += this.deltaRotation; //MOVED: EntityMoveABle
+                    this.deltaRotationYaw += deltaR;
+//                    this.rotationYaw += this.deltaRotationYaw; //MOVED: EntityMoveABle
                 }
             } else {
-                this.deltaRotation += 0.01;
-                this.rotationYaw += this.deltaRotation; //Spin me around
+                this.deltaRotationYaw += 0.01;
+                this.rotationYaw += this.deltaRotationYaw; //Spin me around
             }
             //Apply movement
 //            this.motionX += (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * fwd);

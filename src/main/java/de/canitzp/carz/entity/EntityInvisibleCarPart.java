@@ -1,8 +1,7 @@
 package de.canitzp.carz.entity;
 
 import de.canitzp.carz.api.EntityPartedBase;
-import de.canitzp.carz.network.MessageCarPartInteract;
-import de.canitzp.carz.network.NetworkHandler;
+import de.canitzp.carz.util.MathUtil;
 import de.canitzp.carz.util.VehiclePackets;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
@@ -58,7 +57,8 @@ public class EntityInvisibleCarPart extends Entity {
     }
 
     @Override
-    public @Nonnull String getName() {
+    public @Nonnull
+    String getName() {
         if (parent != null)
             return parent.getName();
         return super.getName();
@@ -100,20 +100,25 @@ public class EntityInvisibleCarPart extends Entity {
 
     /**
      * Called from the parent (EntityPartedBase)
-     * @param cos the parent cos
-     * @param sin the paren sin
+     *
+     * @param cosYaw the parent cos
+     * @param sinYaw the paren sin
      */
-    public void onUpdate(double cos, double sin) {
-        this.setPositionAndUpdate(this.parent.posX + this.offsetX * cos - this.offsetZ * sin,
-                this.parent.posY + this.offsetY,
-                this.parent.posZ + this.offsetX * sin + this.offsetZ * cos);
+    public void onUpdate(double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll) {
+        this.setPositionAndUpdate(
+                this.parent.posX + MathUtil.rotX(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posY + MathUtil.rotY(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posZ + MathUtil.rotZ(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
 
         if (!this.world.isRemote && colliding) {
             if (moveAlong) {
                 this.moveAlongNearbyEntities();
             }
             this.collideWithNearbyEntities();
-        }else if (this.world.isRemote && moveAlong){
+        } else if (this.world.isRemote && moveAlong) {
             this.moveAlongNearbyEntities();
         }
 
@@ -217,6 +222,18 @@ public class EntityInvisibleCarPart extends Entity {
         if (parent != null && !parent.isDead && colliding) {
             parent.applyEntityCollision(entityIn);
         }
+    }
+
+    public float getOffsetX() {
+        return offsetX;
+    }
+
+    public float getOffsetY() {
+        return offsetY;
+    }
+
+    public float getOffsetZ() {
+        return offsetZ;
     }
 
     public float getWidthOffset() {

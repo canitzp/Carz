@@ -131,8 +131,8 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
 
             Vec3d vec3d = seat.rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
             passenger.setPosition(this.posX + vec3d.x, this.posY + (double) f1 + vec3d.y, this.posZ + vec3d.z);
-            passenger.rotationYaw += this.deltaRotation;
-            passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotation);
+            passenger.rotationYaw += this.deltaRotationYaw;
+            passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotationYaw);
             this.applyYawToEntity(passenger);
         }
     }

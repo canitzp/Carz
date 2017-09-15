@@ -27,12 +27,15 @@ import java.util.*;
 
 /**
  * Just to test stuff... and no collisions :(
+ * //TODO: Clean up this mess - it's even worse than my room - and my room looks like a warzone
  *
  * @author MisterErwin
  */
 public abstract class EntityPartedBase extends EntityWorldInteractionBase {
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
+
+    protected float deltaRotationPitch;
     //TODO: Seperate parts that are only following without the move/rotation collision checks
 
     private AxisAlignedBB renderBoundingBox;
@@ -69,10 +72,13 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
         //Reset the movingAlong collection, as we will re-add them in onUpdate if needed
         movingAlong.clear();
         //prev renderYawOffset
-        double cos = Math.cos(this.rotationYaw * (Math.PI / 180.0F));
-        double sin = Math.sin(this.rotationYaw * (Math.PI / 180.0F));
+
+        double cosYaw = Math.cos(this.rotationYaw * (Math.PI / 180.0F));
+        double sinYaw = Math.sin(this.rotationYaw * (Math.PI / 180.0F));
+        double cosPitch = Math.cos(-this.rotationPitch * (Math.PI / 180.0F));
+        double sinPitch = Math.sin(-this.rotationPitch * (Math.PI / 180.0F));
         for (EntityInvisibleCarPart part : partArray) {
-            part.onUpdate(cos, sin);
+            part.onUpdate(cosYaw, sinYaw, cosPitch, sinPitch, 1, 0);
         }
 
         super.onUpdate();
@@ -202,16 +208,21 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             double temp;
 
             List<AxisAlignedBB> collisions = new ArrayList<>();
-
+            double realFirstY = y;
             for (int i = 0; i < backup.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 backup[i] = e.getEntityBoundingBox();
                 if (y != 0) {
-                    for (AxisAlignedBB aList1 : worldCollisionBoxes) {
-                        y = aList1.calculateYOffset(e.getEntityBoundingBox(), y);
+                    temp = realFirstY;
+                    for (AxisAlignedBB bb : worldCollisionBoxes) {
+                        y = bb.calculateYOffset(e.getEntityBoundingBox(), y);
+                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
                     }
-                }
+                    e.onGround = (temp != realFirstY);
+                } else
+                    e.onGround = true;
             }
+
             for (int i = 0; i < backup.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (y != 0)
@@ -273,6 +284,8 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     e.setEntityBoundingBox(backup[i]);
                 }
                 y = (double) this.stepHeight;
+                if (this.rotationPitch != 0)
+                    y *= 2;
 //                List<AxisAlignedBB> list = this.getWorldCollisionBoxes(this, this.getEntityBoundingBox().expand(origX, y, origZ));
                 AxisAlignedBB[] axisalignedbb2 = new AxisAlignedBB[this.collidingParts.length + 1];
                 AxisAlignedBB[] backup3 = new AxisAlignedBB[this.collidingParts.length + 1];
@@ -289,6 +302,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                         potY = bb.calculateYOffset(axisalignedbb3, potY);
                     }
                 }
+
                 double potX = origX;
                 for (int i = 0; i < backup1.length; ++i) {
                     axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, potY, 0.0D);
@@ -390,9 +404,11 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 } else {
                     for (int i = 0; i < backup1.length; ++i) {
                         Entity e = i == 0 ? this : this.collidingParts[i - 1];
+                        double startY = y;
                         for (AxisAlignedBB bb : list) {
                             y = bb.calculateYOffset(e.getEntityBoundingBox(), y);
                         }
+//                        e.onGround = y != startY;
                         e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, y, 0.0D));
                     }
                 }
@@ -410,14 +426,26 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
             if (x != origX || z != origZ) {
                 double d = (x - origX) * (x - origX) + (z - origZ) * (z - origZ);
-                if (d > 0.09) {
-                    System.out.println("Collision with " + d);
-                    System.out.println(collisions.size());
-                    for (AxisAlignedBB bb : collisions) {
-                        System.out.println(bb.maxX + "|"  + bb.minX);
-                        world.destroyBlock(new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2), true);
+                this.onCollision(d, collisions);
+            }
+
+            int yFront = 0;
+            int yBack = 0;
+            for (EntityInvisibleCarPart part : this.collidingParts) {
+                if (part.onGround) {
+                    if (part.getOffsetZ() > .3) {
+                        yFront++;
+                    } else if (part.getOffsetZ() < -.3) {
+                        yBack++;
                     }
                 }
+            }
+            if (yFront > yBack && yBack == 0) {
+                this.rotationPitch = Math.max(-20, this.rotationPitch - 1);
+            } else if (yFront < yBack && yFront == 0) {
+                this.rotationPitch = Math.min(20, this.rotationPitch + 1);
+            } else if (this.rotationPitch != 0 && yFront != 0 && yBack != 0) {
+                this.rotationPitch = this.rotationPitch + (this.rotationPitch > 0 ? -1 : 1);
             }
 
             this.world.profiler.endSection();
@@ -492,6 +520,14 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
             this.world.profiler.endSection();
         }
+    }
+
+    /**
+     * @param force      A number representing how strong the collision was (not really a force)
+     * @param collisions All collisions happened
+     */
+    protected void onCollision(double force, Collection<AxisAlignedBB> collisions) {
+
     }
 
     protected static class PartData {

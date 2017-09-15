@@ -3,6 +3,7 @@ package de.canitzp.carz.api;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.network.MessageCarSpeed;
 import de.canitzp.carz.network.NetworkHandler;
+import de.canitzp.carz.util.MathUtil;
 import de.canitzp.carz.util.TimedCache;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -18,6 +19,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -29,7 +31,8 @@ import java.util.List;
  * @author MisterErwin
  */
 public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollideableBase*/ {
-    protected float deltaRotation;
+    protected float deltaRotationYaw;
+
     protected float momentum, angularMomentum;
     protected int spinningTicks = 0; //Out of control
 
@@ -59,15 +62,21 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
 
         float speed = getSpeed();
         float origRotationYaw = this.rotationYaw;
-        if (speedSqAbs > 0.001 && this.isBeingRidden()) {
-            this.rotationYaw += this.deltaRotation;
-        }
+//        if (speedSqAbs > 0.001 && this.isBeingRidden()) {
+        this.rotationYaw += this.deltaRotationYaw;
+//        }
+        this.rotationPitch += this.deltaRotationPitch;
+        //TODO: Get rid of deltaRotationPitch and get the delta ourself
+
         this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
         this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
 
-        double cos = Math.cos(-this.deltaRotation * 0.017453292F);
-        double sin = Math.sin(this.deltaRotation * 0.017453292F);
+        //(Math.PI / 180.0F) = 0.017453292F
+        double cosYaw = Math.cos(-this.deltaRotationYaw * 0.017453292F);
+        double sinYaw = Math.sin(this.deltaRotationYaw * 0.017453292F);
+        double cosPitch = Math.cos(-this.deltaRotationPitch * 0.017453292F);
+        double sinPitch = Math.sin(this.deltaRotationPitch * 0.017453292F);
 
 
         if (this.isCollidedHorizontally)
@@ -75,16 +84,25 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         else {
             for (Entity e : movingAlong) {
                 if (world.isRemote || !(e instanceof EntityPlayerMP)) { //TODO: Do I really do not want to move Players?
-                    e.rotationYaw += deltaRotation;
-                    e.setRotationYawHead(e.getRotationYawHead() + deltaRotation);
+                    e.rotationYaw += deltaRotationYaw;
+                    e.setRotationYawHead(e.getRotationYawHead() + deltaRotationYaw);
 
-                    double ox = e.posX - this.posX, oz = e.posZ - this.posZ;
+                    double ox = e.posX - this.posX, oy = e.posY - this.posY, oz = e.posZ - this.posZ;
 
-                    //vehiclepos + moved + offset rotated by deltaR
+                    //vehiclepos + moved + offset rotated
 
-                    e.setPosition(this.posX + this.motionX + ox * cos - oz * sin,
-                            e.posY + motionY,
-                            this.posZ + motionZ + ox * sin + oz * cos);
+                    double ny = this.motionY + MathUtil.rotY(ox, oy, oz,
+                            cosYaw, sinYaw, cosPitch, sinPitch, 1, 0);
+                    if (ny > 0)
+                        ny += 0.1;
+
+                    e.setPosition(
+                            this.posX + this.motionX + MathUtil.rotX(ox, oy, oz,
+                                    cosYaw, sinYaw, cosPitch, sinPitch, 1, 0),
+                            this.posY + ny,
+                            this.posZ + this.motionZ + MathUtil.rotZ(ox, oy, oz,
+                                    cosYaw, sinYaw, cosPitch, sinPitch, 1, 0)
+                    );
                 }
             }
         }
@@ -115,7 +133,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         this.motionX *= (double) this.momentum;
         this.motionZ *= (double) this.momentum;
         this.motionY += this.hasNoGravity() ? 0.0D : -0.2; // -0.03999999910593033D;
-        this.deltaRotation *= this.angularMomentum;
+        this.deltaRotationYaw *= this.angularMomentum;
         this.centrifugalV2 *= this.angularMomentum;
 
         this.speedSqAbs = this.motionZ * this.motionZ + this.motionX * this.motionX;
@@ -155,7 +173,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     @Override
     protected void removePassenger(Entity passenger) {
         super.removePassenger(passenger);
-        this.deltaRotation=0;
+        this.deltaRotationYaw = 0;
     }
 
     @Override
@@ -300,4 +318,15 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         return new Vec3d(b.minX + (b.maxX - b.minX) * 0.5D, b.minY + (b.maxY - b.minY) * 0.5D, b.minZ + (b.maxZ - b.minZ) * 0.5D);
     }
 
+    @Override
+    protected void onCollision(double force, Collection<AxisAlignedBB> collisions) {
+        if (force > 0.09 && this.speedSqAbs > 0.05) {
+            System.out.println("Collision with " + force);
+            System.out.println(collisions.size());
+            for (AxisAlignedBB bb : collisions) {
+                System.out.println(bb.maxX + "|" + bb.minX);
+                world.destroyBlock(new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2), true);
+            }
+        }
+    }
 }
