@@ -35,7 +35,6 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
 
-    protected float deltaRotationPitch;
     //TODO: Seperate parts that are only following without the move/rotation collision checks
 
     private AxisAlignedBB renderBoundingBox;
@@ -176,6 +175,9 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     //ToDo: Performance - like: for real
 
+    public List<AxisAlignedBB> collisions = new ArrayList<>();
+    public Collection<AxisAlignedBB> possibleCollisions = new ArrayList<>();
+
     /**
      * Tries to move the entity towards the specified location.
      */
@@ -203,15 +205,17 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
 
             Set<AxisAlignedBB> worldCollisionBoxes = this.getWorldCollisionBoxes(this, x, y, z);
-            AxisAlignedBB[] backup = new AxisAlignedBB[this.collidingParts.length + 1];
+            AxisAlignedBB[] originalBBs = new AxisAlignedBB[this.collidingParts.length + 1];
 
             double temp;
 
-            List<AxisAlignedBB> collisions = new ArrayList<>();
+            /*List<AxisAlignedBB>*/
+            collisions = new ArrayList<>();
+            possibleCollisions = worldCollisionBoxes;
             double realFirstY = y;
-            for (int i = 0; i < backup.length; ++i) {
+            for (int i = 0; i < originalBBs.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
-                backup[i] = e.getEntityBoundingBox();
+                originalBBs[i] = e.getEntityBoundingBox();
                 if (y != 0) {
                     temp = realFirstY;
                     for (AxisAlignedBB bb : worldCollisionBoxes) {
@@ -219,11 +223,16 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                         temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
                     }
                     e.onGround = (temp != realFirstY);
-                } else
-                    e.onGround = true;
+                } else {
+                    temp = realFirstY;
+                    for (AxisAlignedBB bb : worldCollisionBoxes) {
+                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
+                    }
+                    e.onGround = (temp != realFirstY);
+                }
             }
 
-            for (int i = 0; i < backup.length; ++i) {
+            for (int i = 0; i < originalBBs.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (y != 0)
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, y, 0.0D));
@@ -237,7 +246,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     }
                 }
             }
-            for (int i = 0; i < backup.length; ++i) {
+            for (int i = 0; i < originalBBs.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (x != 0) {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(x, 0.0D, 0.0D));
@@ -252,7 +261,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     }
                 }
             }
-            for (int i = 0; i < backup.length; ++i) {
+            for (int i = 0; i < originalBBs.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 if (z != 0) {
                     e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, 0.0D, z));
@@ -273,25 +282,24 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             //TODO: stepHeight
             if (this.stepHeight > 0.0F && flag && (origX != x || origZ != z)) {
                 collisions.clear(); //Welp - efficiency will be dammed
-                double curX = x;
-                double curY = y;
-                double curZ = z;
-                AxisAlignedBB[] backup1 = new AxisAlignedBB[this.collidingParts.length + 1];
-                for (int i = 0; i < backup1.length; ++i) {
+                double noStepHeightX = x;
+                double noStepHeightY = y;
+                double NoStepHeightZ = z;
+                AxisAlignedBB[] noStepHeightBBs = new AxisAlignedBB[this.collidingParts.length + 1];
+                for (int i = 0; i < noStepHeightBBs.length; ++i) {
                     Entity e = i == 0 ? this : this.collidingParts[i - 1];
-                    backup1[i] = e.getEntityBoundingBox();
+                    noStepHeightBBs[i] = e.getEntityBoundingBox();
                     //AxisAlignedBB axisalignedbb1 = this.getEntityBoundingBox();
-                    e.setEntityBoundingBox(backup[i]);
+                    e.setEntityBoundingBox(originalBBs[i]);
                 }
                 y = (double) this.stepHeight;
                 if (this.rotationPitch != 0)
                     y *= 2;
 //                List<AxisAlignedBB> list = this.getWorldCollisionBoxes(this, this.getEntityBoundingBox().expand(origX, y, origZ));
                 AxisAlignedBB[] axisalignedbb2 = new AxisAlignedBB[this.collidingParts.length + 1];
-                AxisAlignedBB[] backup3 = new AxisAlignedBB[this.collidingParts.length + 1];
                 List<AxisAlignedBB> list = new ArrayList<>();
                 double potY = y;
-                for (int i = 0; i < backup1.length; ++i) {
+                for (int i = 0; i < noStepHeightBBs.length; ++i) {
                     Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     list.addAll(this.world.getCollisionBoxes(e, e.getEntityBoundingBox().expand(origX, y, origZ)));
 //                    AxisAlignedBB axisalignedbb2 = this.getEntityBoundingBox();
@@ -304,7 +312,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 }
 
                 double potX = origX;
-                for (int i = 0; i < backup1.length; ++i) {
+                for (int i = 0; i < noStepHeightBBs.length; ++i) {
                     axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, potY, 0.0D);
 
                     for (AxisAlignedBB bb : list) {
@@ -316,7 +324,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 }
                 double potZ = origZ;
 
-                for (int i = 0; i < backup1.length; ++i) {
+                for (int i = 0; i < noStepHeightBBs.length; ++i) {
                     axisalignedbb2[i] = axisalignedbb2[i].offset(potX, 0.0D, 0.0D);
 
                     for (AxisAlignedBB bb : list) {
@@ -329,7 +337,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
                 AxisAlignedBB[] axisalignedbb4 = new AxisAlignedBB[this.collidingParts.length + 1];
                 double someOtherY = y;
-                for (int i = 0; i < backup1.length; ++i) {
+                for (int i = 0; i < noStepHeightBBs.length; ++i) {
                     Entity e = i == 0 ? this : this.collidingParts[i - 1];
 
                     axisalignedbb2[i] = axisalignedbb2[i].offset(0.0D, 0.0D, potZ);
@@ -343,7 +351,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     }
                 }
                 double ox = origX;
-                for (int i = 0; i < backup1.length; ++i) {
+                for (int i = 0; i < noStepHeightBBs.length; ++i) {
                     axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, someOtherY, 0.0D);
 
 
@@ -352,7 +360,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     }
                 }
                 double oz = origZ;
-                for (int i = 0; i < backup1.length; ++i) {
+                for (int i = 0; i < noStepHeightBBs.length; ++i) {
 
                     axisalignedbb4[i] = axisalignedbb4[i].offset(ox, 0.0D, 0.0D);
 
@@ -361,7 +369,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                         oz = bb.calculateZOffset(axisalignedbb4[i], oz);
                     }
                 }
-//                for (int i = 0; i < backup1.length; ++i) {
+//                for (int i = 0; i < noStepHeightBBs.length; ++i) {
 //                    Entity e = i == 0 ? this : this.collidingParts[i - 1];
 //                    axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, d22);
 //                }
@@ -373,7 +381,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     z = potZ;
                     y = -potY;
 //                        e.setEntityBoundingBox(axisalignedbb2);
-                    for (int i = 0; i < backup1.length; ++i) {
+                    for (int i = 0; i < noStepHeightBBs.length; ++i) {
                         Entity e = i == 0 ? this : this.collidingParts[i - 1];
 //                        axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, d22);
                         e.setEntityBoundingBox(axisalignedbb2[i]);
@@ -384,7 +392,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     z = oz;
                     y = -someOtherY;
 //                    e.setEntityBoundingBox(axisalignedbb4);
-                    for (int i = 0; i < backup1.length; ++i) {
+                    for (int i = 0; i < noStepHeightBBs.length; ++i) {
                         Entity e = i == 0 ? this : this.collidingParts[i - 1];
                         axisalignedbb4[i] = axisalignedbb4[i].offset(0.0D, 0.0D, oz);
                         e.setEntityBoundingBox(axisalignedbb4[i]);
@@ -392,35 +400,32 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 }
 
 
-                if (curX * curX + curZ * curZ >= x * x + z * z) {
-                    x = curX;
-                    y = curY;
-                    z = curZ;
-//                        e.setEntityBoundingBox(axisalignedbb1);
-                    for (int i = 0; i < backup1.length; ++i) {
+                if (noStepHeightX * noStepHeightX + NoStepHeightZ * NoStepHeightZ >= x * x + z * z) {
+                    x = noStepHeightX;
+                    y = noStepHeightY;
+                    z = NoStepHeightZ;
+                    for (int i = 0; i < noStepHeightBBs.length; ++i) {
                         Entity e = i == 0 ? this : this.collidingParts[i - 1];
-                        e.setEntityBoundingBox(backup1[i]);
+                        e.setEntityBoundingBox(noStepHeightBBs[i]);
                     }
                 } else {
-                    for (int i = 0; i < backup1.length; ++i) {
+                    for (int i = 0; i < noStepHeightBBs.length; ++i) {
                         Entity e = i == 0 ? this : this.collidingParts[i - 1];
-                        double startY = y;
                         for (AxisAlignedBB bb : list) {
                             y = bb.calculateYOffset(e.getEntityBoundingBox(), y);
                         }
-//                        e.onGround = y != startY;
                         e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, y, 0.0D));
                     }
                 }
 
 //                e.setEntityBoundingBox(e.getEntityBoundingBox().offset(0.0D, y, 0.0D));
 
-//                if (curX * curX + curZ * curZ >= x * x + z * z) {
-//                    x = curX;
-//                    y = curY;
-//                    z = curZ;
+//                if (noStepHeightX * noStepHeightX + NoStepHeightZ * NoStepHeightZ >= x * x + z * z) {
+//                    x = noStepHeightX;
+//                    y = noStepHeightY;
+//                    z = NoStepHeightZ;
 ////                        e.setEntityBoundingBox(axisalignedbb1);
-//                    e.setEntityBoundingBox(backup1[i]);
+//                    e.setEntityBoundingBox(noStepHeightBBs[i]);
 //                }
             }
 
@@ -432,21 +437,24 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             int yFront = 0;
             int yBack = 0;
             for (EntityInvisibleCarPart part : this.collidingParts) {
-                if (part.onGround) {
-                    if (part.getOffsetZ() > .3) {
+                if (part.onGround && part.colliding) {
+                    if (part.getOffsetZ() > 1.3) {
                         yFront++;
-                    } else if (part.getOffsetZ() < -.3) {
+                    } else if (part.getOffsetZ() < -1.3) {
                         yBack++;
                     }
                 }
             }
-            if (yFront > yBack && yBack == 0) {
-                this.rotationPitch = Math.max(-20, this.rotationPitch - 1);
-            } else if (yFront < yBack && yFront == 0) {
-                this.rotationPitch = Math.min(20, this.rotationPitch + 1);
+            if (yFront > yBack && (yBack == 0 /*|| this.rotationPitch < 0*/)) {
+                this.rotationPitch = Math.max(-14, this.rotationPitch - 1);
+            } else if (yFront < yBack && (yFront == 0 /*|| this.rotationPitch > 0*/)) {
+                this.rotationPitch = Math.min(14, this.rotationPitch + 1);
             } else if (this.rotationPitch != 0 && yFront != 0 && yBack != 0) {
                 this.rotationPitch = this.rotationPitch + (this.rotationPitch > 0 ? -1 : 1);
             }
+
+//            if (yFront != 0 && yBack != 0)
+//                System.out.println(yFront + "|" + yBack);
 
             this.world.profiler.endSection();
             this.world.profiler.startSection("rest");
@@ -456,7 +464,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             this.onGround = this.isCollidedVertically && origY < 0.0D;
             this.isCollided = this.isCollidedHorizontally || this.isCollidedVertically;
             int j6 = MathHelper.floor(this.posX);
-            int i1 = MathHelper.floor(this.posY - 0.20000000298023224D);
+            int i1 = MathHelper.floor(this.posY - 0.000000298023224D);
             int k6 = MathHelper.floor(this.posZ);
             BlockPos blockpos = new BlockPos(j6, i1, k6);
             IBlockState iblockstate = this.world.getBlockState(blockpos);

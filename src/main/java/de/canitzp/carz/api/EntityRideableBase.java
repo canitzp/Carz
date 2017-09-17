@@ -32,6 +32,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
 
     /**
      * Add a seat position.
+     *
      * @param x offset from entity center
      * @param y offset from entity center
      * @param z offset from entity center
@@ -42,6 +43,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
 
     /**
      * Sets the position of the driver seat
+     *
      * @param x offset from entity center
      * @param y offset from entity center
      * @param z offset from entity center
@@ -58,6 +60,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
 
     /**
      * Can an entity enter this vehicle?
+     *
      * @param passenger entity
      * @return true if said entity may enter this vehicle as a passenger
      */
@@ -109,6 +112,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
 
     /**
      * Get the seat(index) to "place" an entity on.
+     *
      * @param passenger the passenger
      * @return the index of the seat, or -1 if said entity is not an passenger
      */
@@ -133,6 +137,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             passenger.setPosition(this.posX + vec3d.x, this.posY + (double) f1 + vec3d.y, this.posZ + vec3d.z);
             passenger.rotationYaw += this.deltaRotationYaw;
             passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotationYaw);
+            passenger.rotationPitch += prevRotationPitch - rotationPitch;
             this.applyYawToEntity(passenger);
         }
     }

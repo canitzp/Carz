@@ -1,6 +1,7 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.blocks.BlockRoad;
 import de.canitzp.carz.network.MessageCarSpeed;
 import de.canitzp.carz.network.NetworkHandler;
 import de.canitzp.carz.util.MathUtil;
@@ -32,6 +33,7 @@ import java.util.List;
  */
 public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollideableBase*/ {
     protected float deltaRotationYaw;
+//    private float deltaRotationPitch;
 
     protected float momentum, angularMomentum;
     protected int spinningTicks = 0; //Out of control
@@ -65,8 +67,6 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
 //        if (speedSqAbs > 0.001 && this.isBeingRidden()) {
         this.rotationYaw += this.deltaRotationYaw;
 //        }
-        this.rotationPitch += this.deltaRotationPitch;
-        //TODO: Get rid of deltaRotationPitch and get the delta ourself
 
         this.motionX = (double) (MathHelper.sin(-this.rotationYaw * 0.017453292F) * speed);
         this.motionZ = (double) (MathHelper.cos(this.rotationYaw * 0.017453292F) * speed);
@@ -75,8 +75,9 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         //(Math.PI / 180.0F) = 0.017453292F
         double cosYaw = Math.cos(-this.deltaRotationYaw * 0.017453292F);
         double sinYaw = Math.sin(this.deltaRotationYaw * 0.017453292F);
-        double cosPitch = Math.cos(-this.deltaRotationPitch * 0.017453292F);
-        double sinPitch = Math.sin(this.deltaRotationPitch * 0.017453292F);
+        double deltaRotationPitch = prevRotationPitch - rotationPitch;
+        double cosPitch = Math.cos(-deltaRotationPitch * 0.017453292F);
+        double sinPitch = Math.sin(deltaRotationPitch * 0.017453292F);
 
 
         if (this.isCollidedHorizontally)
@@ -93,8 +94,9 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
 
                     double ny = this.motionY + MathUtil.rotY(ox, oy, oz,
                             cosYaw, sinYaw, cosPitch, sinPitch, 1, 0);
-                    if (ny > 0)
-                        ny += 0.1;
+                    //TODO: Sometimes this is needed, sometimes not
+//                    if (ny > 0)
+//                        ny += 0.1;
 
                     e.setPosition(
                             this.posX + this.motionX + MathUtil.rotX(ox, oy, oz,
@@ -132,7 +134,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         }
         this.motionX *= (double) this.momentum;
         this.motionZ *= (double) this.momentum;
-        this.motionY += this.hasNoGravity() ? 0.0D : -0.2; // -0.03999999910593033D;
+        this.motionY += this.hasNoGravity() ? 0.0D : -0.05; // -0.03999999910593033D; //Gravity
         this.deltaRotationYaw *= this.angularMomentum;
         this.centrifugalV2 *= this.angularMomentum;
 
@@ -325,7 +327,9 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
             System.out.println(collisions.size());
             for (AxisAlignedBB bb : collisions) {
                 System.out.println(bb.maxX + "|" + bb.minX);
-                world.destroyBlock(new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2), true);
+                BlockPos pos = new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2);
+                if (!(world.getBlockState(pos).getBlock() instanceof BlockRoad))
+                    world.destroyBlock(pos, true);
             }
         }
     }
