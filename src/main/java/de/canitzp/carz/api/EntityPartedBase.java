@@ -43,6 +43,8 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     public Set<Entity> movingAlong = new HashSet<>();
 
+    private int rotationTicks = 5;
+
     public EntityPartedBase(World worldIn) {
         super(worldIn);
 
@@ -218,17 +220,25 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 originalBBs[i] = e.getEntityBoundingBox();
                 if (y != 0) {
                     temp = realFirstY;
+                    boolean onGround = false;
                     for (AxisAlignedBB bb : worldCollisionBoxes) {
                         y = bb.calculateYOffset(e.getEntityBoundingBox(), y);
-                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
+//                        bb.intersect((e.getEntityBoundingBox)
+//                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
+                        if (!onGround)
+                            onGround = onGround(bb, e.getEntityBoundingBox());
                     }
-                    e.onGround = (temp != realFirstY);
+                    e.onGround = onGround; //(temp != realFirstY);
                 } else {
-                    temp = realFirstY;
+                    boolean onGround = false;
                     for (AxisAlignedBB bb : worldCollisionBoxes) {
-                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
+                        if (!onGround) {
+                            onGround = onGround(bb, e.getEntityBoundingBox());
+                            if (onGround)
+                                break;
+                        }
                     }
-                    e.onGround = (temp != realFirstY);
+                    e.onGround = onGround;
                 }
             }
 
@@ -445,12 +455,19 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     }
                 }
             }
-            if (yFront > yBack && (yBack == 0 /*|| this.rotationPitch < 0*/)) {
-                this.rotationPitch = Math.max(-14, this.rotationPitch - 1);
-            } else if (yFront < yBack && (yFront == 0 /*|| this.rotationPitch > 0*/)) {
-                this.rotationPitch = Math.min(14, this.rotationPitch + 1);
-            } else if (this.rotationPitch != 0 && yFront != 0 && yBack != 0) {
-                this.rotationPitch = this.rotationPitch + (this.rotationPitch > 0 ? -1 : 1);
+            if (yFront > 0 && yBack == 0) {
+                this.rotationPitch = Math.max(-14, this.rotationPitch - 0.5f);
+            } else if (yBack > 0 && yFront == 0) {
+                this.rotationPitch = Math.min(14, this.rotationPitch + 0.5f);
+            } else if (yFront != 0 && yBack != 0) {
+                if (--rotationTicks == 0) {
+                    rotationTicks = 5;
+                    if (this.rotationPitch >= 1 || this.rotationPitch <= -1)
+                        this.rotationPitch = (this.rotationPitch + (this.rotationPitch > 0 ? -0.5f : 0.5f));
+                    else
+                        this.rotationPitch = 0;
+                }
+//                System.out.println("Pitch => " + this.rotationPitch);
             }
 
             this.world.profiler.endSection();
@@ -606,6 +623,14 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             return new PartData(d, colliding.stream().mapToInt(x -> x).toArray());
         }
 
+    }
+
+    public static boolean onGround(AxisAlignedBB a, AxisAlignedBB b) {
+        if (a.maxX > b.minX && a.minX < b.maxX && a.maxZ > b.minZ && a.minZ < b.maxZ) {
+            if (a.minY < b.minY && a.maxY > b.minY - 0.2)
+                return true;
+        }
+        return false;
     }
 
 }

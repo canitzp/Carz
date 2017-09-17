@@ -63,6 +63,12 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         this.doBlockCollisions();
 
         float speed = getSpeed();
+
+        if (this.rotationPitch > 5)
+            speed += 0.02;
+        else if (this.rotationPitch < -5)
+            speed -= 0.02;
+
         float origRotationYaw = this.rotationYaw;
 //        if (speedSqAbs > 0.001 && this.isBeingRidden()) {
         this.rotationYaw += this.deltaRotationYaw;
