@@ -4,6 +4,7 @@ import de.canitzp.carz.api.EntityRenderedBase;
 import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
+import de.canitzp.carz.client.models.ModelNakedBus;
 import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
@@ -13,7 +14,6 @@ import de.canitzp.carz.entity.EntitySportscar;
 import de.canitzp.carz.fluid.FluidBase;
 import de.canitzp.carz.items.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -33,7 +33,8 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -104,7 +105,7 @@ public class Registry {
      * Models:
      */
     public static final ModelSportscar MODEL_SPORTSCAR = new ModelSportscar();
-    public static final ModelBus MODEL_BUS = new ModelBus();
+    public static final ModelBus MODEL_BUS = new ModelNakedBus();
 
     /**
      * Statistics:

@@ -3,7 +3,7 @@ package de.canitzp.carz.client.models;
 import net.minecraft.entity.Entity;
 
 /**
- * A bus exposing its inner parts - perfect for boundingbox-debugging
+ * A bus exposing its inner parts - perfect for debugging
  * @author canitzp
  */
 public class ModelNakedBus extends ModelBus {
@@ -19,7 +19,7 @@ public class ModelNakedBus extends ModelBus {
         this.seat4_base.render(f5);
         this.axle_front.render(f5);
         this.seat5_base.render(f5);
-        this.left_side.render(f5);
+//        this.left_side.render(f5);
         this.seat6_back.render(f5);
         this.seat2_base.render(f5);
         this.tyre1_right_front.render(f5);
