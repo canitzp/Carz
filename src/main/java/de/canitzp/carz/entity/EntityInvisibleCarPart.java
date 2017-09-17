@@ -92,7 +92,7 @@ public class EntityInvisibleCarPart extends Entity {
 
     @Override
     public void onUpdate() {
-        if (this.parent == null || this.parent.isDead) {
+        if (this.parent == null || this.parent.isDead) { //Most likely not called on the client, but yeah :)
             this.world.removeEntity(this);
         }
         //The stuff normally done here is now called from the parent, with "cached" sin/cos

@@ -453,9 +453,6 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 this.rotationPitch = this.rotationPitch + (this.rotationPitch > 0 ? -1 : 1);
             }
 
-//            if (yFront != 0 && yBack != 0)
-//                System.out.println(yFront + "|" + yBack);
-
             this.world.profiler.endSection();
             this.world.profiler.startSection("rest");
             this.resetPositionToBB();
@@ -536,6 +533,15 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
      */
     protected void onCollision(double force, Collection<AxisAlignedBB> collisions) {
 
+    }
+
+    @Override
+    public void setDead() {
+        for (Entity part : partArray) {
+            part.setDead();
+            world.removeEntityDangerously(part);
+        }
+        super.setDead();
     }
 
     protected static class PartData {
