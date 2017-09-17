@@ -57,7 +57,6 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 @Mod.EventBusSubscriber
 public class Registry {
-
     /**
      * Internal Stuff:
      */
@@ -105,7 +104,7 @@ public class Registry {
      * Models:
      */
     public static final ModelSportscar MODEL_SPORTSCAR = new ModelSportscar();
-    public static final ModelBus MODEL_BUS = new ModelNakedBus();
+    public static final ModelBus MODEL_BUS = getInstanceWithDebug(ModelBus.class, ModelNakedBus.class);
 
     /**
      * Statistics:
@@ -164,7 +163,7 @@ public class Registry {
         registerFluidRenderer(fluidBioFuel);
     }
 
-    private static void registerFluids(IForgeRegistry<Block> registry){
+    private static void registerFluids(IForgeRegistry<Block> registry) {
         FluidRegistry.registerFluid(fluidBioFuel);
         FluidRegistry.addBucketForFluid(fluidBioFuel);
         registry.register(new BlockFluid(fluidBioFuel));
@@ -220,6 +219,16 @@ public class Registry {
         ModelLoader.registerItemVariants(item);
         ModelLoader.setCustomMeshDefinition(item, mesh);
         ModelLoader.setCustomStateMapper(block, mapper);
+    }
+
+    private static <T> T getInstanceWithDebug(Class<T> normal, Class<? extends T> debug) {
+        try {
+            if ("true".equals(System.getProperty("renderDebug")))
+                return debug.newInstance();
+            return normal.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

@@ -32,16 +32,29 @@ import java.util.*;
  * @author MisterErwin
  */
 public abstract class EntityPartedBase extends EntityWorldInteractionBase {
+    private static final boolean enableDebugRenderer = "true".equals(System.getProperty("renderDebug"));
+
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
-
-    //TODO: Seperate parts that are only following without the move/rotation collision checks
 
     private AxisAlignedBB renderBoundingBox;
 
     protected float horizontalCollisionModifier = 0.2f;
 
+    /**
+     * Entities moving along
+     */
     public Set<Entity> movingAlong = new HashSet<>();
+
+    /**
+     * Collisions currently happening
+     */
+    public List<AxisAlignedBB> collisions = new ArrayList<>();
+
+    /**
+     * Collisionboxes that could have caused a collision
+     */
+    public Collection<AxisAlignedBB> possibleCollisions = new ArrayList<>();
 
     private int rotationTicks = 5;
 
@@ -177,9 +190,6 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     //ToDo: Performance - like: for real
 
-    public List<AxisAlignedBB> collisions = new ArrayList<>();
-    public Collection<AxisAlignedBB> possibleCollisions = new ArrayList<>();
-
     /**
      * Tries to move the entity towards the specified location.
      */
@@ -213,22 +223,19 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
             /*List<AxisAlignedBB>*/
             collisions = new ArrayList<>();
-            possibleCollisions = worldCollisionBoxes;
-            double realFirstY = y;
+            if (enableDebugRenderer)
+                possibleCollisions = worldCollisionBoxes;
             for (int i = 0; i < originalBBs.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 originalBBs[i] = e.getEntityBoundingBox();
                 if (y != 0) {
-                    temp = realFirstY;
                     boolean onGround = false;
                     for (AxisAlignedBB bb : worldCollisionBoxes) {
                         y = bb.calculateYOffset(e.getEntityBoundingBox(), y);
-//                        bb.intersect((e.getEntityBoundingBox)
-//                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
                         if (!onGround)
                             onGround = onGround(bb, e.getEntityBoundingBox());
                     }
-                    e.onGround = onGround; //(temp != realFirstY);
+                    e.onGround = onGround;
                 } else {
                     boolean onGround = false;
                     for (AxisAlignedBB bb : worldCollisionBoxes) {
@@ -625,7 +632,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     }
 
-    public static boolean onGround(AxisAlignedBB a, AxisAlignedBB b) {
+    private static boolean onGround(AxisAlignedBB a, AxisAlignedBB b) {
         if (a.maxX > b.minX && a.minX < b.maxX && a.maxZ > b.minZ && a.minZ < b.maxZ) {
             if (a.minY < b.minY && a.maxY > b.minY - 0.2)
                 return true;

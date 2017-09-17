@@ -29,6 +29,8 @@ public class Carz {
 
     static {
         FluidRegistry.enableUniversalBucket();
+        //I could not pass this along with the gradle start, so :)
+        System.setProperty("renderDebug", "true");
     }
 
     @Mod.Instance(MODID)
@@ -49,7 +51,7 @@ public class Carz {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        if(ConfigCarz.Generation.OIL_CHUNKS_ACTIVE){
+        if (ConfigCarz.Generation.OIL_CHUNKS_ACTIVE) {
             GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
         }
         proxy.init(event);

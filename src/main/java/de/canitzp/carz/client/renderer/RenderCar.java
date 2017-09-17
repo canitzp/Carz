@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
  */
 @SideOnly(Side.CLIENT)
 public class RenderCar<T extends EntityRenderedBase> extends Render<T> implements IResourceManagerReloadListener {
+    private static final boolean enableDebugRenderer = "true".equals(System.getProperty("renderDebug"));
 
     private ModelBase model;
     private ResourceLocation texture;
@@ -63,7 +64,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         }
         GlStateManager.popMatrix();
 
-        if (car instanceof EntityPartedBase/* && !((EntityPartedBase) car).collisions.isEmpty()*/){
+        if (enableDebugRenderer && car instanceof EntityPartedBase){
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.glLineWidth(2.0F);
@@ -82,13 +83,9 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
             for (AxisAlignedBB bb : ((EntityPartedBase) car).collisions)
                 RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 0.2F, 0.2F, 0.2F);
 
-
-
             GlStateManager.depthMask(true);
             GlStateManager.enableTexture2D();
             GlStateManager.disableBlend();
-
-
         }
 
         super.doRender(car, x, y, z, entityYaw, partialTicks);
