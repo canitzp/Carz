@@ -29,12 +29,12 @@ public class Carz {
 
     static {
         FluidRegistry.enableUniversalBucket();
-        //I could not pass this along with the gradle start, so :)
-        System.setProperty("renderDebug", "true");
     }
 
     @Mod.Instance(MODID)
     public static Carz carz;
+
+    public static boolean RENDER_DEBUG = false;
 
     @SidedProxy(clientSide = "de.canitzp.carz.network.ClientProxy", serverSide = "de.canitzp.carz.network.CommonProxy")
     public static CommonProxy proxy;

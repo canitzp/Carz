@@ -32,8 +32,6 @@ import java.util.*;
  * @author MisterErwin
  */
 public abstract class EntityPartedBase extends EntityWorldInteractionBase {
-    private static final boolean enableDebugRenderer = "true".equals(System.getProperty("renderDebug"));
-
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
 
@@ -223,8 +221,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
             /*List<AxisAlignedBB>*/
             collisions = new ArrayList<>();
-            if (enableDebugRenderer)
-                possibleCollisions = worldCollisionBoxes;
+            possibleCollisions = worldCollisionBoxes;
             for (int i = 0; i < originalBBs.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 originalBBs[i] = e.getEntityBoundingBox();

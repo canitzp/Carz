@@ -1,5 +1,6 @@
 package de.canitzp.carz.client.renderer;
 
+import de.canitzp.carz.Carz;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -19,8 +20,6 @@ import javax.annotation.Nullable;
  * @author MisterErwin
  */
 public class RenderInvisibleCarPart extends Render<EntityInvisibleCarPart> {
-    private static final boolean enableDebugRenderer = "true".equals(System.getProperty("renderDebug"));
-
     private final Minecraft minecraft;
 
     public RenderInvisibleCarPart(RenderManager renderManager) {
@@ -36,7 +35,7 @@ public class RenderInvisibleCarPart extends Render<EntityInvisibleCarPart> {
 
     @Override
     public void doRender(EntityInvisibleCarPart entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        if (!enableDebugRenderer || !entity.colliding)
+        if (!Carz.RENDER_DEBUG || !entity.colliding)
             return;
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);

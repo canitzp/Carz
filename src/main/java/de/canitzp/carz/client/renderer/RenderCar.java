@@ -1,5 +1,6 @@
 package de.canitzp.carz.client.renderer;
 
+import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.EntityRenderedBase;
 import net.minecraft.client.Minecraft;
@@ -25,8 +26,6 @@ import javax.annotation.Nullable;
  */
 @SideOnly(Side.CLIENT)
 public class RenderCar<T extends EntityRenderedBase> extends Render<T> implements IResourceManagerReloadListener {
-    private static final boolean enableDebugRenderer = "true".equals(System.getProperty("renderDebug"));
-
     private ModelBase model;
     private ResourceLocation texture;
 
@@ -64,7 +63,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         }
         GlStateManager.popMatrix();
 
-        if (enableDebugRenderer && car instanceof EntityPartedBase){
+        if (Carz.RENDER_DEBUG && car instanceof EntityPartedBase){
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.glLineWidth(2.0F);

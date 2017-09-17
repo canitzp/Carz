@@ -125,7 +125,10 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     public static KeyBinding keyRight;
     @SideOnly(Side.CLIENT)
+    public static KeyBinding enableDebug;
+    @SideOnly(Side.CLIENT)
     public static KeyBinding keyStartEngine;
+
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -179,6 +182,7 @@ public class Registry {
             keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
             keyLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft;
             keyRight = Minecraft.getMinecraft().gameSettings.keyBindRight;
+            ClientRegistry.registerKeyBinding(enableDebug = new KeyBinding(I18n.format("carz:key.render_debug.desc"), Keyboard.KEY_O, Carz.MODNAME));
             ClientRegistry.registerKeyBinding(keyStartEngine = new KeyBinding(I18n.format("carz:key.start_engine.desc"), Keyboard.KEY_R, Carz.MODNAME));
         }
     }
