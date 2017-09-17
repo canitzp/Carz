@@ -1,13 +1,12 @@
 package de.canitzp.carz.inventory;
 
-import de.canitzp.carz.api.EntityRenderedBase;
+import de.canitzp.carz.api.EntityWorldInteractionBase;
 import de.canitzp.carz.api.Safety;
 import de.canitzp.carz.items.ItemKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -19,7 +18,7 @@ import javax.annotation.Nonnull;
 public class ContainerCar extends Container {
 
     public ContainerCar(EntityPlayer player, int entityId) {
-        EntityRenderedBase car = Safety.getEntity(player.world, entityId, EntityRenderedBase.class);
+        EntityWorldInteractionBase car = Safety.getEntity(player.world, entityId, EntityWorldInteractionBase.class);
 
         IItemHandler inv = car.getInventory(null);
         if(inv != null){
