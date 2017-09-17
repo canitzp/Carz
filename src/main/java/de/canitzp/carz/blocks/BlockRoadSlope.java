@@ -27,10 +27,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
-import static de.canitzp.carz.util.BlockProps.*;
+import static de.canitzp.carz.util.BlockProps.FACING;
+import static de.canitzp.carz.util.BlockProps.SLOPE_NUMBER;
 
 /**
  * The meta for this looks like this:
@@ -157,36 +157,25 @@ public class BlockRoadSlope extends BlockRoad<BlockRoadSlope>{
 
     @Override
     public void addCollisionBoxToList(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-        boolean isXFacing = state.getValue(FACING) == EnumFacing.WEST || state.getValue(FACING) == EnumFacing.EAST;
-        switch (state.getValue(SLOPE_NUMBER)){
-            case 0:{
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0D, 0.0D, 0.0D, isXFacing ? 0.25D : 1.0D, 1/16D, !isXFacing ? 0.25D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.25D : 0.0D, 0.0D, !isXFacing ? 0.25D : 0.0D, isXFacing ? 0.5D : 1.0D, 2/16D, !isXFacing ? 0.5D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.5D : 0.0D, 0.0D, !isXFacing ? 0.5D : 0.0D, isXFacing ? 0.75D : 1.0D, 3/16D, !isXFacing ? 0.75D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.75D : 0.0D, 0.0D, !isXFacing ? 0.75D : 0.0D, 1.0D, 4/16D, 1.0D));
+        double y = state.getValue(SLOPE_NUMBER)*4;
+        boolean isXFacing = false;
+        switch (state.getValue(FACING)){
+            case EAST:
+                isXFacing = true;
+            case SOUTH:
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0D, 0, 0.0D, isXFacing ? 0.25D : 1.0D, (y+1)/16D, !isXFacing ? 0.25D : 1.0D));
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.25D : 0.0D, 0, !isXFacing ? 0.25D : 0.0D, isXFacing ? 0.5D : 1.0D, (y+2)/16D, !isXFacing ? 0.5D : 1.0D));
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.5D : 0.0D, 0, !isXFacing ? 0.5D : 0.0D, isXFacing ? 0.75D : 1.0D, (y+3)/16D, !isXFacing ? 0.75D : 1.0D));
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.75D : 0.0D, 0, !isXFacing ? 0.75D : 0.0D, 1.0D, (y+4)/16D, 1.0D));
                 break;
-            }
-            case 1:{
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0D, 0.0D, 0.0D, isXFacing ? 0.25D : 1.0D, 5/16D, !isXFacing ? 0.25D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.25D : 0.0D, 0.0D, !isXFacing ? 0.25D : 0.0D, isXFacing ? 0.5D : 1.0D, 6/16D, !isXFacing ? 0.5D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.5D : 0.0D, 0.0D, !isXFacing ? 0.5D : 0.0D, isXFacing ? 0.75D : 1.0D, 7/16D, !isXFacing ? 0.75D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.75D : 0.0D, 0.0D, !isXFacing ? 0.75D : 0.0D, 1.0D, 8/16D, 1.0D));
+            case WEST:
+                isXFacing = true;
+            default:
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0D, 0, 0.0D, isXFacing ? 0.25D : 1.0D, (y+4)/16D, !isXFacing ? 0.25D : 1.0D));
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.25D : 0.0D, 0, !isXFacing ? 0.25D : 0.0D, isXFacing ? 0.5D : 1.0D, (y+3)/16D, !isXFacing ? 0.5D : 1.0D));
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.5D : 0.0D, 0, !isXFacing ? 0.5D : 0.0D, isXFacing ? 0.75D : 1.0D, (y+2)/16D, !isXFacing ? 0.75D : 1.0D));
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.75D : 0.0D, 0, !isXFacing ? 0.75D : 0.0D, 1.0D, (y+1)/16D, 1.0D));
                 break;
-            }
-            case 2:{
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0D, 0.0D, 0.0D, isXFacing ? 0.25D : 1.0D, 9/16D, !isXFacing ? 0.25D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.25D : 0.0D, 0.0D, !isXFacing ? 0.25D : 0.0D, isXFacing ? 0.5D : 1.0D, 10/16D, !isXFacing ? 0.5D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.5D : 0.0D, 0.0D, !isXFacing ? 0.5D : 0.0D, isXFacing ? 0.75D : 1.0D, 11/16D, !isXFacing ? 0.75D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.75D : 0.0D, 0.0D, !isXFacing ? 0.75D : 0.0D, 1.0D, 12/16D, 1.0D));
-                break;
-            }
-            default: {
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0D, 0.0D, 0.0D, isXFacing ? 0.25D : 1.0D, 13/16D, !isXFacing ? 0.25D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.25D : 0.0D, 0.0D, !isXFacing ? 0.25D : 0.0D, isXFacing ? 0.5D : 1.0D, 14/16D, !isXFacing ? 0.5D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.5D : 0.0D, 0.0D, !isXFacing ? 0.5D : 0.0D, isXFacing ? 0.75D : 1.0D, 15/16D, !isXFacing ? 0.75D : 1.0D));
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(isXFacing ? 0.75D : 0.0D, 0.0D, !isXFacing ? 0.75D : 0.0D, 1.0D, 16/16D, 1.0D));
-                break;
-            }
         }
     }
 
