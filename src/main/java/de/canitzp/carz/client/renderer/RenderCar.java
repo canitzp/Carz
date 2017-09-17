@@ -77,10 +77,10 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
             double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double)partialTicks;
 
             for (AxisAlignedBB bb : ((EntityPartedBase) car).possibleCollisions)
-                RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 1.0F, 0.0F, 1f);
+                RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 1.0F, 0.0F, 0.2f);
 
             for (AxisAlignedBB bb : ((EntityPartedBase) car).collisions)
-                RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 0.2F, 0.2F, 1.0F);
+                RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 0.2F, 0.2F, 0.2F);
 
 
 

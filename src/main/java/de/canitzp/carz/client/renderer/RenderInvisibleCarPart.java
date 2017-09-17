@@ -50,7 +50,7 @@ public class RenderInvisibleCarPart extends Render<EntityInvisibleCarPart> {
         double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
 
         if (entity.onGround) {
-            RenderGlobal.drawSelectionBoundingBox(axisalignedbb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 0.2F, 0.2F, 1.0F, 1.0F);
+            RenderGlobal.drawSelectionBoundingBox(axisalignedbb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1, 0, 0, 1.0F);
         } else {
             RenderGlobal.drawSelectionBoundingBox(axisalignedbb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 0.2F, 0.2F, 0.2F, 1.0F);
         }
