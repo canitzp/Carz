@@ -477,10 +477,10 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             this.world.profiler.endSection();
             this.world.profiler.startSection("rest");
             this.resetPositionToBB();
-            this.isCollidedHorizontally = origX != x || origZ != z;
-            this.isCollidedVertically = origY != y;
-            this.onGround = this.isCollidedVertically && origY < 0.0D;
-            this.isCollided = this.isCollidedHorizontally || this.isCollidedVertically;
+            this.collidedHorizontally = origX != x || origZ != z;
+            this.collidedVertically = origY != y;
+            this.onGround = this.collidedVertically && origY < 0.0D;
+            this.collided = this.collidedHorizontally || this.collidedVertically;
             int j6 = MathHelper.floor(this.posX);
             int i1 = MathHelper.floor(this.posY - 0.000000298023224D);
             int k6 = MathHelper.floor(this.posZ);

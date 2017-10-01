@@ -57,7 +57,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         this.onUpdate(this.canPassengerSteer());
         this.stepHeight = 0.26f; //Yeah - config - now a bit greater than 4/16
 
-        if (this.isCollidedHorizontally) {
+        if (this.collidedHorizontally) {
             blockCollisionCheck();
         }
         this.doBlockCollisions();
@@ -86,7 +86,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         double sinPitch = Math.sin(deltaRotationPitch * 0.017453292F);
 
 
-        if (this.isCollidedHorizontally)
+        if (this.collidedHorizontally)
             this.rotationYaw = origRotationYaw;
         else {
             for (Entity e : movingAlong) {

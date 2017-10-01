@@ -74,7 +74,7 @@ public class ItemPainter extends ItemBase<ItemPainter> {
     }
 
     @Override
-    public float getStrVsBlock(ItemStack stack, IBlockState state) {
+    public float getDestroySpeed(ItemStack stack, IBlockState state) {
         return 0.0F;
     }
 
