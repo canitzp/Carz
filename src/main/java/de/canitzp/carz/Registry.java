@@ -5,7 +5,6 @@ import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelNakedBus;
-import de.canitzp.carz.client.models.ModelSportscar;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
 import de.canitzp.carz.entity.EntityBus;
@@ -13,14 +12,19 @@ import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
 import de.canitzp.carz.fluid.FluidBase;
 import de.canitzp.carz.items.*;
+import de.canitzp.voxeler.VoxelBase;
+import de.canitzp.voxeler.Voxeler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -48,6 +52,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +61,7 @@ import java.util.List;
  */
 @SuppressWarnings("WeakerAccess")
 @Mod.EventBusSubscriber
-public class Registry {
+public class Registry{
 
     /**
      * Internal Stuff:
@@ -104,8 +109,8 @@ public class Registry {
     /**
      * Models:
      */
-    public static final ModelSportscar MODEL_SPORTSCAR = new ModelSportscar();
-    public static final ModelBus MODEL_BUS = new ModelNakedBus();
+    public static VoxelBase MODEL_SPORTSCAR;
+    public static VoxelBase MODEL_BUS;
 
     /**
      * Statistics:
@@ -161,7 +166,7 @@ public class Registry {
         for (ItemBase item : ITEMS_FOR_REGISTERING) {
             item.registerClient();
         }
-        registerFluidRenderer(fluidBioFuel);
+        initModels();
     }
 
     private static void registerFluids(IForgeRegistry<Block> registry){
@@ -175,6 +180,12 @@ public class Registry {
         registerEntity("bus", EntityBus.class, event.getSide());
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
         if (event.getSide().isClient()) {
+            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener() {
+                @Override
+                public void onResourceManagerReload(IResourceManager resourceManager) {
+                    initModels();
+                }
+            });
             RenderingRegistry.registerEntityRenderingHandler(EntityInvisibleCarPart.class, new RenderInvisibleCarPart.RenderInvisibleCarPartFactory());
             keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
             keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
@@ -182,6 +193,12 @@ public class Registry {
             keyRight = Minecraft.getMinecraft().gameSettings.keyBindRight;
             ClientRegistry.registerKeyBinding(keyStartEngine = new KeyBinding(I18n.format("carz:key.start_engine.desc"), Keyboard.KEY_R, Carz.MODNAME));
         }
+    }
+
+    private static void initModels(){
+        registerFluidRenderer(fluidBioFuel);
+        MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
+        MODEL_BUS = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/bus"));
     }
 
     private static <T extends EntityRenderedBase> void registerEntity(String name, Class<T> entity, Side side) {
@@ -207,19 +224,21 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     private static void registerFluidRenderer(Fluid fluid) {
         Block block = fluid.getBlock();
-        Item item = Item.getItemFromBlock(block);
-        final ModelResourceLocation loc = new ModelResourceLocation(new ResourceLocation(Carz.MODID, "fluids"), fluid.getName());
-        ItemMeshDefinition mesh = stack -> loc;
-        StateMapperBase mapper = new StateMapperBase() {
-            @Nonnull
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return loc;
-            }
-        };
-        ModelLoader.registerItemVariants(item);
-        ModelLoader.setCustomMeshDefinition(item, mesh);
-        ModelLoader.setCustomStateMapper(block, mapper);
+        if(block != null){
+            Item item = Item.getItemFromBlock(block);
+            final ModelResourceLocation loc = new ModelResourceLocation(new ResourceLocation(Carz.MODID, "fluids"), fluid.getName());
+            ItemMeshDefinition mesh = stack -> loc;
+            StateMapperBase mapper = new StateMapperBase() {
+                @Nonnull
+                @Override
+                protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                    return loc;
+                }
+            };
+            ModelLoader.registerItemVariants(item);
+            ModelLoader.setCustomMeshDefinition(item, mesh);
+            ModelLoader.setCustomStateMapper(block, mapper);
+        }
     }
 
 }
