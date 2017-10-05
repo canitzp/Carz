@@ -20,12 +20,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
@@ -41,6 +44,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -63,6 +67,7 @@ public class Registry {
      * Internal Stuff:
      */
     public static final List<BlockBase> BLOCKS_FOR_REGISTERING = new ArrayList<>();
+    public static final List<Block> BLOCKS = new ArrayList<>();
     public static final List<ItemBase> ITEMS_FOR_REGISTERING = new ArrayList<>();
     private static int entityId = 0;
     @SideOnly(Side.CLIENT)
@@ -87,6 +92,8 @@ public class Registry {
     public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
     public static BlockPlantFermenter blockPlantFermenter = new BlockPlantFermenter().register();
     public static BlockBasic blockBasic = new BlockBasic().register();
+    public static BlockRubberLog blockLog = new BlockRubberLog().register();
+    public static BlockRubberLeaves blockRubberLeaves = new BlockRubberLeaves().register();
 
     /**
      * Items:
@@ -96,6 +103,7 @@ public class Registry {
     public static ItemOilProbe itemOilProbe = new ItemOilProbe().register();
     public static ItemBaseDefault itemPressedPlant = new ItemBaseDefault<>("pressed_plant").register();
     public static ItemKey itemKey = new ItemKey().register();
+    public static ItemBaseDefault itemRawRubber = new ItemBaseDefault<>("raw_rubber").register();
 
     /**
      * Fluids:
@@ -139,6 +147,10 @@ public class Registry {
             Carz.LOG.info("Registering Block: " + block.getRegistryName());
             reg.register(block);
         }
+        for (Block block : BLOCKS) {
+            Carz.LOG.info("Registering Block: " + block.getRegistryName());
+            reg.register(block);
+        }
         registerFluids(reg);
     }
 
@@ -148,6 +160,10 @@ public class Registry {
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             Carz.LOG.info("Registering ItemBlock: " + block.getRegistryName());
             reg.register(block.getItemBlock());
+        }
+        for (Block block : BLOCKS) {
+            Carz.LOG.info("Registering ItemBlock: " + block.getRegistryName());
+            reg.register(new CustomItemBlock(block).setRegistryName(block.getRegistryName()));
         }
         for (ItemBase item : ITEMS_FOR_REGISTERING) {
             Carz.LOG.info("Registering Item: " + item.getRegistryName());
@@ -161,6 +177,11 @@ public class Registry {
         ModelLoaderRegistry.registerLoader(new CustomModelLoader());
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
+        }
+        for (Block block : BLOCKS) {
+            for(int i = 0; i < 16; i++){
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), i, new ModelResourceLocation(block.getRegistryName(), "inventory"));
+            }
         }
         for (ItemBase item : ITEMS_FOR_REGISTERING) {
             item.registerClient();
@@ -198,6 +219,16 @@ public class Registry {
     private static void initModels(){
         registerFluidRenderer(fluidBioFuel);
         MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
+    }
+
+    public static void init(FMLInitializationEvent event){
+        if(event.getSide().isClient()){
+            for(Block block : BLOCKS){
+                if(block instanceof IBlockColor){
+                    Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((IBlockColor) block, block);
+                }
+            }
+        }
     }
 
     private static <T extends EntityRenderedBase> void registerEntity(String name, Class<T> entity, Side side) {
