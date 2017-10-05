@@ -1,0 +1,68 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model": "minecraft:cube",
+    "textures": {
+      "tex_rubber": "carz:blocks/log_rubber_rubber_side",
+      "tex_rubbery": "carz:blocks/log_rubber_rubbery_side",
+      "tex_default": "carz:blocks/log_rubber_side",
+      "particle": "#tex_default",
+      "up": "carz:blocks/log_rubber_top",
+      "down": "#up",
+      "north": "#tex_default",
+      "south": "#tex_default",
+      "east": "#tex_default",
+      "west": "#tex_default"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "rubbery": {
+      "true": {
+        "textures": {
+          "tex_rubber": "#tex_rubbery"
+        }
+      },
+      "false": {}
+    },
+    "rubber_side": {
+      "north": {
+        "textures": {
+          "north": "#tex_rubber"
+        }
+      },
+      "south": {
+        "textures": {
+          "south": "#tex_rubber"
+        }
+      },
+      "east": {
+        "textures": {
+          "east": "#tex_rubber"
+        }
+      },
+      "west": {
+        "textures": {
+          "west": "#tex_rubber"
+        }
+      }
+    },
+    "rubber": {
+      "true": {},
+      "false": {}
+    },
+    "axis": {
+      "x": {
+        "x": 90,
+        "y": 90
+      },
+      "y": {},
+      "z": {
+        "x": 90
+      },
+      "none": {}
+    }
+  }
+}
