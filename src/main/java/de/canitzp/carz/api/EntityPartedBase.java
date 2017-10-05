@@ -35,13 +35,26 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
 
-    //TODO: Seperate parts that are only following without the move/rotation collision checks
-
     private AxisAlignedBB renderBoundingBox;
 
     protected float horizontalCollisionModifier = 0.2f;
 
+    /**
+     * Entities moving along
+     */
     public Set<Entity> movingAlong = new HashSet<>();
+
+    /**
+     * Collisions currently happening
+     */
+    public List<AxisAlignedBB> collisions = new ArrayList<>();
+
+    /**
+     * Collisionboxes that could have caused a collision
+     */
+    public Collection<AxisAlignedBB> possibleCollisions = new ArrayList<>();
+
+    private int rotationTicks = 5;
 
     public EntityPartedBase(World worldIn) {
         super(worldIn);
@@ -175,9 +188,6 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     //ToDo: Performance - like: for real
 
-    public List<AxisAlignedBB> collisions = new ArrayList<>();
-    public Collection<AxisAlignedBB> possibleCollisions = new ArrayList<>();
-
     /**
      * Tries to move the entity towards the specified location.
      */
@@ -212,23 +222,27 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             /*List<AxisAlignedBB>*/
             collisions = new ArrayList<>();
             possibleCollisions = worldCollisionBoxes;
-            double realFirstY = y;
             for (int i = 0; i < originalBBs.length; ++i) {
                 Entity e = i == 0 ? this : this.collidingParts[i - 1];
                 originalBBs[i] = e.getEntityBoundingBox();
                 if (y != 0) {
-                    temp = realFirstY;
+                    boolean onGround = false;
                     for (AxisAlignedBB bb : worldCollisionBoxes) {
                         y = bb.calculateYOffset(e.getEntityBoundingBox(), y);
-                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
+                        if (!onGround)
+                            onGround = onGround(bb, e.getEntityBoundingBox());
                     }
-                    e.onGround = (temp != realFirstY);
+                    e.onGround = onGround;
                 } else {
-                    temp = realFirstY;
+                    boolean onGround = false;
                     for (AxisAlignedBB bb : worldCollisionBoxes) {
-                        temp = bb.calculateYOffset(e.getEntityBoundingBox(), temp);
+                        if (!onGround) {
+                            onGround = onGround(bb, e.getEntityBoundingBox());
+                            if (onGround)
+                                break;
+                        }
                     }
-                    e.onGround = (temp != realFirstY);
+                    e.onGround = onGround;
                 }
             }
 
@@ -445,24 +459,28 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     }
                 }
             }
-            if (yFront > yBack && (yBack == 0 /*|| this.rotationPitch < 0*/)) {
-                this.rotationPitch = Math.max(-14, this.rotationPitch - 1);
-            } else if (yFront < yBack && (yFront == 0 /*|| this.rotationPitch > 0*/)) {
-                this.rotationPitch = Math.min(14, this.rotationPitch + 1);
-            } else if (this.rotationPitch != 0 && yFront != 0 && yBack != 0) {
-                this.rotationPitch = this.rotationPitch + (this.rotationPitch > 0 ? -1 : 1);
+            if (yFront > 0 && yBack == 0) {
+                this.rotationPitch = Math.max(-14, this.rotationPitch - 0.5f);
+            } else if (yBack > 0 && yFront == 0) {
+                this.rotationPitch = Math.min(14, this.rotationPitch + 0.5f);
+            } else if (yFront != 0 && yBack != 0) {
+                if (--rotationTicks == 0) {
+                    rotationTicks = 5;
+                    if (this.rotationPitch >= 1 || this.rotationPitch <= -1)
+                        this.rotationPitch = (this.rotationPitch + (this.rotationPitch > 0 ? -0.5f : 0.5f));
+                    else
+                        this.rotationPitch = 0;
+                }
+//                System.out.println("Pitch => " + this.rotationPitch);
             }
-
-//            if (yFront != 0 && yBack != 0)
-//                System.out.println(yFront + "|" + yBack);
 
             this.world.profiler.endSection();
             this.world.profiler.startSection("rest");
             this.resetPositionToBB();
-            this.isCollidedHorizontally = origX != x || origZ != z;
-            this.isCollidedVertically = origY != y;
-            this.onGround = this.isCollidedVertically && origY < 0.0D;
-            this.isCollided = this.isCollidedHorizontally || this.isCollidedVertically;
+            this.collidedHorizontally = origX != x || origZ != z;
+            this.collidedVertically = origY != y;
+            this.onGround = this.collidedVertically && origY < 0.0D;
+            this.collided = this.collidedHorizontally || this.collidedVertically;
             int j6 = MathHelper.floor(this.posX);
             int i1 = MathHelper.floor(this.posY - 0.000000298023224D);
             int k6 = MathHelper.floor(this.posZ);
@@ -538,6 +556,15 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     }
 
+    @Override
+    public void setDead() {
+        for (Entity part : partArray) {
+            part.setDead();
+            world.removeEntityDangerously(part);
+        }
+        super.setDead();
+    }
+
     protected static class PartData {
         final float[][] data;
         final int[] collidingPartIndizes;
@@ -600,6 +627,14 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
             return new PartData(d, colliding.stream().mapToInt(x -> x).toArray());
         }
 
+    }
+
+    private static boolean onGround(AxisAlignedBB a, AxisAlignedBB b) {
+        if (a.maxX > b.minX && a.minX < b.maxX && a.maxZ > b.minZ && a.minZ < b.maxZ) {
+            if (a.minY < b.minY && a.maxY > b.minY - 0.2)
+                return true;
+        }
+        return false;
     }
 
 }

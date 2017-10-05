@@ -17,14 +17,12 @@ import de.canitzp.voxeler.Voxeler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -52,7 +50,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +58,7 @@ import java.util.List;
  */
 @SuppressWarnings("WeakerAccess")
 @Mod.EventBusSubscriber
-public class Registry{
-
+public class Registry {
     /**
      * Internal Stuff:
      */
@@ -110,7 +106,7 @@ public class Registry{
      * Models:
      */
     public static VoxelBase MODEL_SPORTSCAR;
-    public static VoxelBase MODEL_BUS;
+    public static final ModelBus MODEL_BUS = getInstanceWithDebug(ModelBus.class, ModelNakedBus.class);
 
     /**
      * Statistics:
@@ -131,7 +127,10 @@ public class Registry{
     @SideOnly(Side.CLIENT)
     public static KeyBinding keyRight;
     @SideOnly(Side.CLIENT)
+    public static KeyBinding enableDebug;
+    @SideOnly(Side.CLIENT)
     public static KeyBinding keyStartEngine;
+
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -169,7 +168,7 @@ public class Registry{
         initModels();
     }
 
-    private static void registerFluids(IForgeRegistry<Block> registry){
+    private static void registerFluids(IForgeRegistry<Block> registry) {
         FluidRegistry.registerFluid(fluidBioFuel);
         FluidRegistry.addBucketForFluid(fluidBioFuel);
         registry.register(new BlockFluid(fluidBioFuel));
@@ -191,6 +190,7 @@ public class Registry{
             keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
             keyLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft;
             keyRight = Minecraft.getMinecraft().gameSettings.keyBindRight;
+            ClientRegistry.registerKeyBinding(enableDebug = new KeyBinding(I18n.format("carz:key.render_debug.desc"), Keyboard.KEY_O, Carz.MODNAME));
             ClientRegistry.registerKeyBinding(keyStartEngine = new KeyBinding(I18n.format("carz:key.start_engine.desc"), Keyboard.KEY_R, Carz.MODNAME));
         }
     }
@@ -198,7 +198,6 @@ public class Registry{
     private static void initModels(){
         registerFluidRenderer(fluidBioFuel);
         MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
-        MODEL_BUS = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/bus"));
     }
 
     private static <T extends EntityRenderedBase> void registerEntity(String name, Class<T> entity, Side side) {
@@ -238,6 +237,16 @@ public class Registry{
             ModelLoader.registerItemVariants(item);
             ModelLoader.setCustomMeshDefinition(item, mesh);
             ModelLoader.setCustomStateMapper(block, mapper);
+        }
+    }
+
+    private static <T> T getInstanceWithDebug(Class<T> normal, Class<? extends T> debug) {
+        try {
+            if ("true".equals(System.getProperty("renderDebug")))
+                return debug.newInstance();
+            return normal.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -34,6 +34,8 @@ public class Carz {
     @Mod.Instance(MODID)
     public static Carz carz;
 
+    public static boolean RENDER_DEBUG = false;
+
     @SidedProxy(clientSide = "de.canitzp.carz.network.ClientProxy", serverSide = "de.canitzp.carz.network.CommonProxy")
     public static CommonProxy proxy;
 
@@ -49,7 +51,7 @@ public class Carz {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        if(ConfigCarz.Generation.OIL_CHUNKS_ACTIVE){
+        if (ConfigCarz.Generation.OIL_CHUNKS_ACTIVE) {
             GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
         }
         proxy.init(event);

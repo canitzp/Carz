@@ -1,5 +1,6 @@
 package de.canitzp.carz.client.renderer;
 
+import de.canitzp.carz.Carz;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -34,7 +35,7 @@ public class RenderInvisibleCarPart extends Render<EntityInvisibleCarPart> {
 
     @Override
     public void doRender(EntityInvisibleCarPart entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        if (!entity.colliding)
+        if (!Carz.RENDER_DEBUG || !entity.colliding)
             return;
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -50,7 +51,7 @@ public class RenderInvisibleCarPart extends Render<EntityInvisibleCarPart> {
         double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
 
         if (entity.onGround) {
-            RenderGlobal.drawSelectionBoundingBox(axisalignedbb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 0.2F, 0.2F, 1.0F, 1.0F);
+            RenderGlobal.drawSelectionBoundingBox(axisalignedbb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1, 0, 0, 1.0F);
         } else {
             RenderGlobal.drawSelectionBoundingBox(axisalignedbb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 0.2F, 0.2F, 0.2F, 1.0F);
         }

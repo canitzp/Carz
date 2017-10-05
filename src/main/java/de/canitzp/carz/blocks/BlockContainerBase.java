@@ -22,7 +22,7 @@ public abstract class BlockContainerBase<T extends BlockContainerBase> extends B
 
     public BlockContainerBase(Material blockMaterialIn, MapColor blockMapColorIn, Class<? extends TileEntity> tileClass) {
         super(blockMaterialIn, blockMapColorIn);
-        this.isBlockContainer = true;
+        this.hasTileEntity = true;
         this.tileClass = tileClass;
     }
 

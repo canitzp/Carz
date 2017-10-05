@@ -23,6 +23,10 @@ public class KeyListener {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
         EntityPlayer p = Minecraft.getMinecraft().player;
+        if (Registry.enableDebug.isPressed()){
+            Carz.RENDER_DEBUG = !Carz.RENDER_DEBUG;
+            return;
+        }
         Entity riding = p.getRidingEntity();
         if (!(riding instanceof EntitySteerableBase)) {
             return;
