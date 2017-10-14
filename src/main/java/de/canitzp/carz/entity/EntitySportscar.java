@@ -4,6 +4,7 @@ import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntitySteerableBase;
 import de.canitzp.carz.inventory.Inventory;
+import de.canitzp.voxeler.VoxelBase;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.InventoryBasic;
@@ -33,14 +34,15 @@ public class EntitySportscar extends EntitySteerableBase {
         this.setDriverSeat(-0.3D, -1.0D, 0.0D);
     }
 
+    @Nonnull
     @Override
-    public ModelBase getCarModel() {
+    public VoxelBase getVoxelModel() {
         return Registry.MODEL_SPORTSCAR;
     }
 
     @Nullable
     @Override
-    public ResourceLocation getCarTexture() {
+    public ResourceLocation getTexture() {
         return new ResourceLocation(Carz.MODID, "textures/cars/sportscar.png");
     }
 

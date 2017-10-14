@@ -1,11 +1,13 @@
 # file id,textureXSize,textureYSize
 Voxeler File Format,128,128
+# set a texture file
+:r>
 # new ModelRenderer
 # shape name,textureX,textureY,rotationXPoint,rotationYPoint,rotationZPoint,rotationAngleX,rotationAngleY,rotationAngleZ
 : test;0;96;-13;21,5;-9,5;0;0;0;
 # new box in old ModelRenderer
 # offsetX,offsetY,offsetZ,width,height,depth,scaleFactor
-#::
+::
 # new ModelRenderer as child of above one
 # shape name,textureX,textureY,rotationXPoint,rotationYPoint,rotationZPoint,offsetX,offsetY,offsetZ,width,height,depth,scaleFactor,rotationAngleX,rotationAngleY,rotationAngleZ
-#:::
+:::

@@ -12,21 +12,27 @@ import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.entity.EntitySportscar;
 import de.canitzp.carz.fluid.FluidBase;
 import de.canitzp.carz.items.*;
+import de.canitzp.voxeler.IVoxelRenderEntity;
+import de.canitzp.voxeler.RenderVoxel;
 import de.canitzp.voxeler.VoxelBase;
 import de.canitzp.voxeler.Voxeler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -114,7 +120,7 @@ public class Registry {
      * Models:
      */
     public static VoxelBase MODEL_SPORTSCAR;
-    public static final ModelBus MODEL_BUS = getInstanceWithDebug(ModelBus.class, ModelNakedBus.class);
+    public static VoxelBase MODEL_BUS;
 
     /**
      * Statistics:
@@ -200,12 +206,7 @@ public class Registry {
         registerEntity("bus", EntityBus.class, event.getSide());
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
         if (event.getSide().isClient()) {
-            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener() {
-                @Override
-                public void onResourceManagerReload(IResourceManager resourceManager) {
-                    initModels();
-                }
-            });
+            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> initModels());
             RenderingRegistry.registerEntityRenderingHandler(EntityInvisibleCarPart.class, new RenderInvisibleCarPart.RenderInvisibleCarPartFactory());
             keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
             keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
@@ -219,6 +220,9 @@ public class Registry {
     private static void initModels(){
         registerFluidRenderer(fluidBioFuel);
         MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
+        VoxelBase busModel = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/bus"));
+        MODEL_BUS = "false".equals(System.getProperty("renderDebug")) ? busModel :
+                busModel.exclude("rooftop_plate", "vent", "right_back_panel", "left_side", "right_front_panel", "bottom_plate", "back_plate", "right_middle_panel", "front_plate");
     }
 
     public static void init(FMLInitializationEvent event){
@@ -244,6 +248,7 @@ public class Registry {
         if (renderFactory == null) {
             renderFactory = manager -> {
                 RenderCar<EntityRenderedBase> renderCar = new RenderCar<>(manager);
+                //RenderVoxel renderCar = new RenderVoxel<T, VoxelBase>(manager);
                 ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(renderCar);
                 return renderCar;
             };
@@ -268,16 +273,6 @@ public class Registry {
             ModelLoader.registerItemVariants(item);
             ModelLoader.setCustomMeshDefinition(item, mesh);
             ModelLoader.setCustomStateMapper(block, mapper);
-        }
-    }
-
-    private static <T> T getInstanceWithDebug(Class<T> normal, Class<? extends T> debug) {
-        try {
-            if ("true".equals(System.getProperty("renderDebug")))
-                return debug.newInstance();
-            return normal.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 

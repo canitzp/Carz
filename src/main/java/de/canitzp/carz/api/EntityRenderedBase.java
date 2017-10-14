@@ -3,6 +3,8 @@ package de.canitzp.carz.api;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.inventory.ContainerCar;
 import de.canitzp.carz.network.GuiHandler;
+import de.canitzp.voxeler.IVoxelRenderEntity;
+import de.canitzp.voxeler.VoxelBase;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +37,7 @@ import javax.annotation.Nullable;
  * @see EntitySteerableBase
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class EntityRenderedBase extends Entity {
+public abstract class EntityRenderedBase extends Entity implements IVoxelRenderEntity<VoxelBase>{
 
     public EntityRenderedBase(World worldIn) {
         super(worldIn);
@@ -45,7 +47,9 @@ public abstract class EntityRenderedBase extends Entity {
      * @return The Model for the Car
      */
     @SideOnly(Side.CLIENT)
-    public abstract ModelBase getCarModel();
+    @Nonnull
+    @Override
+    public abstract VoxelBase getVoxelModel();
 
     /**
      * Here you can define the texture for the car. You can just make a new {@link ResourceLocation},
@@ -56,7 +60,8 @@ public abstract class EntityRenderedBase extends Entity {
      */
     @SideOnly(Side.CLIENT)
     @Nullable
-    public abstract ResourceLocation getCarTexture();
+    @Override
+    public abstract ResourceLocation getTexture();
 
     /**
      * Here you have to setup all the OpenGL Stuff for the car like translation, rotation and scaling.
@@ -79,4 +84,5 @@ public abstract class EntityRenderedBase extends Entity {
         //TODO @canitzp
         return 0;
     }
+
 }

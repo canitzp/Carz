@@ -5,6 +5,7 @@ import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.EntitySteerableBase;
 import de.canitzp.carz.network.NetworkHandler;
+import de.canitzp.voxeler.VoxelBase;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -183,14 +184,15 @@ public class EntityBus extends EntitySteerableBase {
         return partData.getCollidingPartIndizes();
     }
 
+    @Nonnull
     @Override
-    public ModelBase getCarModel() {
+    public VoxelBase getVoxelModel() {
         return Registry.MODEL_BUS;
     }
 
     @Nullable
     @Override
-    public ResourceLocation getCarTexture() {
+    public ResourceLocation getTexture() {
         return new ResourceLocation(Carz.MODID, "textures/cars/bus.png");
     }
 
