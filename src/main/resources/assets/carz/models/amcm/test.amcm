@@ -1,0 +1,5 @@
+This is the first test file for the AdvancedMinecraftModel format or amcm for short.
+:res> carz:textures/cars/bus.png;512;512
+name,width,height,depth,offX,offY,offZ,rotPointX,rotPointY,rotPointZ,rotAngleX,rotAngleY,rotAngleZ,
+offTXNorth,offTYNorth,offTXSouth,offTYSouth,offTXWest,offTYWest,offTXEast,offTYEast,offTXUp,offTYUp,offTXDown,offTYDown
+:box> front_plate;46;32;1;-23;-16;0;0;4;-56;0;0;0;0;0;48;0;46;0;0;287;0;287;0;287

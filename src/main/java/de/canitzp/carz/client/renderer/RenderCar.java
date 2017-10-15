@@ -41,7 +41,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
 
     {
         try {
-            testModel = AdvancedMinecraftModel.loadModel(new File(AdvancedMinecraftModel.class.getResource("/assets/carz/models/cars/sportscar.amcm").getFile()));
+            testModel = AdvancedMinecraftModel.loadModel(new ResourceLocation("carz", "models/amcm/test.amcm"));
         } catch (IOException e) {
             e.printStackTrace();
         }

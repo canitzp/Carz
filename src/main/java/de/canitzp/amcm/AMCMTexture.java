@@ -35,7 +35,7 @@ public class AMCMTexture {
     }
 
     public AMCMTexture setForceTexture(boolean force){
-        this.forceTexture = false;
+        this.forceTexture = force;
         return this;
     }
 
