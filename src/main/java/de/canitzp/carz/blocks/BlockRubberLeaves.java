@@ -7,8 +7,11 @@ import net.minecraft.block.BlockNewLeaf;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ColorizerFoliage;
@@ -40,11 +43,6 @@ public class BlockRubberLeaves extends BlockLeaves implements IBlockColor{
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, CHECK_DECAY, DECAYABLE);
     }
@@ -73,5 +71,21 @@ public class BlockRubberLeaves extends BlockLeaves implements IBlockColor{
     @Override
     public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
         return BiomeColorHelper.getFoliageColorAtPos(worldIn, pos);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public BlockRenderLayer getBlockLayer() {
+        return isOpaqueCube(this.getDefaultState()) ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return this.isOpaqueCube(blockState) || blockAccess.getBlockState(pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return Minecraft.getMinecraft().gameSettings.fancyGraphics;
     }
 }

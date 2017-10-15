@@ -2,12 +2,14 @@ package de.canitzp.carz;
 
 import de.canitzp.carz.config.ConfigCarz;
 import de.canitzp.carz.gen.OilChunkGen;
+import de.canitzp.carz.gen.WorldGenRubberTree;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenTrees;
+import de.canitzp.voxeler.Voxeler;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Mod;
@@ -20,6 +22,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
+
+import java.io.File;
+import java.util.Objects;
 
 /**
  * @author canitzp
@@ -62,6 +67,9 @@ public class Carz {
         if (ConfigCarz.Generation.OIL_CHUNKS_ACTIVE) {
             GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
         }
+        if(ConfigCarz.Generation.RUBBERTREES_ACTIVE){
+            GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 10);
+        }
         proxy.init(event);
     }
 
@@ -69,5 +77,6 @@ public class Carz {
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
     }
+
 
 }

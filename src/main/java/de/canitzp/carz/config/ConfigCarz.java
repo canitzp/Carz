@@ -45,6 +45,15 @@ public class ConfigCarz{
         @Config.RangeInt(min = 1000, max = 100000000)
         public static int OIL_MAX = 10000000;
 
+        @Config.Name("Should Rubber Trees spawn")
+        @Config.RequiresMcRestart
+        public static boolean RUBBERTREES_ACTIVE = true;
+
+        @Config.Name("Rubber Tree population")
+        @Config.Comment({"This defines in how much chunks a Rubber Tree should spawn. 1 = 1 per chunk, 4 = 1 per 4 chunks", "Default: 5"})
+        @Config.RangeInt(min = 1)
+        public static int RUBBERTREES_POPULATION = 5;
+
     }
 
 }
