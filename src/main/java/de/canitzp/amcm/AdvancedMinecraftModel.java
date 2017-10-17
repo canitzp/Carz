@@ -47,22 +47,43 @@ public class AdvancedMinecraftModel {
     }
 
     private static void parseLine(String line, List<IAMCMShapes> shapes, AMCMTexture texture){
-        if(line.startsWith(":box> ")){ // name,width,height,depth,offX,offY,offZ,rotPointX,rotPointY,rotPointZ,rotAngleX,rotAngleY,rotAngleZ,offTXDown,offTYDown
+        if(line.startsWith(":box> ")){ // name,width,height,depth,offX,offY,offZ,rotPointX,rotPointY,rotPointZ,rotAngleX,rotAngleY,rotAngleZ,allTextureOffsets[...],flags
             String[] split = line.replace(":box> ", "").split(";");
-            if(split.length == 25){
-                Map<EnumFacing, int[]> textOffsets = new HashMap<>();
-                textOffsets.put(EnumFacing.NORTH, new int[]{Integer.parseInt(split[13]), Integer.parseInt(split[14])});
-                textOffsets.put(EnumFacing.SOUTH, new int[]{Integer.parseInt(split[15]), Integer.parseInt(split[16])});
-                textOffsets.put(EnumFacing.WEST, new int[]{Integer.parseInt(split[17]), Integer.parseInt(split[18])});
-                textOffsets.put(EnumFacing.EAST, new int[]{Integer.parseInt(split[19]), Integer.parseInt(split[20])});
-                textOffsets.put(EnumFacing.UP, new int[]{Integer.parseInt(split[21]), Integer.parseInt(split[22])});
-                textOffsets.put(EnumFacing.DOWN, new int[]{Integer.parseInt(split[23]), Integer.parseInt(split[24])});
-                shapes.add(new AMCMBox(parseFloat(split[1]), parseFloat(split[2]), parseFloat(split[3]))
+            if(split.length >= 25){
+                AMCMBox box = new AMCMBox(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]))
                         .setOffset(parseFloat(split[4]), parseFloat(split[5]), parseFloat(split[6]))
                         .setRotationPoint(parseFloat(split[7]), parseFloat(split[8]), parseFloat(split[9]))
                         .setRotateAngle(parseFloat(split[10]), parseFloat(split[11]), parseFloat(split[12]))
-                        .setTextureOffset(textOffsets)
-                        .setName(split[0]).setTexture(texture));
+                        .setName(split[0]).setTexture(texture)
+                        .setTextureOffset(EnumFacing.NORTH, Integer.parseInt(split[13]), Integer.parseInt(split[14]))
+                        .setTextureOffset(EnumFacing.SOUTH, Integer.parseInt(split[15]), Integer.parseInt(split[16]))
+                        .setTextureOffset(EnumFacing.WEST, Integer.parseInt(split[17]), Integer.parseInt(split[18]))
+                        .setTextureOffset(EnumFacing.EAST, Integer.parseInt(split[19]), Integer.parseInt(split[20]))
+                        .setTextureOffset(EnumFacing.UP, Integer.parseInt(split[21]), Integer.parseInt(split[22]))
+                        .setTextureOffset(EnumFacing.DOWN, Integer.parseInt(split[23]), Integer.parseInt(split[24]));
+                if(split.length == 26){
+                    box.setFlags(split[25]);
+                }
+                shapes.add(box);
+            }
+        } else if(line.startsWith(":tri> ")){ // name,width,height,depth,offX,offY,offZ,rotPointX,rotPointY,rotPointZ,rotAngleX,rotAngleY,rotAngleZ,allTextureOffsets[...],flags
+            String[] split = line.replace(":tri> ", "").split(";");
+            if(split.length >= 26){
+                AMCMTriangle triangle = new AMCMTriangle(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]),
+                        new AMCMShapeVar<>(Integer.parseInt(split[23]), Integer.parseInt(split[24]), Integer.parseInt(split[25])))
+                        .setOffset(parseFloat(split[4]), parseFloat(split[5]), parseFloat(split[6]))
+                        .setRotationPoint(parseFloat(split[7]), parseFloat(split[8]), parseFloat(split[9]))
+                        .setRotateAngle(parseFloat(split[10]), parseFloat(split[11]), parseFloat(split[12]))
+                        .setName(split[0]).setTexture(texture)
+                        .setTextureOffset(EnumFacing.NORTH, Integer.parseInt(split[13]), Integer.parseInt(split[14]))
+                        .setTextureOffset(EnumFacing.SOUTH, Integer.parseInt(split[15]), Integer.parseInt(split[16]))
+                        .setTextureOffset(EnumFacing.WEST, Integer.parseInt(split[17]), Integer.parseInt(split[18]))
+                        .setTextureOffset(EnumFacing.EAST, Integer.parseInt(split[19]), Integer.parseInt(split[20]))
+                        .setTextureOffset(EnumFacing.DOWN, Integer.parseInt(split[21]), Integer.parseInt(split[22]));
+                if(split.length == 27){
+                    triangle.setFlags(split[26]);
+                }
+                shapes.add(triangle);
             }
         }
     }

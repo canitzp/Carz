@@ -41,7 +41,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
 
     {
         try {
-            testModel = AdvancedMinecraftModel.loadModel(new ResourceLocation("carz", "models/amcm/test.amcm"));
+            testModel = AdvancedMinecraftModel.loadModel(new ResourceLocation("carz", "models/amcm/bus.amcm"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,6 +74,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
             GlStateManager.enableColorMaterial();
             GlStateManager.enableOutlineMode(this.getTeamColor(car));
         }
+        GlStateManager.enableCull();
         this.testModel.render(0.0625F);
         //this.model.render(car, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         if (this.renderOutlines) {
