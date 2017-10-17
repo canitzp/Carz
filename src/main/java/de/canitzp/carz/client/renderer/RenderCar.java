@@ -37,9 +37,9 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
     private ModelBase model;
     private ResourceLocation texture;
 
-    private AMCMModel testModel;
+    public static AMCMModel testModel;
 
-    {
+    static {
         try {
             testModel = AdvancedMinecraftModel.loadModel(new ResourceLocation("carz", "models/amcm/bus.amcm"));
         } catch (IOException e) {

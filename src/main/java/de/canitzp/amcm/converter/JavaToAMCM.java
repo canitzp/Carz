@@ -83,11 +83,11 @@ public class JavaToAMCM {
 
     private static void generateTechneTextures(int textOffsetX, int textOffsetY, AMCMDefaultShape shape){
         shape.setTextureOffset(EnumFacing.NORTH, textOffsetX + shape.depth, textOffsetY + shape.depth);
-        shape.setTextureOffset(EnumFacing.SOUTH, textOffsetX + (2*shape.depth) + shape.width, textOffsetY + shape.depth);
-        shape.setTextureOffset(EnumFacing.WEST, textOffsetX, textOffsetY);
+        shape.setTextureOffset(EnumFacing.SOUTH, textOffsetX + shape.depth + shape.width + shape.depth, textOffsetY + shape.depth);
+        shape.setTextureOffset(EnumFacing.WEST, textOffsetX, textOffsetY + shape.depth);
         shape.setTextureOffset(EnumFacing.EAST, textOffsetX + shape.width + shape.depth, textOffsetY + shape.depth);
-        shape.setTextureOffset(EnumFacing.DOWN, textOffsetX + shape.depth, textOffsetY);
-        shape.setTextureOffset(EnumFacing.UP, textOffsetX + shape.width + shape.depth, textOffsetY);
+        shape.setTextureOffset(EnumFacing.DOWN, textOffsetX + shape.depth + shape.width, textOffsetY);
+        shape.setTextureOffset(EnumFacing.UP, textOffsetX + shape.depth, textOffsetY);
     }
 
 }

@@ -41,7 +41,6 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
         double width = this.width * scale;
         double height = this.height * scale;
         double depth = this.depth * scale;
-
         for(IAMCMBuffer buffer : this.buffer){
             builder.begin(buffer.getGLMode(), buffer.getFormat());
             for(EnumFacing facing : EnumFacing.values()){
@@ -147,7 +146,7 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
         }
 
         GlStateManager.translate(this.offset.x * scale, this.offset.y * scale, this.offset.z * scale);
-        this.getTexture().setForceTexture(false).bind();
+        this.getTexture().bind();
         if (this.rotationAngle.allZero()) {
             if (this.rotationPoint.allZero()) {
                 GlStateManager.callList(this.displayList);
