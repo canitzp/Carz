@@ -1,4 +1,5 @@
-itemGroup.carz=Carz
+itemGroup.carz=Carz General
+itemGroup.carz_fire=Carz Fire Department
 
 # Blocks
 tile.carz:fuel_station.name=Fuel Station
@@ -6,6 +7,8 @@ tile.carz:road.name=Road
 tile.carz:road_sign.name=Road Sign
 tile.carz:plant_fermenter.name=Plant Fermenter
 tile.carz:road_slope.name=Slope
+tile.carz:block_log.name=Rubber Log
+tile.carz:rubber_leaves.name=Rubber Leaves
 
 # Items
 item.carz:painter.name=Painter
@@ -14,6 +17,8 @@ item.carz:oil_probe.name=Oil probe
 item.carz:oil_probe.found=Found %smB oil in this chunk
 item.carz:pressed_plant.name=Bio waste
 item.carz:key.name=Key
+item.carz:raw_rubber.name=Raw rubber
+item.carz:tree_tap.name=Tree tap
 
 # Fluids
 fluid.carz:bio_fuel.name=Bio fuel

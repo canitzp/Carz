@@ -46,6 +46,7 @@ public class BlockRoadSlope extends BlockRoad<BlockRoadSlope>{
         this.setDefaultState(this.getDefaultState().withProperty(FACING, EnumFacing.NORTH).withProperty(SLOPE_NUMBER, 0));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void registerClient() {
         StateMapperBase ignoreState = new StateMapperBase() {

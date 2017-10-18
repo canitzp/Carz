@@ -36,7 +36,7 @@ public abstract class ItemBase<T extends ItemBase> extends Item {
     @Nullable
     @Override
     public CreativeTabs getCreativeTab() {
-        return Registry.TAB;
+        return Registry.TAB_GENERAL;
     }
 
     @SuppressWarnings("ConstantConditions")

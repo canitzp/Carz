@@ -1,27 +1,20 @@
 package de.canitzp.carz.blocks;
 
-import com.google.common.base.Predicate;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 /**
  * @author canitzp
@@ -36,6 +29,7 @@ public class BlockRubberLog extends BlockLog {
         this.setDefaultState(this.blockState.getBaseState().withProperty(RUBBER, false).withProperty(FACING, EnumFacing.NORTH).withProperty(LOG_AXIS, EnumAxis.NONE).withProperty(CURRENT_RUBBER, false));
         this.setRegistryName(Carz.MODID, "block_log");
         this.setUnlocalizedName(this.getRegistryName().toString());
+        this.setCreativeTab(Registry.TAB_GENERAL);
     }
 
     public BlockRubberLog register(){
@@ -63,12 +57,6 @@ public class BlockRubberLog extends BlockLog {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        super.getSubBlocks(itemIn, items);
-        items.add(new ItemStack(this, 1, this.getMetaFromState(this.getDefaultState().withProperty(RUBBER, true))));
-        items.add(new ItemStack(this, 1, this.getMetaFromState(this.getDefaultState().withProperty(RUBBER, true).withProperty(CURRENT_RUBBER, true))));
-    }
-
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING, RUBBER, LOG_AXIS, CURRENT_RUBBER);
     }
@@ -80,5 +68,17 @@ public class BlockRubberLog extends BlockLog {
             return state;
         }
         return state.withProperty(LOG_AXIS, BlockLog.EnumAxis.fromFacingAxis(facing.getAxis()));
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if(state.getValue(CURRENT_RUBBER) && facing == state.getValue(FACING) && player.getHeldItem(hand).getItem() == Registry.itemTreeTap){
+            if(!world.isRemote){
+                world.spawnEntity(new EntityItem(world, pos.getX() + hitX, pos.getY() + hitY, pos.getZ() + hitZ, new ItemStack(Registry.itemRawRubber, world.rand.nextInt(1) + 1)));
+                world.setBlockState(pos, state.withProperty(CURRENT_RUBBER, false));
+            }
+            return true;
+        }
+        return false;
     }
 }

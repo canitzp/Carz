@@ -3,12 +3,11 @@ package de.canitzp.carz.blocks;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import net.minecraft.block.BlockLeaves;
-import net.minecraft.block.BlockNewLeaf;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -28,12 +27,13 @@ import java.util.List;
 /**
  * @author canitzp
  */
-public class BlockRubberLeaves extends BlockLeaves implements IBlockColor{
+
+public class BlockRubberLeaves extends BlockLeaves implements IColoredBlock{
 
     public BlockRubberLeaves(){
         super();
         this.setDefaultState(this.blockState.getBaseState().withProperty(CHECK_DECAY, true).withProperty(DECAYABLE, true));
-        this.setCreativeTab(Registry.TAB);
+        this.setCreativeTab(Registry.TAB_GENERAL);
         this.setRegistryName(Carz.MODID, "rubber_leaves");
         this.setUnlocalizedName(this.getRegistryName().toString());
     }
@@ -70,12 +70,6 @@ public class BlockRubberLeaves extends BlockLeaves implements IBlockColor{
 
     @SideOnly(Side.CLIENT)
     @Override
-    public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
-        return BiomeColorHelper.getFoliageColorAtPos(worldIn, pos);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
     public BlockRenderLayer getBlockLayer() {
         return Blocks.LEAVES.getBlockLayer();
     }
@@ -90,4 +84,15 @@ public class BlockRubberLeaves extends BlockLeaves implements IBlockColor{
         return Blocks.LEAVES.isOpaqueCube(state);
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int tintIndex) {
+        return world != null && pos != null ? BiomeColorHelper.getFoliageColorAtPos(world, pos) : ColorizerFoliage.getFoliageColorBasic();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public int getItemColor(ItemStack stack, int tintIndex) {
+        return this.getBlockColor(this.getDefaultState(), null, null, tintIndex);
+    }
 }

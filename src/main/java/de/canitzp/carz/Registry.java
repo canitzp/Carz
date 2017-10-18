@@ -21,19 +21,23 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -54,6 +58,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,10 +81,16 @@ public class Registry {
     /**
      * Random:
      */
-    public static final CreativeTabs TAB = new CreativeTabs(Carz.MODID) {
+    public static final CreativeTabs TAB_GENERAL = new CreativeTabs(Carz.MODID) {
         @Override
         public ItemStack getTabIconItem() {
             return new ItemStack(itemKey);
+        }
+    };
+    public static final CreativeTabs TAB_FIRE = new CreativeTabs(Carz.MODID + "_fire") {
+        @Override
+        public ItemStack getTabIconItem() {
+            return new ItemStack(Blocks.FIRE);
         }
     };
 
@@ -104,6 +115,7 @@ public class Registry {
     public static ItemBaseDefault itemPressedPlant = new ItemBaseDefault<>("pressed_plant").register();
     public static ItemKey itemKey = new ItemKey().register();
     public static ItemBaseDefault itemRawRubber = new ItemBaseDefault<>("raw_rubber").register();
+    public static ItemBaseDefault itemTreeTap = new ItemBaseDefault<>("tree_tap").register();
 
     /**
      * Fluids:
@@ -200,12 +212,13 @@ public class Registry {
         registerEntity("bus", EntityBus.class, event.getSide());
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
         if (event.getSide().isClient()) {
-            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener() {
+            /*((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener() {
+                @SideOnly(Side.CLIENT)
                 @Override
                 public void onResourceManagerReload(IResourceManager resourceManager) {
                     initModels();
                 }
-            });
+            });*/
             RenderingRegistry.registerEntityRenderingHandler(EntityInvisibleCarPart.class, new RenderInvisibleCarPart.RenderInvisibleCarPartFactory());
             keyForward = Minecraft.getMinecraft().gameSettings.keyBindForward;
             keyBackward = Minecraft.getMinecraft().gameSettings.keyBindBack;
@@ -216,6 +229,7 @@ public class Registry {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     private static void initModels(){
         registerFluidRenderer(fluidBioFuel);
         MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
@@ -224,8 +238,9 @@ public class Registry {
     public static void init(FMLInitializationEvent event){
         if(event.getSide().isClient()){
             for(Block block : BLOCKS){
-                if(block instanceof IBlockColor){
-                    Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((IBlockColor) block, block);
+                if(block instanceof IColoredBlock){
+                    Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(((IColoredBlock) block)::getBlockColor, block);
+                    Minecraft.getMinecraft().getItemColors().registerItemColorHandler(((IColoredBlock) block)::getItemColor, block);
                 }
             }
         }

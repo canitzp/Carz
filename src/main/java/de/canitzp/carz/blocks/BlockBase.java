@@ -58,7 +58,7 @@ public abstract class BlockBase<T extends BlockBase> extends Block {
     @Nonnull
     @Override
     public CreativeTabs getCreativeTabToDisplayOn() {
-        return Registry.TAB;
+        return Registry.TAB_GENERAL;
     }
 
     @SuppressWarnings("ConstantConditions")
