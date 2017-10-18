@@ -9,6 +9,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -76,16 +77,17 @@ public class BlockRubberLeaves extends BlockLeaves implements IBlockColor{
     @SideOnly(Side.CLIENT)
     @Override
     public BlockRenderLayer getBlockLayer() {
-        return isOpaqueCube(this.getDefaultState()) ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
+        return Blocks.LEAVES.getBlockLayer();
     }
 
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return this.isOpaqueCube(blockState) || blockAccess.getBlockState(pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+        return !this.isOpaqueCube(blockState) || blockAccess.getBlockState(pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
-        return Minecraft.getMinecraft().gameSettings.fancyGraphics;
+        return Blocks.LEAVES.isOpaqueCube(state);
     }
+
 }
