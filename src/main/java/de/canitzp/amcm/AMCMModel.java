@@ -18,7 +18,7 @@ public abstract class AMCMModel<T extends AMCMModel> {
         return (T) this;
     }
 
-    protected abstract void createModel(List<IAMCMShapes> shapes);
+    public abstract void createModel(List<IAMCMShapes> shapes);
 
     public void render(float scale){
         this.texture.bind();
@@ -30,4 +30,11 @@ public abstract class AMCMModel<T extends AMCMModel> {
         }
     }
 
+    public AMCMTexture getTexture() {
+        return texture;
+    }
+
+    public List<IAMCMShapes> getShapes() {
+        return shapes;
+    }
 }

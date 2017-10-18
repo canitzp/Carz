@@ -1,9 +1,6 @@
 package de.canitzp.amcm.converter;
 
-import de.canitzp.amcm.AMCMBox;
-import de.canitzp.amcm.AMCMDefaultShape;
-import de.canitzp.amcm.AdvancedMinecraftModel;
-import de.canitzp.amcm.IAMCMShapes;
+import de.canitzp.amcm.*;
 import net.minecraft.util.EnumFacing;
 import org.apache.commons.io.FileUtils;
 
@@ -64,20 +61,7 @@ public class JavaToAMCM {
             if(currentShape != null){
                 shapes.add(currentShape);
             }
-            List<String> outLines = new ArrayList<>();
-            outLines.add("AdvancedMinecraftModel");
-            for(IAMCMShapes shape : shapes){
-                if(shape instanceof AMCMBox){
-                    AMCMBox box = (AMCMBox) shape;
-                    outLines.add(String.format(":box> %s;%d;%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%s",
-                            box.name, box.width, box.height, box.depth,
-                            box.offset.x, box.offset.y, box.offset.z,
-                            box.rotationPoint.x, box.rotationPoint.y, box.rotationPoint.z,
-                            box.rotationAngle.x, box.rotationAngle.y, box.rotationAngle.z,
-                            box.getTextureStringForFile(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST, EnumFacing.UP, EnumFacing.DOWN)));
-                }
-            }
-            FileUtils.writeLines(outputFile, outLines);
+            AMCMWriter.writeToFile(outputFile, new AMCMPredefinedModel(shapes));
         }
     }
 

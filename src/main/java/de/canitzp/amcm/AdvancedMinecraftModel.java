@@ -25,7 +25,7 @@ public class AdvancedMinecraftModel {
         return loadModel(Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream());
     }
 
-    private static AMCMModel loadModel(InputStream stream) throws IOException {
+    public static AMCMModel loadModel(InputStream stream) throws IOException {
         if(stream != null){
             List<IAMCMShapes> shapes = new ArrayList<>();
             AMCMTexture modelTexture = AMCMTexture.MISSING;

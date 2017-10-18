@@ -16,7 +16,12 @@ public class AMCMPredefinedModel extends AMCMModel<AMCMPredefinedModel>{
     }
 
     @Override
-    protected void createModel(List<IAMCMShapes> shapes) {
+    public void createModel(List<IAMCMShapes> shapes) {
         shapes.addAll(this.shapes);
+    }
+
+    @Override
+    public List<IAMCMShapes> getShapes() {
+        return this.shapes;
     }
 }

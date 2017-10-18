@@ -181,7 +181,7 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
 
     @Override
     public String toString() {
-        return String.format("%s:{name=%s, width=%f, height=%f, depth=%f, offset=%s, rotationPoint=%s, rotationAngle=%s}",
+        return String.format("%s:{name=%s, width=%d, height=%d, depth=%d, offset=%s, rotationPoint=%s, rotationAngle=%s}",
                 this.getClass().getSimpleName(), this.name, this.width, this.height, this.depth, this.offset.toString(), this.rotationPoint.toString(), this.rotationAngle.toString());
     }
 }
