@@ -16,6 +16,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.Random;
+
 /**
  * @author canitzp
  */
@@ -30,6 +32,7 @@ public class BlockRubberLog extends BlockLog {
         this.setRegistryName(Carz.MODID, "block_log");
         this.setUnlocalizedName(this.getRegistryName().toString());
         this.setCreativeTab(Registry.TAB_GENERAL);
+        this.setTickRandomly(true);
     }
 
     public BlockRubberLog register(){
@@ -72,13 +75,26 @@ public class BlockRubberLog extends BlockLog {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if(state.getValue(CURRENT_RUBBER) && facing == state.getValue(FACING) && player.getHeldItem(hand).getItem() == Registry.itemTreeTap){
+        if(facing == state.getValue(FACING) && player.getHeldItem(hand).getItem() == Registry.itemTreeTap){
             if(!world.isRemote){
-                world.spawnEntity(new EntityItem(world, pos.getX() + hitX, pos.getY() + hitY, pos.getZ() + hitZ, new ItemStack(Registry.itemRawRubber, world.rand.nextInt(1) + 1)));
-                world.setBlockState(pos, state.withProperty(CURRENT_RUBBER, false));
+                if(state.getValue(CURRENT_RUBBER)){
+                    world.spawnEntity(new EntityItem(world, pos.getX() + hitX, pos.getY() + hitY, pos.getZ() + hitZ, new ItemStack(Registry.itemRawRubber, world.rand.nextInt(1) + 1)));
+                    world.setBlockState(pos, state.withProperty(CURRENT_RUBBER, false));
+                } else {
+                    world.setBlockState(pos, state.withProperty(RUBBER, false).withProperty(CURRENT_RUBBER, false).withProperty(LOG_AXIS, EnumAxis.NONE));
+                }
             }
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
+        if(random.nextInt(2) == 0){
+            if(state.getValue(RUBBER) && !state.getValue(CURRENT_RUBBER)){
+                world.setBlockState(pos, state.withProperty(CURRENT_RUBBER, true));
+            }
+        }
     }
 }
