@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 /**
  * @author canitzp, MisterErwin
@@ -28,8 +29,25 @@ public class EntityBus extends EntitySteerableBase {
 
     private static EntityPartedBase.PartData partData;
 
+    private final static int SEAT_AMOUNT = 7;
+
     static {
         EntityPartedBase.PartBuilder builder = builder();
+
+        //Driver
+        builder.addInteractOnlyPart(.9f, 0.4f, 2.9f, .8f, 1.1f);
+
+        //first row
+        builder.addInteractOnlyPart(.9f, 0.4f, 1.4f, .8f, 1.1f);
+        builder.addInteractOnlyPart(-.9f, 0.4f, 1.4f, .8f, 1.1f);
+
+        //2nd row
+        builder.addInteractOnlyPart(.9f, 0.3f, 0.2f, .8f, 1.1f);
+        builder.addInteractOnlyPart(-.9f, 0.3f, 0.2f, .8f, 1.1f);
+
+        builder.addInteractOnlyPart(.9f, 0.3f, -2.7f, .8f, 1.1f);
+        builder.addInteractOnlyPart(-.9f, 0.3f, -2.7f, .8f, 1.1f);
+
         //Under**fucking**ground
         for (int z = -3; z <= 3; ++z)
             for (int x = -1; x <= 1; ++x)
@@ -63,16 +81,6 @@ public class EntityBus extends EntitySteerableBase {
                 builder.addCollidingPart(x, wo, +3.5f, 0.2f, wh);
         }
 
-        //Driver
-        builder.addInteractOnlyPart(.9f, 0.4f, 2.9f, .8f, 1.1f);
-
-        //first row
-        builder.addInteractOnlyPart(.9f, 0.4f, 1.4f, .8f, 1.1f);
-        builder.addInteractOnlyPart(-.9f, 0.4f, 1.4f, .8f, 1.1f);
-
-        //2nd row
-        builder.addInteractOnlyPart(.9f, 0.3f, 0.3f, .8f, 1.1f);
-        builder.addInteractOnlyPart(-.9f, 0.3f, 0.3f, .8f, 1.1f);
 
         partData = builder.build();
     }
@@ -90,6 +98,10 @@ public class EntityBus extends EntitySteerableBase {
         this.addSeat(0.05F, -1.6F, -0.9F);
         this.addSeat(0.05F, -1.6F, 0.9F);
 
+        this.addSeat(-2.7f, -1.6F, -0.9F);
+        this.addSeat(-2.7f, -1.6F, 0.9F);
+
+
         this.steeringMax = 2;
         this.steeringMod = 0.07;
     }
@@ -97,7 +109,9 @@ public class EntityBus extends EntitySteerableBase {
     @Override
     protected void entityInit() {
         super.entityInit();
-        this.dataManager.register(SEATING_DATA, new int[]{-1});
+        int[] seats = new int[SEAT_AMOUNT];
+        Arrays.fill(seats, -1);
+        this.dataManager.register(SEATING_DATA, seats);
     }
 
     @Nullable
@@ -119,17 +133,19 @@ public class EntityBus extends EntitySteerableBase {
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand, int partIndex) {
         //The DriverSeat is hitbox No 54
-        if (!world.isRemote && partIndex >= 54 && !player.isSneaking()) {
-            int seatIndex = partIndex - 54;
-            int[] seats = this.dataManager.get(SEATING_DATA);
-            if (seats.length > seatIndex && seats[seatIndex] != -1)
+        if (!world.isRemote && /*partIndex >= 54 &&*/ !player.isSneaking()) {
+            int seatIndex = partIndex/* - 54*/;
+            int[] seating_data = this.dataManager.get(SEATING_DATA);
+            if (seatIndex >= SEAT_AMOUNT)
+                return false;
+            if (seating_data.length > seatIndex && seating_data[seatIndex] != -1)
                 return false;
             if (player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer) {
                 ItemStack spawnEgg = player.getHeldItem(player.getActiveHand());
                 Entity entity = ItemMonsterPlacer.spawnCreature(this.world, ItemMonsterPlacer.getNamedIdFrom(spawnEgg), this.posX, this.posY, this.posZ);
                 if (entity != null) {
                     if (entity.startRiding(this)) {
-                        this.setSeatingData(seats, seatIndex, entity.getEntityId());
+                        this.setSeatingData(seating_data, seatIndex, entity.getEntityId());
                         return true;
                     }
                 }
@@ -137,7 +153,7 @@ public class EntityBus extends EntitySteerableBase {
 
             boolean b = player.startRiding(this);
             if (b) {
-                this.setSeatingData(seats, seatIndex, player.getEntityId());
+                this.setSeatingData(seating_data, seatIndex, player.getEntityId());
             }
             return b;
         }
