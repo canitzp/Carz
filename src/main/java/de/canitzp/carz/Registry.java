@@ -116,6 +116,7 @@ public class Registry {
     public static ItemKey itemKey = new ItemKey().register();
     public static ItemBaseDefault itemRawRubber = new ItemBaseDefault<>("raw_rubber").register();
     public static ItemBaseDefault itemTreeTap = new ItemBaseDefault<>("tree_tap").register();
+    public static ItemLicense itemLicense = new ItemLicense().register();
 
     /**
      * Fluids:

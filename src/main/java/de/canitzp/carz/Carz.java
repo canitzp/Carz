@@ -68,7 +68,7 @@ public class Carz {
             GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
         }
         if(ConfigCarz.Generation.RUBBERTREES_ACTIVE){
-            GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 10);
+            GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 1);
         }
         proxy.init(event);
     }

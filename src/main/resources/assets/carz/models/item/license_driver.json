@@ -1,0 +1,6 @@
+{
+  "parent": "carz:item/carz",
+  "textures": {
+    "layer0": "carz:items/license_driver"
+  }
+}

@@ -1,8 +1,10 @@
 package de.canitzp.carz.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -30,6 +32,20 @@ public class GuiUtil {
             int factor = tank.getFluidAmount() * height / tank.getCapacity();
             Gui.drawModalRectWithCustomSizedTexture(x, y + height - factor, 0, 0, width, factor, 16, 512);
         }
+    }
+
+    public static void drawCenteredString(String text, int center, int y, int color, boolean dropShadow){
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        int width = fontRenderer.getStringWidth(text);
+        fontRenderer.drawString(text, center - Math.round(width / 2.0F), y, color, dropShadow);
+    }
+
+    public static String getTextWithFormatting(String text, TextFormatting... formats){
+        StringBuilder builder = new StringBuilder();
+        for(TextFormatting format : formats){
+            builder.append(format.toString());
+        }
+        return builder.append(text).append(TextFormatting.RESET.toString()).toString();
     }
 
 }

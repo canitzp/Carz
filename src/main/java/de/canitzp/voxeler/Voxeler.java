@@ -22,7 +22,6 @@ public class Voxeler {
     public static VoxelBase loadModelFromFile(File file) {
         try {
             if (file != null && file.getName().endsWith(".vox")) {
-                System.out.println(file);
                 VoxelBase voxelBase = null;
                 ModelRenderer currentRenderer = null;
                 for (String line : FileUtils.readLines(file, "UTF-8")) {

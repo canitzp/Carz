@@ -15,6 +15,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.Random;
 
@@ -42,11 +44,13 @@ public class BlockRubberLog extends BlockLog {
 
     @Override //0b rubbery , isRubber , axis/side,axis/side
     public IBlockState getStateFromMeta(int meta) {
+        int axisFacing = meta & 3;
         boolean isRubber = ((meta >> 2) & 1) == 1;
         if(isRubber){
-            return this.getDefaultState().withProperty(RUBBER, true).withProperty(CURRENT_RUBBER, (meta >> 3) == 1).withProperty(FACING, EnumFacing.getHorizontal(meta & 3)).withProperty(LOG_AXIS, EnumAxis.Y);
+            boolean rubbery = (meta >> 3) == 1;
+            return this.getDefaultState().withProperty(RUBBER, true).withProperty(CURRENT_RUBBER, rubbery).withProperty(FACING, EnumFacing.getHorizontal(axisFacing)).withProperty(LOG_AXIS, EnumAxis.Y);
         } else {
-            return this.getDefaultState().withProperty(RUBBER, false).withProperty(LOG_AXIS, EnumAxis.values()[meta & 3]);
+            return this.getDefaultState().withProperty(RUBBER, false).withProperty(LOG_AXIS, EnumAxis.values()[axisFacing]);
         }
     }
 

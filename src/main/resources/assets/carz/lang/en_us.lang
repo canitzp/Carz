@@ -19,6 +19,7 @@ item.carz:pressed_plant.name=Bio waste
 item.carz:key.name=Key
 item.carz:raw_rubber.name=Raw rubber
 item.carz:tree_tap.name=Tree tap
+item.carz:license_driver.name=Driver license
 
 # Fluids
 fluid.carz:bio_fuel.name=Bio fuel

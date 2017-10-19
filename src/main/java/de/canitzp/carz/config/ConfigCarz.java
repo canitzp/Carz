@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  * @author canitzp
  */
 @Mod.EventBusSubscriber
-@Config(modid = Carz.MODID, name = Carz.MODNAME)
+@Config(modid = Carz.MODID)
 @Config.LangKey("carz:config.general")
 public class ConfigCarz{
 
@@ -22,7 +22,7 @@ public class ConfigCarz{
         }
     }
 
-    @Config(modid = Carz.MODID, name = Carz.MODNAME, category = "generation")
+    @Config(modid = Carz.MODID, category = "generation")
     @Config.LangKey("carz:config.generation")
     public static class Generation{
 
@@ -53,6 +53,28 @@ public class ConfigCarz{
         @Config.Comment({"This defines in how much chunks a Rubber Tree should spawn. 1 = 1 per chunk, 4 = 1 per 4 chunks", "Default: 5"})
         @Config.RangeInt(min = 1)
         public static int RUBBERTREES_POPULATION = 5;
+
+        @Config.Name("Rubber Tree biome blacklist")
+        @Config.Comment({"Rubber trees won't spawn in biomes, that are listed with their correct name in here.",
+                "Vanilla biomes: Ocean, Plains, Desert, Extreme Hills, Forest, Taiga, Swampland, River, Hell, The End,",
+                "FrozenOcean, FrozenRiver, Ice Plains, Ice Mountains, MushroomIsland, MushroomIslandShore, Beach,",
+                "DesertHills, ForestHills, TaigaHills, Extreme Hills Edge, Jungle, JungleHills, JungleEdge, Deep Ocean,",
+                "Stone Beach, Cold Beach, Birch Forest, Birch Forest Hills, Roofed Forest, Cold Taiga, Cold Taiga Hills,",
+                "Mega Taiga, Mega Taiga Hills, Extreme Hills+, Savanna, Savanna Plateau, Mesa, Mesa Plateau F, Mesa Plateau,",
+                "The Void, Sunflower Plains, Desert M, Extreme Hills M, Flower Forest, Taiga M, Swampland M, Ice Plains Spikes,",
+                "Jungle M, JungleEdge M, Birch Forest M, Birch Forest Hills M, Roofed Forest M, Cold Taiga M, Mega Spruce Taiga,",
+                "Redwood Taiga Hills M, Extreme Hills+ M, Savanna M, Savanna Plateau M, Mesa (Bryce), Mesa Plateau F M, Mesa Plateau M",
+                "",
+                "Default: Ocean, Desert, Extreme Hills, Hell, The End, FrozenOcean, FrozenRiver, Ice Plains, Ice Mountains, DesertHills,",
+                "Extreme Hills Edge, Deep Ocean, Cold Beach, Cold Taiga, Cold Taiga Hills, Extreme Hills+, Savanna, Savanna Plateau, Mesa, Mesa Plateau F,",
+                "Mesa Plateau, The Void, Desert M, Extreme Hills M, Ice Plains Spikes, Cold Taiga M, Extreme Hills+ M,",
+                "Savanna M, Savanna Plateau M, Mesa (Bryce), Mesa Plateau F M, Mesa Plateau M"})
+        @Config.RequiresMcRestart
+        public static String[] RUBBERTREE_BIOME_BLACKLIST = new String[]{"Ocean", "Desert", "Extreme Hills", "Hell", "The End", "FrozenOcean",
+                "FrozenRiver", "Ice Plains", "Ice Mountains", "DesertHills", "Extreme Hills Edge", "Deep Ocean", "Cold Beach", "Cold Taiga",
+                "Cold Taiga Hills", "Extreme Hills+", "Savanna", "Savanna Plateau", "Mesa", "Mesa Plateau F", "Mesa Plateau", "The Void",
+                "Desert M", "Extreme Hills M", "Ice Plains Spikes", "Cold Taiga M", "Extreme Hills+ M", "Savanna M", "Savanna Plateau M",
+                "Mesa (Bryce)", "Mesa Plateau F M", "Mesa Plateau M"};
 
     }
 

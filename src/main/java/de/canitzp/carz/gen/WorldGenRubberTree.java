@@ -16,6 +16,8 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -27,6 +29,7 @@ public class WorldGenRubberTree implements IWorldGenerator {
     private IBlockState log = Registry.blockLog.getDefaultState();
     private IBlockState leaves = Registry.blockRubberLeaves.getDefaultState();
     private int populationValue = ConfigCarz.Generation.RUBBERTREES_POPULATION; // 1 = one tree per chunk
+    private final List<String> BIOME_BLACKLIST = Arrays.asList(ConfigCarz.Generation.RUBBERTREE_BIOME_BLACKLIST);
 
     @Override
     public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
@@ -39,6 +42,9 @@ public class WorldGenRubberTree implements IWorldGenerator {
     }
 
     private void generateAt(Random rand, World world, BlockPos position){
+        if(BIOME_BLACKLIST.contains(world.getBiome(position).getBiomeName()) || world.getBlockState(position.down()).getMaterial() != Material.GRASS){
+            return;
+        }
         int i = rand.nextInt(3) + this.minTreeHeight;
         boolean flag = true;
 
@@ -104,7 +110,7 @@ public class WorldGenRubberTree implements IWorldGenerator {
 
                         if (state.getBlock().isAir(state, world, upN) || state.getBlock().isLeaves(state, world, upN) || state.getMaterial() == Material.VINE) {
                             if(world.rand.nextInt(5) == 0){
-                                world.setBlockState(position.up(j3), this.log.withProperty(BlockRubberLog.RUBBER, true).withProperty(BlockRubberLog.FACING, EnumFacing.getHorizontal(world.rand.nextInt(3))).withProperty(BlockRubberLog.CURRENT_RUBBER, true));
+                                world.setBlockState(position.up(j3), this.log.withProperty(BlockRubberLog.RUBBER, true).withProperty(BlockRubberLog.FACING, EnumFacing.getHorizontal(new Random().nextInt(3))).withProperty(BlockRubberLog.CURRENT_RUBBER, true));
                             } else {
                                 world.setBlockState(position.up(j3), this.log);
                             }
