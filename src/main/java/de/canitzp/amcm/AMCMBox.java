@@ -22,45 +22,45 @@ public class AMCMBox extends AMCMDefaultShape<AMCMBox> {
                 Collections.singleton((builder, scale, width1, height1, depth1, facing, textureOffsetLeft, textureOffsetRight, textureOffsetUp, textureOffsetDown) -> {
                     switch (facing) {
                         case NORTH: {
-                            builder.pos(0.0D, 0.0D, 0.0D).tex(textureOffsetLeft, textureOffsetUp).endVertex();
-                            builder.pos(0.0D, height1, 0.0D).tex(textureOffsetLeft, textureOffsetDown).endVertex();
-                            builder.pos(width1, height1, 0.0D).tex(textureOffsetRight, textureOffsetDown).endVertex();
-                            builder.pos(width1, 0.0D, 0.0D).tex(textureOffsetRight, textureOffsetUp).endVertex();
+                            appendToBuilder(builder, facing, 0.0D, 0.0D, 0.0D, textureOffsetLeft, textureOffsetUp);
+                            appendToBuilder(builder, facing,  0.0D, height1, 0.0D, textureOffsetLeft, textureOffsetDown);
+                            appendToBuilder(builder, facing,  width1, height1, 0.0D, textureOffsetRight, textureOffsetDown);
+                            appendToBuilder(builder, facing,  width1, 0.0D, 0.0D, textureOffsetRight, textureOffsetUp);
                             break;
                         }
                         case SOUTH: {
-                            builder.pos(width1, 0.0D, depth1).tex(textureOffsetRight, textureOffsetUp).endVertex();
-                            builder.pos(width1, height1, depth1).tex(textureOffsetRight, textureOffsetDown).endVertex();
-                            builder.pos(0.0D, height1, depth1).tex(textureOffsetLeft, textureOffsetDown).endVertex();
-                            builder.pos(0.0D, 0.0D, depth1).tex(textureOffsetLeft, textureOffsetUp).endVertex();
+                            appendToBuilder(builder, facing,  width1, 0.0D, depth1, textureOffsetRight, textureOffsetUp);
+                            appendToBuilder(builder, facing,  width1, height1, depth1, textureOffsetRight, textureOffsetDown);
+                            appendToBuilder(builder, facing,  0.0D, height1, depth1, textureOffsetLeft, textureOffsetDown);
+                            appendToBuilder(builder, facing,  0.0D, 0.0D, depth1, textureOffsetLeft, textureOffsetUp);
                             break;
                         }
                         case WEST: {
-                            builder.pos(0.0D, 0.0D, depth1).tex(textureOffsetLeft, textureOffsetUp).endVertex();
-                            builder.pos(0.0D, height1, depth1).tex(textureOffsetLeft, textureOffsetDown).endVertex();
-                            builder.pos(0.0D, height1, 0.0D).tex(textureOffsetLeft, textureOffsetDown).endVertex();
-                            builder.pos(0.0D, 0.0D, 0.0D).tex(textureOffsetLeft, textureOffsetUp).endVertex();
+                            builder.pos(0.0D, 0.0D, depth1).tex(textureOffsetLeft, textureOffsetUp).normal(0, 0, 0).endVertex();
+                            builder.pos(0.0D, height1, depth1).tex(textureOffsetLeft, textureOffsetDown).normal(0, 0, 0).endVertex();
+                            builder.pos(0.0D, height1, 0.0D).tex(textureOffsetLeft, textureOffsetDown).normal(0, 0, 0).endVertex();
+                            builder.pos(0.0D, 0.0D, 0.0D).tex(textureOffsetLeft, textureOffsetUp).normal(0, 0, 0).endVertex();
                             break;
                         }
                         case EAST: {
-                            builder.pos(width1, 0.0D, 0.0D).tex(textureOffsetRight, textureOffsetUp).endVertex();
-                            builder.pos(width1, height1, 0.0D).tex(textureOffsetRight, textureOffsetDown).endVertex();
-                            builder.pos(width1, height1, depth1).tex(textureOffsetRight, textureOffsetDown).endVertex();
-                            builder.pos(width1, 0.0D, depth1).tex(textureOffsetRight, textureOffsetUp).endVertex();
+                            builder.pos(width1, 0.0D, 0.0D).tex(textureOffsetRight, textureOffsetUp).normal(0, 0, 0).endVertex();
+                            builder.pos(width1, height1, 0.0D).tex(textureOffsetRight, textureOffsetDown).normal(0, 0, 0).endVertex();
+                            builder.pos(width1, height1, depth1).tex(textureOffsetRight, textureOffsetDown).normal(0, 0, 0).endVertex();
+                            builder.pos(width1, 0.0D, depth1).tex(textureOffsetRight, textureOffsetUp).normal(0, 0, 0).endVertex();
                             break;
                         }
                         case DOWN: {
-                            builder.pos(0.0D, height1, 0.0D).tex(textureOffsetLeft, textureOffsetDown).endVertex();
-                            builder.pos(0.0D, height1, depth1).tex(textureOffsetLeft, textureOffsetDown).endVertex();
-                            builder.pos(width1, height1, depth1).tex(textureOffsetRight, textureOffsetDown).endVertex();
-                            builder.pos(width1, height1, 0.0D).tex(textureOffsetRight, textureOffsetDown).endVertex();
+                            builder.pos(0.0D, height1, 0.0D).tex(textureOffsetLeft, textureOffsetDown).normal(0, 0, 0).endVertex();
+                            builder.pos(0.0D, height1, depth1).tex(textureOffsetLeft, textureOffsetDown).normal(0, 0, 0).endVertex();
+                            builder.pos(width1, height1, depth1).tex(textureOffsetRight, textureOffsetDown).normal(0, 0, 0).endVertex();
+                            builder.pos(width1, height1, 0.0D).tex(textureOffsetRight, textureOffsetDown).normal(0, 0, 0).endVertex();
                             break;
                         }
                         case UP: {
-                            builder.pos(0.0D, 0.0D, depth1).tex(textureOffsetLeft, textureOffsetUp).endVertex();
-                            builder.pos(0.0D, 0.0D, 0.0D).tex(textureOffsetLeft, textureOffsetUp).endVertex();
-                            builder.pos(width1, 0.0D, 0.0D).tex(textureOffsetRight, textureOffsetUp).endVertex();
-                            builder.pos(width1, 0.0D, depth1).tex(textureOffsetRight, textureOffsetUp).endVertex();
+                            builder.pos(0.0D, 0.0D, depth1).tex(textureOffsetLeft, textureOffsetUp).normal(0, 0, 0).endVertex();
+                            builder.pos(0.0D, 0.0D, 0.0D).tex(textureOffsetLeft, textureOffsetUp).normal(0, 0, 0).endVertex();
+                            builder.pos(width1, 0.0D, 0.0D).tex(textureOffsetRight, textureOffsetUp).normal(0, 0, 0).endVertex();
+                            builder.pos(width1, 0.0D, depth1).tex(textureOffsetRight, textureOffsetUp).normal(0, 0, 0).endVertex();
                             break;
                         }
                     }

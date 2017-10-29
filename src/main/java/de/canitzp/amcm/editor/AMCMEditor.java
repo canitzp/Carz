@@ -432,7 +432,7 @@ public class AMCMEditor {
                 g.drawImage(currentTexture, 0, 0, null);
                 IAMCMShapes shape = shapes.getSelectedValue();
                 if(shape instanceof AMCMDefaultShape){
-                    int[] off = (int[]) ((AMCMDefaultShape) shape).textureOffsets.getOrDefault(currenttextureFacing, new int[]{0, 0});
+                    //int[] off = (int[]) ((AMCMDefaultShape) shape).textureOffsets.getOrDefault(currenttextureFacing, new int[]{0, 0});
                     g.setColor(Color.white);
                     int w = ((AMCMDefaultShape) shape).width;
                     int h = ((AMCMDefaultShape) shape).height;
@@ -446,7 +446,7 @@ public class AMCMEditor {
                             break;
                         }
                     }
-                    g.drawRect(off[0] - 1, off[1] - 1, w + 2, h + 1);
+                    //g.drawRect(off[0] - 1, off[1] - 1, w + 2, h + 1);
                 }
             }
         }

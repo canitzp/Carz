@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -20,7 +21,7 @@ import java.util.*;
 public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IAMCMShapes<T> {
 
     public int width, height, depth;
-    public Map<EnumFacing, int[]> textureOffsets = new HashMap<>();
+    public List<AMCMTexturePosition> texturePositions = new ArrayList<>();
     public AMCMTexture texture = AMCMTexture.MISSING.setForceTexture(false);
     private List<IAMCMBuffer> buffer = new ArrayList<>();
     private int displayList = -1;
@@ -28,7 +29,7 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
     public AMCMShapeVar<Float> rotationAngle = new AMCMShapeVar<>(0F, 0F, 0F);
     public AMCMShapeVar<Float> offset = new AMCMShapeVar<>(0F, 0F, 0F);
     public String name;
-    private String flags = "";
+    private List<String> flags = new ArrayList<>();
 
     public AMCMDefaultShape(int width, int height, int depth, Collection<IAMCMBuffer> buffers){
         this.width = width;
@@ -55,14 +56,50 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
     }
 
     private double[] calculateTextureOffset(EnumFacing facing, int[] additionalOffset){
-        int[] texts = this.textureOffsets.getOrDefault(facing, new int[]{0, 0});
-        int textOffX = texts[0] + additionalOffset[0];
-        int textOffY = texts[1] + additionalOffset[1];
-        double texLeft = textOffX / (this.texture.getTextureWidth() * 1.0);
-        double texRight = (textOffX + this.width) / (this.texture.getTextureWidth() * 1.0);
-        double texTop = textOffY / (this.texture.getTextureHeight() * 1.0);
-        double texBottom = (textOffY + this.height) / (this.texture.getTextureHeight() * 1.0);
-        return new double[]{texLeft, texRight, texTop, texBottom};
+        int w = this.width;
+        int h = this.height;
+        switch (facing){
+            case EAST: case WEST: {
+                w = this.depth;
+                break;
+            }
+            case DOWN: case UP: {
+                h = this.depth;
+                break;
+            }
+        }
+        for(AMCMTexturePosition pos : this.texturePositions){
+            if(pos.getSide().equals(facing)){
+                double left = pos.getTextureOffsetU();
+                double top = pos.getTextureOffsetV();
+                double right = left + (w / this.texture.getTextureWidth());
+                double down = top + (h / this.texture.getTextureWidth());
+                return new double[]{left, right, top, down};
+            }
+        }
+        return new double[]{0, 0, 0, 0};
+    }
+
+    protected static void appendToBuilder(BufferBuilder builder, EnumFacing facing, double width, double height, double depth, double textureX, double textureY){
+        float normX = (float) width, normY = (float) height, normZ = (float) depth;
+        switch (facing){
+            case NORTH: case SOUTH: {
+                normX /= 2;
+                normY /= 2;
+                break;
+            }
+            case WEST: case EAST: {
+                normY /= 2;
+                normZ /= 2;
+                break;
+            }
+            case UP: case DOWN: {
+                normX /= 2;
+                normZ /= 2;
+                break;
+            }
+        }
+        builder.pos(width, height, depth).tex(textureX, textureY).normal(normX, normY, normZ).endVertex();
     }
 
     public T setTexture(AMCMTexture texture){
@@ -73,7 +110,7 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
     }
 
     public T setTextureOffset(EnumFacing facing, int textureOffsetX, int textureOffsetY){
-        this.textureOffsets.put(facing, new int[]{textureOffsetX, textureOffsetY});
+        this.texturePositions.add(new AMCMTexturePosition(textureOffsetX, textureOffsetY, this.texture.getTextureWidth(), this.texture.getTextureHeight(), facing));
         return (T) this;
     }
 
@@ -109,15 +146,26 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
     }
 
     public T setFlags(String flags){
-        this.flags = flags;
+        String[] sFlags = flags.split("\\|");
+        for(String flag : sFlags){
+            if(flag.startsWith("customTexture:")){ //.class
+                flag = flag.replace("customTexture:", "");
+                String res = flag.substring(0, flag.length() - 6);
+                int textureWidth = Integer.parseInt(flag.substring(flag.length() - 6, flag.length() - 3));
+                int textureHeight = Integer.parseInt(flag.substring(flag.length() - 3));
+                this.setTexture(new AMCMTexture(new ResourceLocation(res), textureWidth, textureHeight));
+            } else {
+                this.flags.add(flag);
+            }
+        }
         return (T) this;
     }
 
     public boolean hasFlags(){
-        return !StringUtils.isNullOrEmpty(this.flags);
+        return !this.flags.isEmpty();
     }
 
-    public String getFlags(){
+    public List<String> getFlags(){
         return this.flags;
     }
 
@@ -125,11 +173,11 @@ public abstract class AMCMDefaultShape<T extends AMCMDefaultShape> implements IA
         StringBuilder builder = new StringBuilder();
         for(EnumFacing facing : facings){
             System.out.println(facing);
-            int[] offs = this.textureOffsets.getOrDefault(facing, new int[]{0, 0});
-            builder.append(String.valueOf(offs[0]));
-            builder.append(";");
-            builder.append(String.valueOf(offs[1]));
-            builder.append(";");
+            //int[] offs = this.textureOffsets.getOrDefault(facing, new int[]{0, 0});
+            //builder.append(String.valueOf(offs[0]));
+            //builder.append(";");
+            //builder.append(String.valueOf(offs[1]));
+            //builder.append(";");
         }
         builder.deleteCharAt(builder.length() - 1);
         return builder.toString();

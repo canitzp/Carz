@@ -19,7 +19,7 @@ public interface IAMCMBuffer {
     }
 
     default VertexFormat getFormat(){
-        return DefaultVertexFormats.POSITION_TEX;
+        return DefaultVertexFormats.POSITION_TEX_NORMAL;
     }
 
     default boolean isValid(EnumFacing facing){

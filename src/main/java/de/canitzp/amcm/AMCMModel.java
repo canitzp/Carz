@@ -1,5 +1,8 @@
 package de.canitzp.amcm;
 
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
