@@ -22,6 +22,8 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
 
     protected boolean autoSnapping = true;
 
+    protected double someOtherRandomRotModifier = 1;
+
     public EntitySteerableBase(World worldIn) {
         super(worldIn);
     }
@@ -75,7 +77,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
                     //Maybe use this for something?
                     double segment = Math.PI * 6 * deltaR / 180;
 
-                    deltaR = Math.min(deltaR, Math.sqrt(this.speedSqAbs));
+                    deltaR = Math.min(deltaR, someOtherRandomRotModifier * Math.sqrt(this.speedSqAbs));
 
                     //Rotate if driving backwards
                     deltaR *= this.speedSq > 0 ? 1 : -1;
