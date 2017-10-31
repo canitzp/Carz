@@ -3,9 +3,11 @@ package de.canitzp.carz.network;
 import de.canitzp.carz.client.gui.GuiCar;
 import de.canitzp.carz.client.gui.GuiPixelMesher;
 import de.canitzp.carz.client.gui.GuiPlantFermenter;
+import de.canitzp.carz.client.gui.GuiRoadConfigurator;
 import de.canitzp.carz.inventory.ContainerCar;
 import de.canitzp.carz.inventory.ContainerPlantFermenter;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -20,6 +22,7 @@ public class GuiHandler implements IGuiHandler {
     public static final int ID_PIXELMESHER = 0;
     public static final int ID_PLANT_FERMENTER = 1;
     public static final int ID_CAR = 2;
+    public static final int ID_BOOSTING_ROAD = 3;
 
     @Nullable
     @Override
@@ -47,6 +50,9 @@ public class GuiHandler implements IGuiHandler {
             }
             case ID_CAR: {
                 return new GuiCar(player, x);
+            }
+            case ID_BOOSTING_ROAD: {
+                return new GuiRoadConfigurator(player, new BlockPos(x, y, z));
             }
             default: return null;
         }

@@ -3,6 +3,7 @@ package de.canitzp.carz.entity;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntitySteerableBase;
+import de.canitzp.carz.api.IWheelClampable;
 import de.canitzp.carz.inventory.Inventory;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,10 +21,11 @@ import javax.annotation.Nullable;
 /**
  * @author canitzp
  */
-public class EntitySportscar extends EntitySteerableBase {
+public class EntitySportscar extends EntitySteerableBase implements IWheelClampable {
 
     private FluidTank tank = new FluidTank(10000);
     private Inventory inventory = new Inventory("Sportscar-Inventory", 37);
+    private boolean clamped = false;
 
     public EntitySportscar(World world) {
         super(world);
@@ -56,12 +58,14 @@ public class EntitySportscar extends EntitySteerableBase {
     protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
         this.inventory.readTag(compound);
         this.tank.readFromNBT(compound.getCompoundTag("FluidTank"));
+        this.clamped = compound.getBoolean("clamped");
     }
 
     @Override
     protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
         this.inventory.writeTag(compound);
         compound.setTag("FluidTank", this.tank.writeToNBT(new NBTTagCompound()));
+        compound.setBoolean("clamped", this.clamped);
     }
 
     @Nullable
@@ -74,5 +78,15 @@ public class EntitySportscar extends EntitySteerableBase {
     @Override
     public IItemHandler getInventory(@Nullable EnumFacing facing) {
         return this.inventory;
+    }
+
+    @Override
+    public void setClamped(boolean clamped) {
+        this.clamped = clamped;
+    }
+
+    @Override
+    public boolean isClamped() {
+        return clamped;
     }
 }

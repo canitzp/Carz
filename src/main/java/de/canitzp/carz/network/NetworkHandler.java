@@ -59,6 +59,7 @@ public class NetworkHandler {
         net.registerMessage(MessageSendPixelMeshesToClient.class, MessageSendPixelMeshesToClient.class, id++, Side.CLIENT);
         net.registerMessage(MessageSendPixelMeshesToServer.class, MessageSendPixelMeshesToServer.class, id++, Side.SERVER);
         net.registerMessage(MessageUpdatePainter.class, MessageUpdatePainter.class, id++, Side.SERVER);
+        net.registerMessage(MessageUpdateRoadConfigurator.class, MessageUpdateRoadConfigurator.class, id++, Side.SERVER);
         net.registerMessage(MessageCarPartInteract.class, MessageCarPartInteract.class, id++, Side.SERVER);
     }
 

@@ -517,6 +517,11 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 block.onLanded(this.world, this);
             }
 
+            if (onGround && canTriggerWalking()) {
+                //Used for boosting road etc
+                block.onEntityWalk(this.world, blockpos, this);
+            }
+
             try {
                 this.doBlockCollisions();
             } catch (Throwable throwable) {

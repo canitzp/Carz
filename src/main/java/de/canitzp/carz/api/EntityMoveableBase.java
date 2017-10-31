@@ -21,7 +21,6 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.List;
 
 
 /**
@@ -61,6 +60,13 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
             blockCollisionCheck();
         }
         this.doBlockCollisions();
+
+        if (this instanceof IWheelClampable && ((IWheelClampable) this).isClamped()) {
+            this.motionX = 0;
+            this.motionZ = 0;
+            this.setSpeed(0);
+            return;
+        }
 
         float speed = getSpeed();
 
@@ -292,20 +298,21 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     }
 
     private void blockCollisionCheck() {
-        List<AxisAlignedBB> list = this.world.getCollisionBoxes(this, this.getEntityBoundingBox().grow(0.01, -0.01, 0.01));
-        Vec3d ourCenter = getCenter(this.getCollisionBoundingBox());
-        //TODO: get side of collision and apply damage
-        for (AxisAlignedBB bb : list) {
-            rayCheck(bb.maxX, ourCenter.y, bb.maxZ, ourCenter);
-            rayCheck(bb.maxX, ourCenter.y, bb.minZ, ourCenter);
-            rayCheck(bb.minX, ourCenter.y, bb.maxZ, ourCenter);
-            rayCheck(bb.minX, ourCenter.y, bb.minZ, ourCenter);
-            Vec3d c = getCenter(bb);
-            double colYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.posZ - c.z, this.posX - c.x) * 180 / Math.PI) - 90;
-            double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
-            double colAngle = -(MathHelper.wrapDegrees(rotYaw - colYaw) - 90) + 90;
-            //ToDO: yeah - do I really need this?
-        }
+        //Yeahs - let's
+//        List<AxisAlignedBB> list = this.world.getCollisionBoxes(this, this.getEntityBoundingBox().grow(0.01, -0.01, 0.01));
+//        Vec3d ourCenter = getCenter(this.getCollisionBoundingBox());
+//        //TODO: get side of collision and apply damage
+//        for (AxisAlignedBB bb : list) {
+//            rayCheck(bb.maxX, ourCenter.y, bb.maxZ, ourCenter);
+//            rayCheck(bb.maxX, ourCenter.y, bb.minZ, ourCenter);
+//            rayCheck(bb.minX, ourCenter.y, bb.maxZ, ourCenter);
+//            rayCheck(bb.minX, ourCenter.y, bb.minZ, ourCenter);
+//            Vec3d c = getCenter(bb);
+//            double colYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.posZ - c.z, this.posX - c.x) * 180 / Math.PI) - 90;
+//            double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
+//            double colAngle = -(MathHelper.wrapDegrees(rotYaw - colYaw) - 90) + 90;
+//            //ToDO: yeah - do I really need this?
+//        }
     }
 
     @Nullable

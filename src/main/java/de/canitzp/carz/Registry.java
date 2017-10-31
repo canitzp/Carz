@@ -20,24 +20,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -58,7 +51,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +91,7 @@ public class Registry {
      */
     public static BlockFuelStation blockFuelStation = new BlockFuelStation().register();
     public static BlockRoad blockRoad = new BlockRoad<>("road").register();
+    public static BlockBoostingRoad blockBoostingRoad = new BlockBoostingRoad().register();
     public static BlockRoadSlope blockRoadSlope = new BlockRoadSlope().register();
     public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
     public static BlockPlantFermenter blockPlantFermenter = new BlockPlantFermenter().register();
@@ -117,6 +110,8 @@ public class Registry {
     public static ItemBaseDefault itemRawRubber = new ItemBaseDefault<>("raw_rubber").register();
     public static ItemBaseDefault itemTreeTap = new ItemBaseDefault<>("tree_tap").register();
     public static ItemLicense itemLicense = new ItemLicense().register();
+    public static ItemRoadConfigurator itemRoadConfigurator = new ItemRoadConfigurator().register();
+    public static ItemWheelClamp itemWheelClamp = new ItemWheelClamp().register();
 
     /**
      * Fluids:
