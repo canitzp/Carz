@@ -1,7 +1,7 @@
 package de.canitzp.carz.api;
 
-import de.canitzp.carz.Carz;
 import de.canitzp.carz.blocks.BlockRoad;
+import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.network.MessageCarSpeed;
 import de.canitzp.carz.network.NetworkHandler;
 import de.canitzp.carz.util.MathUtil;
@@ -246,14 +246,19 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     @Override
     public void applyEntityCollision(@Nonnull Entity entityIn) {
         if (world.isRemote || this.isPassenger(entityIn)) return;
-        if (true) return; //ToDo: Yeah - let's reuse this :)
+        if (entityIn instanceof EntityInvisibleCarPart) {
+            //ToDo: Yeah... todo
+        }
+
         if (entityIn instanceof EntityMoveableBase) {
-
+            //ToDo: Yeah... todo - again
         } else if (entityIn instanceof EntityLiving) {
-            if (collisionCache.contains(entityIn.getEntityId())/*this.ticksExisted - this.lastColTime > 10*/) {
-
-//                this.lastColTime = this.ticksExisted;
-            } else if (this.lastColX != 0) {
+            if ((this.motionX * this.motionX) + (this.motionZ * this.motionZ) > 0.07 && !collisionCache.contains(entityIn.getEntityId())) {
+                //ToDo. more to come
+                entityIn.addVelocity(this.motionX * 9, 0.1, this.motionZ * 9);
+                this.collisionCache.add(entityIn.getEntityId());
+            }
+            /*else if (this.lastColX != 0) {
                 this.updateServerDrivingData();
                 double angle = Math.atan2(this.posZ, this.posX) - Math.atan2(entityIn.posZ, entityIn.posX);
                 Carz.LOG.info("Hit with angle " + angle + " // " + this.angle + " @ " + this.speedSq);
@@ -278,12 +283,11 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
 //                this.lastColTime += 20;
                 this.collisionCache.add(entityIn.getEntityId());
             } else {
-                //TODO: Yeah - let's actually use the collision contact point
                 this.lastColX = this.posX;
                 this.lastColZ = this.posZ;
                 entityIn.addVelocity(0, 2, 0);
 //                this.collisionCache.add(entityIn.getEntityId());
-            }
+            }*/
         }
     }
 

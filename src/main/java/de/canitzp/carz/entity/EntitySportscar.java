@@ -6,7 +6,6 @@ import de.canitzp.carz.api.EntitySteerableBase;
 import de.canitzp.carz.inventory.Inventory;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -14,7 +13,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +29,8 @@ public class EntitySportscar extends EntitySteerableBase {
         super(world);
         this.setSize(1.75F, 1.8125F);
         this.setDriverSeat(-0.3D, -1.0D, 0.0D);
+
+        this.someOtherRandomRotModifier = 2;
     }
 
     @Override

@@ -160,17 +160,20 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
      */
     public List<AxisAlignedBB> getWorldCollisionBoxes(@Nullable Entity entityIn, AxisAlignedBB aabb) {
         List<AxisAlignedBB> boxes = this.world.getCollisionBoxes(null, aabb);
+        List<Entity> entitiesWithinAABB = this.world.getEntitiesWithinAABBExcludingEntity(null, aabb.grow(0.25D));
+
         if (entityIn != null) {
-            addEntity(entityIn, this, aabb, boxes);
+            addEntity(entityIn, this, aabb, boxes, entitiesWithinAABB);
             for (EntityInvisibleCarPart part : this.collidingParts)
-                addEntity(part, this, aabb, boxes);
+                addEntity(part, this, aabb, boxes, entitiesWithinAABB);
         }
         return boxes;
     }
 
-    private void addEntity(Entity entityIn, Entity entityParentIgnored, AxisAlignedBB aabb, List<AxisAlignedBB> boxes) {
-        List<Entity> list1 = this.world.getEntitiesWithinAABBExcludingEntity(entityIn, aabb.grow(0.25D));
-        for (Entity entity : list1) {
+    private void addEntity(Entity entityIn, Entity entityParentIgnored, AxisAlignedBB aabb, List<AxisAlignedBB> boxes,
+                           Iterable<Entity> entitiesWithinAABB) {
+        for (Entity entity : entitiesWithinAABB) {
+            if (entity == entityIn)continue; //ExcludingEntity
             if (!entityIn.isRidingSameEntity(entity) && !entity.isEntityEqual(entityIn) && !entity.isEntityEqual(entityParentIgnored)) {
                 AxisAlignedBB axisalignedbb = entity.getCollisionBoundingBox();
 
@@ -549,6 +552,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
     }
 
     /**
+     * Called upon blocks that shall be crushed into gravel - or something along those lines
      * @param force      A number representing how strong the collision was (not really a force)
      * @param collisions All collisions happened
      */
