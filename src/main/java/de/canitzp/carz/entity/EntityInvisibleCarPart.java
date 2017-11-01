@@ -101,8 +101,46 @@ public class EntityInvisibleCarPart extends Entity {
     /**
      * Called from the parent (EntityPartedBase)
      *
-     * @param cosYaw the parent cos
-     * @param sinYaw the paren sin
+     * @param cosYaw       the parent yaw-cos
+     * @param sinYaw       the parent yaw-sin
+     * @param cosPitch     the parent pitch-cos
+     * @param sinPitch     the parent pitch-sin
+     * @param cosRoll      the parent roll-cos
+     * @param sinRoll      the parent roll-sin
+     * @param movingAlong_ possible moving along candidates (grouped)
+     */
+    public void onUpdate(double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll, List<Entity> movingAlong_) {
+        this.setPositionAndUpdate(
+                this.parent.posX + MathUtil.rotX(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posY + MathUtil.rotY(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posZ + MathUtil.rotZ(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
+
+        if (!this.world.isRemote && colliding) {
+            if (moveAlong) {
+                this.moveAlongNearbyEntities(movingAlong_);
+            }
+            this.collideWithNearbyEntities();
+        } else if (this.world.isRemote && moveAlong) {
+            this.moveAlongNearbyEntities(movingAlong_);
+        }
+
+        super.onUpdate();
+    }
+
+    /**
+     * Called from the parent (EntityPartedBase)
+     * <p>
+     * Oh... for many parts, this is "kinda" performance hungry - be warned
+     *
+     * @param cosYaw   the parent yaw-cos
+     * @param sinYaw   the parent yaw-sin
+     * @param cosPitch the parent pitch-cos
+     * @param sinPitch the parent pitch-sin
+     * @param cosRoll  the parent roll-cos
+     * @param sinRoll  the parent roll-sin
      */
     public void onUpdate(double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll) {
         this.setPositionAndUpdate(
@@ -167,6 +205,15 @@ public class EntityInvisibleCarPart extends Entity {
         entities.stream()
                 .filter(entity -> entity != this.parent && !(entity instanceof EntityInvisibleCarPart) && entity.canBePushed() && !this.parent.getPassengers().contains(entity) && !parent.movingAlong.contains(entity))
                 .forEach(entity -> entity.applyEntityCollision(this.parent));
+    }
+
+
+    private void moveAlongNearbyEntities(List<Entity> movingAlong_) {
+        //Check entities standing on us
+        AxisAlignedBB bb = this.getEntityBoundingBox().expand(-0.01, 0.5D, -0.01);
+        movingAlong_.stream()
+                .filter(entity -> entity != this && entity != this.parent && entity.getEntityBoundingBox().intersects(bb) && !(entity instanceof EntityInvisibleCarPart) && entity.canBePushed() && !this.parent.getPassengers().contains(entity))
+                .forEach(e -> parent.movingAlong.add(e));
     }
 
     private void moveAlongNearbyEntities() {

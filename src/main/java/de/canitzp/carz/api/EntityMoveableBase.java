@@ -91,6 +91,8 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         double cosPitch = Math.cos(-deltaRotationPitch * 0.017453292F);
         double sinPitch = Math.sin(deltaRotationPitch * 0.017453292F);
 
+        double cosRoll = 1;
+        double sinRoll = 0;
 
         if (this.collidedHorizontally)
             this.rotationYaw = origRotationYaw;
@@ -109,6 +111,28 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
                     //TODO: Sometimes this is needed, sometimes not
 //                    if (ny > 0)
 //                        ny += 0.1;
+
+                    //TODO: Fix this?
+
+//                      cosYaw = Math.cos(-this.rotationYaw * 0.017453292F);
+//                      sinYaw = Math.sin(this.rotationYaw * 0.017453292F);
+//
+//                      ox = 1;
+//                      oz = 0;
+//
+//                    e.setPosition(
+//                            this.posX +MathUtil.rotX(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+//                            this.posY +this.motionY,
+//                            this.posZ + this.motionZ );
+
+//                    e.setPosition(
+//                            this.posX +this.motionX + MathUtil.rotX(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+//                            this.posY +this.motionY + Math.abs(MathUtil.rotY(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll)),
+//                            this.posZ + this.motionZ + MathUtil.rotZ(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
 
                     e.setPosition(
                             this.posX + this.motionX + MathUtil.rotX(ox, oy, oz,

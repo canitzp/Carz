@@ -91,15 +91,15 @@ public class EntityBus extends EntityAIDriveableBase {
         super(worldIn);
         this.setSize(1.75F, 0.2f); //1.8125F
 
-        this.setDriverSeat(2.75F, -1.6F, -0.9F);
-        this.addSeat(1.05F, -1.6F, -0.9F);
-        this.addSeat(1.05F, -1.6F, 0.9F);
+        this.setDriverSeat(2.75F, -1.3F, -0.9F);
+        this.addSeat(1.05F, -1.3F, -0.9F);
+        this.addSeat(1.05F, -1.3F, 0.9F);
 
-        this.addSeat(0.05F, -1.6F, -0.9F);
-        this.addSeat(0.05F, -1.6F, 0.9F);
+        this.addSeat(0.05F, -1.3F, -0.9F);
+        this.addSeat(0.05F, -1.3F, 0.9F);
 
-        this.addSeat(-2.7f, -1.6F, -0.9F);
-        this.addSeat(-2.7f, -1.6F, 0.9F);
+        this.addSeat(-2.7f, -1.3F, -0.9F);
+        this.addSeat(-2.7f, -1.3F, 0.9F);
 
 
         this.steeringMax = 2;
