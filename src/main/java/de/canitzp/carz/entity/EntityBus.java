@@ -2,8 +2,8 @@ package de.canitzp.carz.entity;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
+import de.canitzp.carz.api.EntityAIDriveableBase;
 import de.canitzp.carz.api.EntityPartedBase;
-import de.canitzp.carz.api.EntitySteerableBase;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * @author canitzp, MisterErwin
  */
-public class EntityBus extends EntitySteerableBase {
+public class EntityBus extends EntityAIDriveableBase {
 
     private static EntityPartedBase.PartData partData;
 
@@ -158,7 +158,7 @@ public class EntityBus extends EntitySteerableBase {
             return b;
         }
 
-        return false;
+        return super.processInitialInteract(player, hand, partIndex);
     }
 
     private void setSeatingData(int[] seats, int index, int value) {
@@ -179,10 +179,10 @@ public class EntityBus extends EntitySteerableBase {
         super.removePassenger(passenger);
     }
 
-    @Override
-    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        return false; //Interact with main-box
-    }
+//    @Override
+//    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
+//        return false; //Interact with main-box
+//    }
 
     @Override
     public double getMountedYOffset() {

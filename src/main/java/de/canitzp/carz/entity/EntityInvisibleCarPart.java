@@ -209,7 +209,7 @@ public class EntityInvisibleCarPart extends Entity {
             if (world.isRemote) {
                 VehiclePackets.sendCarInteractToServer(this.parent, hand, index);
             } else {
-                this.parent.processInitialInteract(player, hand, index);
+                return this.parent.processInitialInteract(player, hand, index);
             }
             return true;
         }
