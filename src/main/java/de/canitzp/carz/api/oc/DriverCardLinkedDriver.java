@@ -100,6 +100,24 @@ public class DriverCardLinkedDriver extends DriverItem {
             return new Object[]{car.getSpeed()};
         }
 
+        @Callback(doc = "function():number, number, number or nil, string -- Gets the current position relative to the machine ")
+        public Object[] getPosition(Context context, Arguments arguments) {
+            EntityAIDriveableBase car = getCar();
+            if (car == null)
+                return new Object[]{null, "car_not_found"};
+            return new Object[]{car.posX - environmentHost.xPosition(),
+                    car.posY - environmentHost.yPosition(),
+                    car.posZ - environmentHost.zPosition()};
+        }
+
+        @Callback(doc = "function():number or nil, string -- Gets the current rotation ")
+        public Object[] getRotation(Context context, Arguments arguments) {
+            EntityAIDriveableBase car = getCar();
+            if (car == null)
+                return new Object[]{null, "car_not_found"};
+            return new Object[]{car.rotationYaw};
+        }
+
         @Override
         public boolean canUpdate() {
             return true;

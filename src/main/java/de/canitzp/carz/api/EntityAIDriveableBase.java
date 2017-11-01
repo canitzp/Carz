@@ -116,10 +116,10 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
     }
 
     public void setAISteered() {
-        lastAISteered = world.getWorldTime();
+        lastAISteered = world.getTotalWorldTime();
     }
 
     public boolean isAISteered() {
-        return world.getWorldTime() - lastAISteered < 60;
+        return world.getTotalWorldTime() - lastAISteered < 60;
     }
 }
