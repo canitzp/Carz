@@ -35,6 +35,10 @@ repositories {
     maven { // CommonCapabilities
         url "https://dl.bintray.com/cyclopsmc/dev/"
     }
+    maven { //OpenComputers
+        name = "OpenComputers"
+        url = "http://maven.cil.li/"
+    }
 }
 
 dependencies {
@@ -42,6 +46,8 @@ dependencies {
     deobfCompile "de.ellpeck.actuallyadditions:ActuallyAdditions:${project.actadd_version}"
     deobfCompile "org.cyclops.commoncapabilities:CommonCapabilities:${project.cc_version}"
     deobfCompile "de.canitzp.tumat:TUMAT:${project.tumat_version}"
+    deobfCompile "li.cil.oc:OpenComputers:${project.oc_version}:api"
+//    deobfCompile "li.cil.oc:OpenComputers:${project.oc_version}" //:api ?
 }
 
 processResources {

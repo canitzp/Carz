@@ -1,6 +1,7 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
+import de.canitzp.carz.api.oc.DriverCardLinkedDriver;
 import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
@@ -112,6 +113,7 @@ public class Registry {
     public static ItemLicense itemLicense = new ItemLicense().register();
     public static ItemRoadConfigurator itemRoadConfigurator = new ItemRoadConfigurator().register();
     public static ItemWheelClamp itemWheelClamp = new ItemWheelClamp().register();
+    public static ItemCardLinkedDriver itemCardLinkedDriver = new ItemCardLinkedDriver().register();
 
     /**
      * Fluids:
@@ -240,6 +242,7 @@ public class Registry {
                 }
             }
         }
+        li.cil.oc.api.Driver.add(new DriverCardLinkedDriver());
     }
 
     private static <T extends EntityRenderedBase> void registerEntity(String name, Class<T> entity, Side side) {

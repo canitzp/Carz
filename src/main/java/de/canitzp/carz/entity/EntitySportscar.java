@@ -2,7 +2,7 @@ package de.canitzp.carz.entity;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
-import de.canitzp.carz.api.EntitySteerableBase;
+import de.canitzp.carz.api.EntityAIDriveableBase;
 import de.canitzp.carz.api.IWheelClampable;
 import de.canitzp.carz.inventory.Inventory;
 import net.minecraft.client.model.ModelBase;
@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 /**
  * @author canitzp
  */
-public class EntitySportscar extends EntitySteerableBase implements IWheelClampable {
+public class EntitySportscar extends EntityAIDriveableBase implements IWheelClampable {
 
     private FluidTank tank = new FluidTank(10000);
     private Inventory inventory = new Inventory("Sportscar-Inventory", 37);
