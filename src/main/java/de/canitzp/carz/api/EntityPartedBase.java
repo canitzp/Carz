@@ -31,7 +31,7 @@ import java.util.*;
  *
  * @author MisterErwin
  */
-public abstract class EntityPartedBase extends EntityWorldInteractionBase {
+public abstract class EntityPartedBase extends EntityRenderedBase {
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
 

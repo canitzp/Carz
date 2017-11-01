@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @author MisterErwin
  */
-public abstract class EntitySteerableBase extends EntityRideableBase {
+public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
 
     private boolean inputLeftDown, inputRightDown, inputForwardDown, inputBackDown;
 
@@ -55,7 +55,7 @@ public abstract class EntitySteerableBase extends EntityRideableBase {
         this.inputBackDown = back;
     }
 
-    private void controlVehicle() {
+    protected void controlVehicle() {
         if (this.isBeingRidden()) {
             world.spawnParticle(EnumParticleTypes.FOOTSTEP, posX, posY, posZ, 0.1, 0.1, 0.1);
             float fwd = 0.0F; //Forward movement?

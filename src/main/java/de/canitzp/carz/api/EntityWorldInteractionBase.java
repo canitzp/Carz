@@ -3,6 +3,7 @@ package de.canitzp.carz.api;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.inventory.ContainerCar;
+import de.canitzp.carz.items.ItemCardLinkedDriver;
 import de.canitzp.carz.items.ItemWheelClamp;
 import de.canitzp.carz.network.GuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,7 @@ import javax.annotation.Nullable;
  *
  * @author canitzp
  */
-public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
+public abstract class EntityWorldInteractionBase extends EntityRideableBase {
 
     protected int currentInventoryPage = 0;
 
@@ -38,9 +39,10 @@ public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         ItemStack handItem = player.getHeldItem(hand);
-        if (handItem.getItem() == Registry.itemWheelClamp && ItemWheelClamp.doInteract(
-                handItem, player, this
-        )) {
+        if (handItem.getItem() == Registry.itemWheelClamp && ItemWheelClamp.doInteract(handItem, player, this)) {
+            return true;
+        } else if (handItem.getItem() == Registry.itemCardLinkedDriver &&
+                ItemCardLinkedDriver.doInteract(handItem, player, this)) {
             return true;
         }
 
