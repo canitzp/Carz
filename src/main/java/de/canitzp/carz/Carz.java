@@ -3,6 +3,7 @@ package de.canitzp.carz;
 import de.canitzp.carz.config.ConfigCarz;
 import de.canitzp.carz.gen.OilChunkGen;
 import de.canitzp.carz.gen.WorldGenRubberTree;
+import de.canitzp.carz.integration.IntegrationHandler;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.world.World;
@@ -54,11 +55,13 @@ public class Carz {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         LOG.info("Launching " + MODNAME + " v" + MODVERSION);
+        IntegrationHandler.loadIntegrations();
         Registry.preInit(event);
         LOG.info("Creating Network issues");
         NetworkHandler.preInit(event);
         LOG.info("Let the proxy out Part I");
         proxy.preInit(event);
+        IntegrationHandler.preInit(event);
     }
 
     @Mod.EventHandler
@@ -71,12 +74,13 @@ public class Carz {
             GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 1);
         }
         proxy.init(event);
+        IntegrationHandler.init(event);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
+        IntegrationHandler.postInit(event);
     }
-
 
 }

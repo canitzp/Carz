@@ -242,7 +242,6 @@ public class Registry {
                 }
             }
         }
-        li.cil.oc.api.Driver.add(new DriverCardLinkedDriver());
     }
 
     private static <T extends EntityRenderedBase> void registerEntity(String name, Class<T> entity, Side side) {

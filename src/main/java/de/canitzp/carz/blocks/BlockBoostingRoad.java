@@ -39,17 +39,9 @@ public class BlockBoostingRoad extends BlockRoad<BlockBoostingRoad> {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerClient() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation("carz:road", "inventory"));
-    }
-
     @SideOnly(Side.CLIENT)
     @Override
     public void registerClientInit() {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(this), 0, new ModelResourceLocation("carz:road", "inventory"));
         ClientRegistry.bindTileEntitySpecialRenderer(TileBoostingRoad.class, new RenderRoad());
     }
 }
