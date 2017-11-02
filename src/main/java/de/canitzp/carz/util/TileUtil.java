@@ -2,6 +2,7 @@ package de.canitzp.carz.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
@@ -14,8 +15,9 @@ public class TileUtil {
         for(EntityPlayer player : tile.getWorld().playerEntities){
             if(player instanceof EntityPlayerMP){
                 BlockPos pos = tile.getPos();
-                if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 64 && tile.getUpdatePacket() != null){
-                    ((EntityPlayerMP) player).connection.sendPacket(tile.getUpdatePacket());
+                SPacketUpdateTileEntity packet = tile.getUpdatePacket();
+                if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 64 && packet != null){
+                    ((EntityPlayerMP) player).connection.sendPacket(packet);
                 }
             }
         }

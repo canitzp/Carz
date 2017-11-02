@@ -7,6 +7,7 @@ import de.canitzp.carz.integration.IntegrationHandler;
 import de.canitzp.carz.network.CommonProxy;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenTrees;
@@ -22,6 +23,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import java.io.File;

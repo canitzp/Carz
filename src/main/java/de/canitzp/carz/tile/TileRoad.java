@@ -4,6 +4,7 @@ import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.events.WorldEvents;
 import de.canitzp.carz.util.BlockProps;
+import de.canitzp.carz.util.TileUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -39,6 +40,7 @@ public class TileRoad extends TileRoadBase{
 
     public void setMesh(PixelMesh mesh) {
         this.mesh = mesh;
+        TileUtil.sync(this);
     }
 
     public PixelMesh getMesh() {
