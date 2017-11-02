@@ -61,6 +61,7 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 @Mod.EventBusSubscriber
 public class Registry {
+
     /**
      * Internal Stuff:
      */
@@ -96,7 +97,6 @@ public class Registry {
     public static BlockRoadSlope blockRoadSlope = new BlockRoadSlope().register();
     public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
     public static BlockPlantFermenter blockPlantFermenter = new BlockPlantFermenter().register();
-    public static BlockBasic blockBasic = new BlockBasic().register();
     public static BlockRubberLog blockLog = new BlockRubberLog().register();
     public static BlockRubberLeaves blockRubberLeaves = new BlockRubberLeaves().register();
 
@@ -152,6 +152,7 @@ public class Registry {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        EnumBasicBlocks.registerBlocks();
         IForgeRegistry<Block> reg = event.getRegistry();
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             Carz.LOG.info("Registering Block: " + block.getRegistryName());
