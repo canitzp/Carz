@@ -57,7 +57,7 @@ public class DriverCardLinkedDriver extends DriverItem {
             double steering = Math.min(1, Math.max(-1, arguments.checkDouble(0)));
             EntityAIDriveableBase car = getCar();
             if (car == null)
-                return new Object[]{false, "car_not_found"};
+                return new Object[]{null, "car_not_found"};
             car.setSteering((float) steering);
             return new Object[]{true};
         }
@@ -67,7 +67,7 @@ public class DriverCardLinkedDriver extends DriverItem {
             double fwd = Math.min(1, Math.max(-1, arguments.checkDouble(0)));
             EntityAIDriveableBase car = getCar();
             if (car == null)
-                return new Object[]{false, "car_not_found"};
+                return new Object[]{null, "car_not_found"};
             car.setForward((float) fwd);
             return new Object[]{true};
         }
@@ -81,14 +81,21 @@ public class DriverCardLinkedDriver extends DriverItem {
             return new Object[]{true};
         }
 
-        //        @Optional.Method(modid = "OpenComputers")
         @Callback(doc = "function():boolean -- Stops the engine")
         public Object[] stop(Context context, Arguments arguments) {
             EntityAIDriveableBase car = getCar();
             if (car == null)
-                return new Object[]{false, "car_not_found"};
+                return new Object[]{null, "car_not_found"};
             car.stopCar();
             return new Object[]{true};
+        }
+
+        @Callback(doc = "function():boolean or nil, boolean -- Returns true if the engine is running")
+        public Object[] isRunning(Context context, Arguments arguments) {
+            EntityAIDriveableBase car = getCar();
+            if (car == null)
+                return new Object[]{null, "car_not_found"};
+            return new Object[]{car.isRunning()};
         }
 
         //        @Optional.Method(modid = "OpenComputers")
@@ -96,7 +103,7 @@ public class DriverCardLinkedDriver extends DriverItem {
         public Object[] getSpeed(Context context, Arguments arguments) {
             EntityAIDriveableBase car = getCar();
             if (car == null)
-                return new Object[]{false, "car_not_found"};
+                return new Object[]{null, "car_not_found"};
             return new Object[]{car.getSpeed()};
         }
 
@@ -117,6 +124,16 @@ public class DriverCardLinkedDriver extends DriverItem {
                 return new Object[]{null, "car_not_found"};
             return new Object[]{car.rotationYaw};
         }
+
+        @Callback(doc = "function():boolean or nil, string -- Returns true if someone is currently driving ")
+        public Object[] hasDriver(Context context, Arguments arguments) {
+            EntityAIDriveableBase car = getCar();
+            if (car == null)
+                return new Object[]{null, "car_not_found"};
+            return new Object[]{car.canPassengerSteer()};
+        }
+
+
 
         @Override
         public boolean canUpdate() {

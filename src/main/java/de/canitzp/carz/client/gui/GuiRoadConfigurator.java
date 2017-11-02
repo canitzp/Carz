@@ -48,8 +48,9 @@ public class GuiRoadConfigurator extends GuiScreen implements GuiPageButtonList.
 
     @Override
     public void initGui() {
-        this.guiLeft = (this.width - 256) / 2;
-        this.guiTop = (this.height - 256) / 2;
+        this.guiLeft = (this.width / 2) - 64;
+//        this.guiTop = (this.height - 256) / 2;
+        this.guiTop = (this.height / 2) - 64;
 
 
         TileEntity tile = mc.world.getTileEntity(pos);
@@ -57,13 +58,13 @@ public class GuiRoadConfigurator extends GuiScreen implements GuiPageButtonList.
         if (!(tile instanceof TileBoostingRoad)) return;
 
 
-        this.buttonList.add(this.absoluteField = new GuiButton(0, this.guiLeft + 20, this.guiTop + 20, 92, 20,
+        this.buttonList.add(this.absoluteField = new GuiButton(0, this.guiLeft + 12, this.guiTop + 13, 150, 20,
                 ((TileBoostingRoad) tile).isAbsolute() ? "Absolute" : "Relative"));
-        this.buttonList.add(this.xSliderField = new GuiSlider(this, 1, this.guiLeft + 10, this.guiTop + 40,
+        this.buttonList.add(this.xSliderField = new GuiSlider(this, 1, this.guiLeft + 12, this.guiTop + 40,
                 "x", -100, 100, ((TileBoostingRoad) tile).getX(), IntFormatter.INSTANCE));
-        this.buttonList.add(this.ySliderField = new GuiSlider(this, 2, this.guiLeft + 10, this.guiTop + 60,
+        this.buttonList.add(this.ySliderField = new GuiSlider(this, 2, this.guiLeft + 12, this.guiTop + 70,
                 "y", -100, 100, ((TileBoostingRoad) tile).getY(), IntFormatter.INSTANCE));
-        this.buttonList.add(this.zSliderField = new GuiSlider(this, 3, this.guiLeft + 10, this.guiTop + 80,
+        this.buttonList.add(this.zSliderField = new GuiSlider(this, 3, this.guiLeft + 12, this.guiTop + 100,
                 "z", -100, 100, ((TileBoostingRoad) tile).getZ(), IntFormatter.INSTANCE));
     }
 
@@ -72,7 +73,6 @@ public class GuiRoadConfigurator extends GuiScreen implements GuiPageButtonList.
         this.drawDefaultBackground();
         this.mc.getTextureManager().bindTexture(LOC);
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, 256, 256);
-//        font.drawString(textNew, (int) (this.guiLeft + 203 - (font.getStringWidth(textNew) / 2.0F)), this.guiTop + 22, 0xFFFFFF);
         this.absoluteField.drawButton(this.mc, mouseX, mouseY, partialTicks);
         this.xSliderField.drawButton(this.mc, mouseX, mouseY, partialTicks);
         this.ySliderField.drawButton(this.mc, mouseX, mouseY, partialTicks);
