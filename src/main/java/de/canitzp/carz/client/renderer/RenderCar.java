@@ -75,7 +75,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
 
-        if (Carz.RENDER_DEBUG && car instanceof EntitySteerableBase) {
+        if (true && car instanceof EntitySteerableBase) {
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.glLineWidth(2.0F);
@@ -94,7 +94,12 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
 //            ).grow(-.5, 10, -.5);
 //            RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 0, 0, 1, 1f);
 
-            RenderGlobal.renderFilledBox(car.getEntityBoundingBox().offset(-renderPosX, -renderPosY, -renderPosZ).grow(0, 10, 0), 0, 1, 0, 0.9f);
+            AxisAlignedBB bb = car.getEntityBoundingBox();
+
+            double xx = bb.minX + (bb.maxX - bb.minX) / 2;
+            double zz = bb.minZ + (bb.maxZ - bb.minZ) / 2;
+            RenderGlobal.renderFilledBox(new AxisAlignedBB(xx - 0.1, bb.minY, zz - 0.1, xx + 0.1, bb.maxY + 10, zz + 0.1)
+                    .offset(-renderPosX, -renderPosY, -renderPosZ).grow(0, 10, 0), 0, 1, 0, 0.9f);
 
 
             GlStateManager.depthMask(true);

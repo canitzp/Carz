@@ -88,11 +88,19 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
                 localRotX = 0;
             if (Math.abs(localRotZ) < 0.015)
                 localRotZ = 0;
-            dataManager.set(localRotationTranslationX, Math.max(-wheelWidth, Math.min(wheelWidth, Math.round(localRotX * 100f) / 100f)));
-            dataManager.set(localRotationTranslationZ, Math.max(-wheelLength, Math.min(wheelLength, Math.round(localRotZ * 100f) / 100f)));
+            localRotX = Math.max(-wheelWidth, Math.min(wheelWidth, Math.round(localRotX * 100f) / 100f));
+            localRotZ = Math.max(-wheelLength, Math.min(wheelLength, Math.round(localRotZ * 100f) / 100f));
+//            if (this.isRotationTranslationValid(localRotX, localRotZ)) {
+            dataManager.set(localRotationTranslationX, localRotX);
+            dataManager.set(localRotationTranslationZ, localRotZ);
+//            }
         }
         updateRotationTranslation();
     }
+
+//    private boolean isRotationTranslationValid(float localRotX, float localRotZ){
+//
+//    }
 
     @Override
     protected void addPassenger(Entity passenger) {
