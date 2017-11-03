@@ -1,9 +1,6 @@
 package de.canitzp.carz.api;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
@@ -18,7 +15,7 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
         super(worldIn);
     }
 
-    protected final static DataParameter<Boolean> AI_STEERED = EntityDataManager.createKey(EntityAIDriveableBase.class, DataSerializers.BOOLEAN);
+    //    protected final static DataParameter<Boolean> AI_STEERED = EntityDataManager.createKey(EntityAIDriveableBase.class, DataSerializers.BOOLEAN);
     private long lastAISteered = 0;
 
     private float AIForward, AISteering;
@@ -27,13 +24,6 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
 //    public boolean isBeingRidden() {
 //        return isAISteered() ? true : super.isBeingRidden();
 //    }
-
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.dataManager.register(AI_STEERED, false);
-    }
-
 
     @Override
     public boolean canPassengerSteer() {
@@ -46,8 +36,6 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
     @Nullable
     @Override
     public Entity getControllingPassenger() {
-        if (isAISteered())
-            return null;
         return super.getControllingPassenger();
     }
 
@@ -81,7 +69,7 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
     }
 
     private void controlAIVehicle() {
-        if (isAISteered() && getControllingPassenger() != null && canPassengerSteer()) {
+        if (isAISteered() && this.getControllingPassenger() == null) {
             world.spawnParticle(EnumParticleTypes.REDSTONE, posX, posY, posZ, 0.1, 0.1, 0.1);
             float fwd = 0.0F; //Forward movement?
             if (AIForward > 0)
@@ -139,13 +127,12 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
     private boolean _lastAISteered = false;
 
     public boolean isAISteered() {
-        if (world.isRemote)
-            return this.dataManager.get(AI_STEERED);
         boolean a = world.getTotalWorldTime() - lastAISteered < 60;
         if (a != _lastAISteered) {
-            this.dataManager.set(AI_STEERED, a);
+
             _lastAISteered = a;
         }
+
         return a;
     }
 }
