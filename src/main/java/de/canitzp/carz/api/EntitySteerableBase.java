@@ -60,7 +60,7 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
             }
 //            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ); moved to EntityMoveable
         }
-        if (!world.isRemote) {
+        if (!world.isRemote && false) {
             float localRotX = dataManager.get(localRotationTranslationX);
             float localRotZ = dataManager.get(localRotationTranslationZ);
             if (lastRotationYawForRotation - rotationYaw < -2) {
