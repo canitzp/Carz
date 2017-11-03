@@ -41,9 +41,9 @@ public abstract class EntityWorldInteractionBase extends EntityRideableBase {
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         ItemStack handItem = player.getHeldItem(hand);
-        if (handItem.getItem() == Registry.itemWheelClamp && ItemWheelClamp.doInteract(handItem, player, this)) {
+        /*if (handItem.getItem() == Registry.itemWheelClamp && ItemWheelClamp.doInteract(handItem, player, this)) {
             return true;
-        } else if (handItem.getItem() == Registry.itemCardLinkedDriver &&
+        } else*/ if (handItem.getItem() == Registry.itemCardLinkedDriver &&
                 ItemCardLinkedDriver.doInteract(handItem, player, this)) {
             return true;
         }

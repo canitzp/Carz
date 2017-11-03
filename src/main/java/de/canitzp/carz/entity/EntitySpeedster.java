@@ -18,6 +18,9 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
@@ -42,17 +45,20 @@ public class EntitySpeedster extends EntityAIDriveableBase implements IWheelClam
         super.entityInit();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ModelBase getCarModel() {
         return Registry.MODEL_SPEEDSTER;
     }
 
+    @SideOnly(Side.CLIENT)
     @Nullable
     @Override
     public ResourceLocation getCarTexture() {
         return new ResourceLocation(Carz.MODID, "textures/cars/speedster_base.png");
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void setupGL(double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.translate(x, y + 3, z);
@@ -75,18 +81,24 @@ public class EntitySpeedster extends EntityAIDriveableBase implements IWheelClam
     @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
         this.clamped = compound.getBoolean("clamped");
+        if(compound.hasKey("Color", Constants.NBT.TAG_INT)){
+            this.dataManager.set(COLOR, compound.getInteger("Color"));
+        }
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound compound) {
         compound.setBoolean("clamped", this.clamped);
+        compound.setInteger("Color", this.dataManager.get(COLOR));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ResourceLocation getOverlayTexture() {
         return new ResourceLocation(Carz.MODID, "textures/cars/speedster_overlay.png");
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public int getCurrentColor() {
         return this.dataManager.get(COLOR);

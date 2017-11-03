@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
@@ -24,17 +26,20 @@ public class EntityDeliveryVan extends EntityAIDriveableBase implements IWheelCl
         this.setSize(4.0F, 3.0F);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ModelBase getCarModel() {
         return Registry.MODEL_DELIVERY_VAN;
     }
 
+    @SideOnly(Side.CLIENT)
     @Nullable
     @Override
     public ResourceLocation getCarTexture() {
         return new ResourceLocation(Carz.MODID, "textures/cars/delivery_van.png");
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void setupGL(double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.translate(x, y + 1.5, z);

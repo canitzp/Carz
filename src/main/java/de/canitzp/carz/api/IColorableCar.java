@@ -7,7 +7,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * @author canitzp
  */
-@SideOnly(Side.CLIENT)
 public interface IColorableCar {
 
     @SideOnly(Side.CLIENT)

@@ -110,6 +110,7 @@ public class ItemLicense extends ItemBaseDefault<ItemLicense> {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if(world.isRemote){
