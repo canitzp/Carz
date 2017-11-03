@@ -8,6 +8,8 @@ import de.canitzp.carz.items.ItemWheelClamp;
 import de.canitzp.carz.network.GuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
@@ -51,6 +53,24 @@ public abstract class EntityWorldInteractionBase extends EntityRideableBase {
             return true;
         }
         return super.processInitialInteract(player, hand);
+    }
+
+    /**
+     * Called when the entity is attacked.
+     */
+    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
+        if (this.isEntityInvulnerable(source)) {
+            return false;
+        } else if (!this.world.isRemote && !this.isDead) {
+            if (source instanceof EntityDamageSourceIndirect && source.getTrueSource() != null && this.isPassenger(source.getTrueSource())) {
+                return false;
+            } else {
+                this.setDead();
+                return true;
+            }
+        } else {
+            return true;
+        }
     }
 
     @Override
