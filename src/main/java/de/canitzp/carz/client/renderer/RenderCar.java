@@ -3,6 +3,8 @@ package de.canitzp.carz.client.renderer;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.EntityRenderedBase;
+import de.canitzp.carz.api.IColorableCar;
+import de.canitzp.carz.util.RenderUtil;
 import de.canitzp.carz.api.EntitySteerableBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -22,6 +24,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * @author canitzp
@@ -29,7 +32,8 @@ import javax.annotation.Nullable;
 @SideOnly(Side.CLIENT)
 public class RenderCar<T extends EntityRenderedBase> extends Render<T> implements IResourceManagerReloadListener {
     private ModelBase model;
-    private ResourceLocation texture;
+    private ResourceLocation texture, overlay;
+    private int oldColor = 0;
 
     public RenderCar(RenderManager renderManager) {
         super(renderManager);
@@ -46,16 +50,28 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         if (this.model == null) {
             this.model = car.getCarModel();
             this.texture = car.getCarTexture();
+            if(car instanceof IColorableCar){
+                this.overlay = ((IColorableCar) car).getOverlayTexture();
+            }
         }
         GlStateManager.pushMatrix();
-        if (car instanceof EntitySteerableBase)
-            car.setupGL(x + ((EntitySteerableBase) car).rotationTranslationX,
-                    y + ((EntitySteerableBase) car).rotationTranslationY,
-                    z + ((EntitySteerableBase) car).rotationTranslationZ, entityYaw, partialTicks);
-        else
-            car.setupGL(x, y, z, entityYaw, partialTicks);
+        car.setupGL(x, y, z, entityYaw, partialTicks);
         if (this.texture != null) {
-            this.bindTexture(this.texture);
+            if(this.overlay != null){
+                try {
+                    int color = car instanceof IColorableCar ? ((IColorableCar) car).getCurrentColor() : 0xFFFFFF;
+                    boolean calc = false;
+                    if(color != this.oldColor){
+                        calc = true;
+                        this.oldColor = color;
+                    }
+                    RenderUtil.bindLayeredTexture(this.texture, this.overlay, 0xFFFFFF, color, car instanceof IColorableCar && ((IColorableCar) car).shouldRecalculateTexture() || calc);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                this.bindTexture(this.texture);
+            }
         } else {
             GlStateManager.bindTexture(TextureUtil.MISSING_TEXTURE.getGlTextureId());
         }
@@ -63,9 +79,9 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
             GlStateManager.enableColorMaterial();
             GlStateManager.enableOutlineMode(this.getTeamColor(car));
         }
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        //GlStateManager.disableAlpha();
+        //GlStateManager.enableBlend();
+        //GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         this.model.render(car, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         if (this.renderOutlines) {
             GlStateManager.disableOutlineMode();
@@ -75,7 +91,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
 
-        if (car instanceof EntitySteerableBase) {
+        if (Carz.RENDER_DEBUG && car instanceof EntityPartedBase){
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.glLineWidth(2.0F);
@@ -84,36 +100,9 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
 
             EntityPlayer player = Minecraft.getMinecraft().player;
 
-            double renderPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
-            double renderPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
-            double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
-
-//            AxisAlignedBB bb = car.getEntityBoundingBox().offset(-((EntitySteerableBase) car).rotationTranslationX,
-//                    -((EntitySteerableBase) car).rotationTranslationY,
-//                    -((EntitySteerableBase) car).rotationTranslationZ
-//            ).grow(-.5, 10, -.5);
-//            RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 0, 0, 1, 1f);
-
-            RenderGlobal.renderFilledBox(car.getEntityBoundingBox().offset(-renderPosX, -renderPosY, -renderPosZ).grow(0, 10, 0), 0, 1, 0, 0.9f);
-
-
-            GlStateManager.depthMask(true);
-            GlStateManager.enableTexture2D();
-            GlStateManager.disableBlend();
-        }
-
-        if (Carz.RENDER_DEBUG && car instanceof EntityPartedBase) {
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.glLineWidth(2.0F);
-            GlStateManager.disableTexture2D();
-            GlStateManager.depthMask(false);
-
-            EntityPlayer player = Minecraft.getMinecraft().player;
-
-            double renderPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
-            double renderPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
-            double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
+            double renderPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double)partialTicks;
+            double renderPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double)partialTicks;
+            double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double)partialTicks;
 
             for (AxisAlignedBB bb : ((EntityPartedBase) car).possibleCollisions)
                 RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 1.0F, 0.0F, 0.2f);
