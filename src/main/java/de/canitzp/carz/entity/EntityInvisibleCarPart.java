@@ -101,6 +101,34 @@ public class EntityInvisibleCarPart extends Entity {
     /**
      * Called from the parent (EntityPartedBase)
      *
+     * @param transX       an optional translation along the x-axis
+     * @param transY       an optional translation along the y-axis
+     * @param transZ       an optional translation along the z-axis
+     * @param cosYaw       the parent yaw-cos
+     * @param sinYaw       the parent yaw-sin
+     * @param cosPitch     the parent pitch-cos
+     * @param sinPitch     the parent pitch-sin
+     * @param cosRoll      the parent roll-cos
+     * @param sinRoll      the parent roll-sin
+     * @param movingAlong_ possible moving along candidates (grouped)
+     */
+    public void onUpdate(double transX, double transY, double transZ, double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll, List<Entity> movingAlong_) {
+        this.setPositionAndUpdate(
+                this.parent.posX + transX + MathUtil.rotX(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posY + transY + MathUtil.rotY(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posZ + transZ + MathUtil.rotZ(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
+
+        onUpdateAlong(movingAlong_);
+
+        super.onUpdate();
+    }
+
+    /**
+     * Called from the parent (EntityPartedBase)
+     *
      * @param cosYaw       the parent yaw-cos
      * @param sinYaw       the parent yaw-sin
      * @param cosPitch     the parent pitch-cos
@@ -118,6 +146,10 @@ public class EntityInvisibleCarPart extends Entity {
                 this.parent.posZ + MathUtil.rotZ(this.offsetX, this.offsetY, this.offsetZ,
                         cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
 
+        onUpdateAlong(movingAlong_);
+    }
+
+    private void onUpdateAlong(List<Entity> movingAlong_) {
         if (!this.world.isRemote && colliding) {
             if (moveAlong) {
                 this.moveAlongNearbyEntities(movingAlong_);

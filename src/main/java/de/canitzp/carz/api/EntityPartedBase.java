@@ -109,8 +109,17 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             double sinYaw = Math.sin(this.rotationYaw * (Math.PI / 180.0F));
             double cosPitch = Math.cos(-this.rotationPitch * (Math.PI / 180.0F));
             double sinPitch = Math.sin(-this.rotationPitch * (Math.PI / 180.0F));
-            for (EntityInvisibleCarPart part : partArray) {
-                part.onUpdate(cosYaw, sinYaw, cosPitch, sinPitch, 1, 0, movingAlong_);
+            if (this instanceof EntitySteerableBase) {
+                for (EntityInvisibleCarPart part : partArray) {
+                    part.onUpdate(((EntitySteerableBase) this).rotationTranslationX,
+                            ((EntitySteerableBase) this).rotationTranslationY,
+                            ((EntitySteerableBase) this).rotationTranslationZ, cosYaw, sinYaw, cosPitch, sinPitch,
+                            1, 0, movingAlong_);
+                }
+            } else {
+                for (EntityInvisibleCarPart part : partArray) {
+                    part.onUpdate(cosYaw, sinYaw, cosPitch, sinPitch, 1, 0, movingAlong_);
+                }
             }
         } else {
             double cosYaw = Math.cos(this.rotationYaw * (Math.PI / 180.0F));

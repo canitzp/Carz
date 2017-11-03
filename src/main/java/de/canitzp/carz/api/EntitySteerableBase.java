@@ -1,7 +1,11 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.util.MathUtil;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -10,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Represents steerable vehicles
+ * //ToDo: Linke Kurve - Links Hinten ROtieren
  *
  * @author MisterErwin
  */
@@ -24,9 +29,29 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
 
     protected double someOtherRandomRotModifier = 1;
 
+    public double rotationTranslationX, rotationTranslationY, rotationTranslationZ;
+    //    public double localRotationTranslationX, localRotationTranslationY, localRotationTranslationZ;
+    protected final static DataParameter<Float> localRotationTranslationX = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
+    //    protected final static DataParameter<Float> localRotationTranslationY = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
+    protected final static DataParameter<Float> localRotationTranslationZ = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
+
+    private double lastRotationTranslationX, lastRotationTranslationY, lastRotationTranslationZ;
+
+
     public EntitySteerableBase(World worldIn) {
         super(worldIn);
     }
+
+    @Override
+    protected void entityInit() {
+        super.entityInit();
+        dataManager.register(localRotationTranslationX, 0f);
+        dataManager.register(localRotationTranslationZ, 0f);
+        lastRotationYawForRotation = rotationYaw;
+    }
+
+
+    private double lastRotationYawForRotation;
 
     @Override
     protected void onUpdate(boolean canPassengerSteer) {
@@ -37,6 +62,29 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
             }
 //            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ); moved to EntityMoveable
         }
+        if (!world.isRemote) {
+            double offset = 0.01;
+            float localRotX = dataManager.get(localRotationTranslationX);
+            float localRotZ = dataManager.get(localRotationTranslationZ);
+            if (lastRotationYawForRotation - rotationYaw < 0) {
+                localRotX -= offset;
+                localRotZ -= offset * 3;
+            } else if (lastRotationYawForRotation - rotationYaw > 0) {
+                localRotX += offset;
+                localRotZ += offset * 3;
+            } else if (localRotX < 0) {
+                localRotX += offset;
+                localRotZ += offset * 3;
+            } else if (localRotX > 0) {
+                localRotX -= offset;
+                localRotZ -= offset * 3;
+            }
+            lastRotationYawForRotation = rotationYaw;
+
+            dataManager.set(localRotationTranslationX, Math.max(-1, Math.min(1, localRotX)));
+            dataManager.set(localRotationTranslationZ, Math.max(-2, Math.min(2, localRotZ)));
+        }
+        updateRotationTranslation();
     }
 
     @Override
@@ -55,7 +103,37 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
         this.inputBackDown = back;
     }
 
+    private void updateRotationTranslation() {
+        double cosYaw = Math.cos(-rotationYaw * 0.017453292F);
+        double sinYaw = Math.sin(rotationYaw * 0.017453292F);
+
+        float localRotX = dataManager.get(localRotationTranslationX);
+        float localRotZ = dataManager.get(localRotationTranslationZ);
+        this.rotationTranslationX = MathUtil.rotX(localRotX, 0, localRotZ,
+                cosYaw, sinYaw);
+//        this.rotationTranslationY = localRotationTranslationY;
+        this.rotationTranslationZ = MathUtil.rotZ(localRotX, 0, localRotZ,
+                cosYaw, sinYaw);
+
+//        this.posX += lastRotationTranslationX-rotationTranslationX;
+//        this.posZ += lastRotationTranslationZ-rotationTranslationZ;
+//
+//        this.posZ+=0.01;
+
+        setPosition(this.posX + lastRotationTranslationX - rotationTranslationX,
+                this.posY,
+                this.posZ + lastRotationTranslationZ - rotationTranslationZ);
+
+        this.lastRotationTranslationX = rotationTranslationX;
+        this.lastRotationTranslationY = rotationTranslationY;
+        this.lastRotationTranslationZ = rotationTranslationZ;
+    }
+
+
+
     protected void controlVehicle() {
+//        updateRotationTranslation();
+
         if (this.isBeingRidden()) {
             world.spawnParticle(EnumParticleTypes.FOOTSTEP, posX, posY, posZ, 0.1, 0.1, 0.1);
             float fwd = 0.0F; //Forward movement?
