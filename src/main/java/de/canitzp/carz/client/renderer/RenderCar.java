@@ -17,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,11 +57,16 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
             GlStateManager.enableColorMaterial();
             GlStateManager.enableOutlineMode(this.getTeamColor(car));
         }
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         this.model.render(car, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         if (this.renderOutlines) {
             GlStateManager.disableOutlineMode();
             GlStateManager.disableColorMaterial();
         }
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
 
         if (Carz.RENDER_DEBUG && car instanceof EntityPartedBase){
