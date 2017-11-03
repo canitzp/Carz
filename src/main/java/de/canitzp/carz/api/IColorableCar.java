@@ -14,14 +14,15 @@ public interface IColorableCar {
     ResourceLocation getOverlayTexture();
 
     @SideOnly(Side.CLIENT)
-    default int getCurrentColor(){
+    default int getCurrentColor() {
         return 0xD70404; // nice red
     }
 
-    default boolean shouldRecalculateTexture(){
+    default boolean shouldRecalculateTexture() {
         return false;
     }
 
-    default void setRecalculated(){}
+    default void setRecalculated() {
+    }
 
 }

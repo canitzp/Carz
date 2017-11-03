@@ -3,9 +3,9 @@ package de.canitzp.carz.client.renderer;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.EntityRenderedBase;
+import de.canitzp.carz.api.EntitySteerableBase;
 import de.canitzp.carz.api.IColorableCar;
 import de.canitzp.carz.util.RenderUtil;
-import de.canitzp.carz.api.EntitySteerableBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,7 +49,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         if (this.model == null) {
             this.model = car.getCarModel();
             this.texture = car.getCarTexture();
-            if(car instanceof IColorableCar){
+            if (car instanceof IColorableCar) {
                 this.overlay = ((IColorableCar) car).getOverlayTexture();
             }
         }
@@ -63,11 +62,11 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         } else
             car.setupGL(x, y, z, entityYaw, partialTicks);
         if (this.texture != null) {
-            if(this.overlay != null){
+            if (this.overlay != null) {
                 try {
                     int color = car instanceof IColorableCar ? ((IColorableCar) car).getCurrentColor() : 0xFFFFFF;
                     boolean calc = false;
-                    if(color != this.oldColor){
+                    if (color != this.oldColor) {
                         calc = true;
                         this.oldColor = color;
                     }
@@ -139,9 +138,9 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
 
             EntityPlayer player = Minecraft.getMinecraft().player;
 
-            double renderPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double)partialTicks;
-            double renderPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double)partialTicks;
-            double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double)partialTicks;
+            double renderPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
+            double renderPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
+            double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
 
             for (AxisAlignedBB bb : ((EntityPartedBase) car).possibleCollisions)
                 RenderGlobal.renderFilledBox(bb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 1.0F, 0.0F, 0.2f);

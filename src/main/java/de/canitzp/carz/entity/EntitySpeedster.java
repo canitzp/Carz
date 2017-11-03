@@ -99,7 +99,7 @@ public class EntitySpeedster extends EntityAIDriveableBase implements IWheelClam
             if (!player.world.isRemote) {
                 EnumDyeColor color = EnumDyeColor.byDyeDamage(stack.getMetadata());
                 this.dataManager.set(COLOR, color.getColorValue());
-                if(!player.isCreative()){
+                if (!player.isCreative()) {
                     stack.shrink(1);
                 }
             }
