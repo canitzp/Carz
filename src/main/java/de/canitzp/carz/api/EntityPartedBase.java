@@ -12,6 +12,7 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -158,6 +159,10 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
     protected int[] constructCollidingPartIndizes() {
         return new int[]{};
+    }
+
+    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount, int partIndex) {
+        return this.attackEntityFrom(source, amount);
     }
 
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand, int partIndex) {

@@ -4,6 +4,7 @@ import de.canitzp.carz.api.EntityPartedBase;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class MessageCarPartInteract implements IMessage, IMessageHandler<MessageCarPartInteract, IMessage> {
     private int entityID;
-    private EnumHand hand;
+    private short handIndex;
     private int partIndex;
 
     public MessageCarPartInteract() {
@@ -24,21 +25,27 @@ public class MessageCarPartInteract implements IMessage, IMessageHandler<Message
 
     public MessageCarPartInteract(int entityID, EnumHand hand, int partIndex) {
         this.entityID = entityID;
-        this.hand = hand;
+        this.handIndex = (short) hand.ordinal();
+        this.partIndex = partIndex;
+    }
+
+    public MessageCarPartInteract(int entityID, short handIndex, int partIndex) {
+        this.entityID = entityID;
+        this.handIndex = handIndex;
         this.partIndex = partIndex;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         this.entityID = buf.readInt();
-        this.hand = EnumHand.values()[buf.readShort()];
+        this.handIndex = buf.readShort();
         this.partIndex = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(entityID);
-        buf.writeShort(hand.ordinal());
+        buf.writeShort(handIndex);
         buf.writeInt(partIndex);
     }
 
@@ -50,7 +57,10 @@ public class MessageCarPartInteract implements IMessage, IMessageHandler<Message
         EntityPlayer entityPlayer = ctx.getServerHandler().player;
         Entity e = entityPlayer.world.getEntityByID(message.entityID);
         if (e instanceof EntityPartedBase) {
-            ((EntityPartedBase) e).processInitialInteract(entityPlayer, message.hand, message.partIndex);
+            if (message.handIndex == 0 || message.handIndex == 1)
+                ((EntityPartedBase) e).processInitialInteract(entityPlayer, EnumHand.values()[message.handIndex], message.partIndex);
+            else if (message.handIndex == -1)
+                ((EntityPartedBase) e).attackEntityFrom(DamageSource.GENERIC, 42, message.partIndex);
         }
         return null;
     }

@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -293,6 +294,26 @@ public class EntityInvisibleCarPart extends Entity {
             return true;
         }
         return super.processInitialInteract(player, hand);
+    }
+
+    @Override
+    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
+        if (this.parent != null && !this.parent.isDead) {
+            int index = -1;
+            for (int i = 0; i < this.parent.getPartArray().length; ++i) {
+                if (parent.getPartArray()[i] == this) {
+                    index = i;
+                    break;
+                }
+            }
+            if (world.isRemote) {
+                VehiclePackets.sendCarInteractToServer(this.parent, (short) -1, index);
+            } else {
+                return this.parent.attackEntityFrom(source, amount);
+            }
+            return true;
+        }
+        return super.attackEntityFrom(source, amount);
     }
 
     @Override
