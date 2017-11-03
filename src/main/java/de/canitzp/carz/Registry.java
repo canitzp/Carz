@@ -5,12 +5,12 @@ import de.canitzp.carz.api.oc.DriverCardLinkedDriver;
 import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
+import de.canitzp.carz.client.models.ModelDeliveryVan;
 import de.canitzp.carz.client.models.ModelNakedBus;
+import de.canitzp.carz.client.models.ModelSpeedster;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
-import de.canitzp.carz.entity.EntityBus;
-import de.canitzp.carz.entity.EntityInvisibleCarPart;
-import de.canitzp.carz.entity.EntitySportscar;
+import de.canitzp.carz.entity.*;
 import de.canitzp.carz.fluid.FluidBase;
 import de.canitzp.carz.items.*;
 import de.canitzp.voxeler.VoxelBase;
@@ -125,6 +125,8 @@ public class Registry {
      */
     public static VoxelBase MODEL_SPORTSCAR;
     public static final ModelBus MODEL_BUS = getInstanceWithDebug(ModelBus.class, ModelNakedBus.class);
+    public static final ModelDeliveryVan MODEL_DELIVERY_VAN = new ModelDeliveryVan();
+    public static final ModelSpeedster MODEL_SPEEDSTER = new ModelSpeedster();
 
     /**
      * Statistics:
@@ -209,6 +211,8 @@ public class Registry {
     public static void preInit(FMLPreInitializationEvent event) {
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
+        registerEntity("delivery_van", EntityDeliveryVan.class, event.getSide());
+        registerEntity("speedster", EntitySpeedster.class, event.getSide());
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
         if (event.getSide().isClient()) {
             /*((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener() {
