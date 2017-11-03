@@ -18,7 +18,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,11 +47,12 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
             this.texture = car.getCarTexture();
         }
         GlStateManager.pushMatrix();
-        if (car instanceof EntitySteerableBase)
+        if (car instanceof EntitySteerableBase) {
+//            ((EntitySteerableBase)car).updateRotationTranslation(); //BLARG
             car.setupGL(x + ((EntitySteerableBase) car).rotationTranslationX,
-                    y + ((EntitySteerableBase) car).rotationTranslationY,
+                    y,
                     z + ((EntitySteerableBase) car).rotationTranslationZ, entityYaw, partialTicks);
-        else
+        } else
             car.setupGL(x, y, z, entityYaw, partialTicks);
         if (this.texture != null) {
             this.bindTexture(this.texture);
@@ -75,7 +75,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
 
-        if (car instanceof EntitySteerableBase) {
+        if (Carz.RENDER_DEBUG && car instanceof EntitySteerableBase) {
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.glLineWidth(2.0F);

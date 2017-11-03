@@ -136,7 +136,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             Vec3d vec3d = seat.rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
             if (this instanceof EntitySteerableBase)
                 passenger.setPosition(this.posX + ((EntitySteerableBase) this).rotationTranslationX + vec3d.x,
-                        this.posY + ((EntitySteerableBase) this).rotationTranslationY + (double) f1 + vec3d.y,
+                        this.posY + (double) f1 + vec3d.y,
                         this.posZ + ((EntitySteerableBase) this).rotationTranslationZ + vec3d.z);
             else
                 passenger.setPosition(this.posX + vec3d.x, this.posY + (double) f1 + vec3d.y, this.posZ + vec3d.z);
