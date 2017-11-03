@@ -112,7 +112,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
             if (this instanceof EntitySteerableBase) {
                 for (EntityInvisibleCarPart part : partArray) {
                     part.onUpdate(((EntitySteerableBase) this).rotationTranslationX,
-                            ((EntitySteerableBase) this).rotationTranslationY,
+                            0,
                             ((EntitySteerableBase) this).rotationTranslationZ, cosYaw, sinYaw, cosPitch, sinPitch,
                             1, 0, movingAlong_);
                 }

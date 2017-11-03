@@ -14,7 +14,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Represents steerable vehicles
- * //ToDo: Linke Kurve - Links Hinten ROtieren
  *
  * @author MisterErwin
  */
@@ -29,14 +28,13 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
 
     protected double someOtherRandomRotModifier = 1;
 
-    public double rotationTranslationX, rotationTranslationY, rotationTranslationZ;
-    //    public double localRotationTranslationX, localRotationTranslationY, localRotationTranslationZ;
-    protected final static DataParameter<Float> localRotationTranslationX = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
-    //    protected final static DataParameter<Float> localRotationTranslationY = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
-    protected final static DataParameter<Float> localRotationTranslationZ = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
+    protected float wheelLength = 0.4f, wheelWidth = 0.4f;
 
-    private double lastRotationTranslationX, lastRotationTranslationY, lastRotationTranslationZ;
+    public double rotationTranslationX, rotationTranslationZ;
 
+    private final static DataParameter<Float> localRotationTranslationX = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
+    private final static DataParameter<Float> localRotationTranslationZ = EntityDataManager.createKey(EntitySteerableBase.class, DataSerializers.FLOAT);
+    private double lastRotationTranslationX, lastRotationTranslationZ;
 
     public EntitySteerableBase(World worldIn) {
         super(worldIn);
@@ -63,29 +61,46 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
 //            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ); moved to EntityMoveable
         }
         if (!world.isRemote) {
-            double offset = 0.01;
             float localRotX = dataManager.get(localRotationTranslationX);
             float localRotZ = dataManager.get(localRotationTranslationZ);
-            if (lastRotationYawForRotation - rotationYaw < 0) {
-                localRotX -= offset;
-                localRotZ -= offset * 3;
-            } else if (lastRotationYawForRotation - rotationYaw > 0) {
-                localRotX += offset;
-                localRotZ += offset * 3;
-            } else if (localRotX < 0) {
-                localRotX += offset;
-                localRotZ += offset * 3;
-            } else if (localRotX > 0) {
-                localRotX -= offset;
-                localRotZ -= offset * 3;
+            if (lastRotationYawForRotation - rotationYaw < -2) {
+                localRotX += 0.1;
+                localRotZ += 0.1;
+            } else if (lastRotationYawForRotation - rotationYaw > 2) {
+                localRotX -= 0.1;
+                localRotZ += 0.1;
+            } else if (getSpeed() <= 0.1) {
+                localRotX = localRotZ = 0;
+            } else {
+                if (localRotX >= 0.1)
+                    localRotX -= 0.1;
+                else if (localRotX <= -0.1)
+                    localRotX += 0.1;
+
+                if (localRotZ >= 0.1)
+                    localRotZ -= 0.1;
+                else if (localRotZ <= -0.1)
+                    localRotZ += 0.1;
             }
             lastRotationYawForRotation = rotationYaw;
 
-            dataManager.set(localRotationTranslationX, Math.max(-1, Math.min(1, localRotX)));
-            dataManager.set(localRotationTranslationZ, Math.max(-2, Math.min(2, localRotZ)));
+            if (Math.abs(localRotX) < 0.015)
+                localRotX = 0;
+            if (Math.abs(localRotZ) < 0.015)
+                localRotZ = 0;
+            localRotX = Math.max(-wheelWidth, Math.min(wheelWidth, Math.round(localRotX * 100f) / 100f));
+            localRotZ = Math.max(-wheelLength, Math.min(wheelLength, Math.round(localRotZ * 100f) / 100f));
+//            if (this.isRotationTranslationValid(localRotX, localRotZ)) {
+            dataManager.set(localRotationTranslationX, localRotX);
+            dataManager.set(localRotationTranslationZ, localRotZ);
+//            }
         }
         updateRotationTranslation();
     }
+
+//    private boolean isRotationTranslationValid(float localRotX, float localRotZ){
+//
+//    }
 
     @Override
     protected void addPassenger(Entity passenger) {
@@ -103,32 +118,33 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
         this.inputBackDown = back;
     }
 
+    private int zeroIgnore = 0;
+
     private void updateRotationTranslation() {
         double cosYaw = Math.cos(-rotationYaw * 0.017453292F);
         double sinYaw = Math.sin(rotationYaw * 0.017453292F);
 
         float localRotX = dataManager.get(localRotationTranslationX);
         float localRotZ = dataManager.get(localRotationTranslationZ);
+
+        if (((lastRotationTranslationX != 0 && localRotX == 0) ||
+                (lastRotationTranslationZ != 0 && localRotZ == 0)) && zeroIgnore++ < 3) {
+            return;
+        }
+        zeroIgnore = 0;
+
         this.rotationTranslationX = MathUtil.rotX(localRotX, 0, localRotZ,
                 cosYaw, sinYaw);
-//        this.rotationTranslationY = localRotationTranslationY;
         this.rotationTranslationZ = MathUtil.rotZ(localRotX, 0, localRotZ,
                 cosYaw, sinYaw);
-
-//        this.posX += lastRotationTranslationX-rotationTranslationX;
-//        this.posZ += lastRotationTranslationZ-rotationTranslationZ;
-//
-//        this.posZ+=0.01;
 
         setPosition(this.posX + lastRotationTranslationX - rotationTranslationX,
                 this.posY,
                 this.posZ + lastRotationTranslationZ - rotationTranslationZ);
 
         this.lastRotationTranslationX = rotationTranslationX;
-        this.lastRotationTranslationY = rotationTranslationY;
         this.lastRotationTranslationZ = rotationTranslationZ;
     }
-
 
 
     protected void controlVehicle() {

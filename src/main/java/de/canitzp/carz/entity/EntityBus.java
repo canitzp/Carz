@@ -101,6 +101,8 @@ public class EntityBus extends EntityAIDriveableBase {
         this.addSeat(-2.7f, -1.3F, -0.9F);
         this.addSeat(-2.7f, -1.3F, 0.9F);
 
+        this.wheelLength = 7 / 2;
+        this.wheelWidth = 3 / 2;
 
         this.steeringMax = 2;
         this.steeringMod = 0.07;
