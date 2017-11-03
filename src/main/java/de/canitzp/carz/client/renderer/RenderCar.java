@@ -32,7 +32,7 @@ import java.io.IOException;
 public class RenderCar<T extends EntityRenderedBase> extends Render<T> implements IResourceManagerReloadListener {
     private ModelBase model;
     private ResourceLocation texture, overlay;
-    private int oldColor = 0;
+    private int oldColor = -1;
 
     public RenderCar(RenderManager renderManager) {
         super(renderManager);
@@ -64,13 +64,16 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         if (this.texture != null) {
             if (this.overlay != null) {
                 try {
-                    int color = car instanceof IColorableCar ? ((IColorableCar) car).getCurrentColor() : 0xFFFFFF;
-                    boolean calc = false;
-                    if (color != this.oldColor) {
-                        calc = true;
-                        this.oldColor = color;
+                    int color = 0xFFFFFF;
+                    boolean calculate = false;
+                    if(car instanceof IColorableCar){
+                        color = ((IColorableCar) car).getCurrentColor();
+                        calculate = ((IColorableCar) car).shouldRecalculateTexture() || color != this.oldColor;
+                        if(calculate){
+                            this.oldColor = color;
+                        }
                     }
-                    RenderUtil.bindLayeredTexture(this.texture, this.overlay, 0xFFFFFF, color, car instanceof IColorableCar && ((IColorableCar) car).shouldRecalculateTexture() || calc);
+                    RenderUtil.bindLayeredTexture(this.texture, this.overlay, 0xFFFFFF, color, calculate);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -160,5 +163,7 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
     public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
         this.model = null;
         this.texture = null;
+        this.overlay = null;
+        this.oldColor = -1;
     }
 }
