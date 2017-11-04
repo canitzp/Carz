@@ -1,7 +1,6 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
-import de.canitzp.carz.api.oc.DriverCardLinkedDriver;
 import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
@@ -25,7 +24,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatBase;
@@ -273,9 +271,10 @@ public class Registry {
         }
     }
 
+    //For vanilla entities: net.minecraft.entity.EntityTracker.java
     private static <T extends EntityRenderedBase> void registerEntity(String name, Class<T> entity, Side side) {
         Carz.LOG.info(String.format("Registering '%s'", name));
-        EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, name), entity, name, entityId++, Carz.carz, 64, 5, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, name), entity, name, entityId++, Carz.carz, 80, 3, true);
         if (side.isClient()) {
             initClientEntity(entity);
         }
