@@ -105,9 +105,9 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
     /**
      * Applies this boat's yaw to the given entity. Used to update the orientation of its passenger.
      */
-    protected void applyYawToEntity(Entity entityToUpdate, double[] seat) {
+    protected void applyYawToEntity(Entity entityToUpdate, float seatRotation) {
         entityToUpdate.setRenderYawOffset(this.rotationYaw);
-        float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw - (seat.length == 3 ? 0 : (float) seat[3]));
+        float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw - seatRotation);
 
         float f1 = /*f;//*/MathHelper.clamp(f, -105.0F, 105.0F);
         entityToUpdate.prevRotationYaw += f1 - f;
@@ -122,7 +122,8 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
     public void applyOrientationToEntity(Entity entityToUpdate) {
         int seatI = getSeatByPassenger(entityToUpdate);
         if (seatI == -1) return;
-        this.applyYawToEntity(entityToUpdate, seats.get(seatI));
+        double[] s = seats.get(seatI);
+        this.applyYawToEntity(entityToUpdate, s.length == 3 ? 0 : (float) s[3]);
     }
 
     /**
@@ -147,6 +148,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
                 return;
 
             double[] seat = this.seats.get(index);
+            double seatRotation = (seat.length == 3) ? 0 : seat[3];
             double[] vec3d = rotateYaw(seat, -this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
             if (this instanceof EntitySteerableBase)
                 passenger.setPosition(this.posX + ((EntitySteerableBase) this).rotationTranslationX + vec3d[0],
@@ -157,7 +159,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             passenger.rotationYaw += this.deltaRotationYaw;
             passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotationYaw);
             passenger.rotationPitch += prevRotationPitch - rotationPitch;
-            this.applyYawToEntity(passenger, seat);
+            this.applyYawToEntity(passenger, (float) seatRotation);
         }
     }
 
@@ -168,4 +170,5 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         double d2 = seat[2] * (double) cos - seat[0] * (double) pitch;
         return new double[]{d0, seat[1], d2};
     }
+    //ToDo: RenderLivingBase rotate prevRenderYawOffset
 }
