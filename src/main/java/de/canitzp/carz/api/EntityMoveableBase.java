@@ -364,7 +364,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
 
     @Override
     protected void onCollision(double force, Collection<AxisAlignedBB> collisions) {
-        if (force > 0.09 && this.speedSqAbs > 0.05) {
+        if (force > 0.09 && this.speedSqAbs > 0.05 && !world.isRemote) {
             if (Carz.RENDER_DEBUG) {
                 System.out.println("Collision with " + force);
                 System.out.println(collisions.size());
@@ -372,6 +372,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
             for (AxisAlignedBB bb : collisions) {
                 System.out.println(bb.maxX + "|" + bb.minX);
                 BlockPos pos = new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2);
+                //Oh Yeah - das ist gerade im desync
                 if (!(world.getBlockState(pos).getBlock() instanceof BlockRoad))
                     world.destroyBlock(pos, true);
             }
