@@ -27,13 +27,15 @@ public abstract class EntityMultiSeatsBase extends EntityAIDriveableBase {
     public EntityMultiSeatsBase(World worldIn, int seatAmount) {
         super(worldIn);
         this.seatAmount = seatAmount;
+        //Yeah - set the seats here...
+        int[] seats = new int[seatAmount];
+        Arrays.fill(seats, -1);
+        this.dataManager.set(SEATING_DATA, seats);
     }
 
     @Override
     protected void entityInit() {
-        int[] seats = new int[seatAmount];
-        Arrays.fill(seats, -1);
-        this.dataManager.register(SEATING_DATA, seats);
+        this.dataManager.register(SEATING_DATA, new int[0]);
         super.entityInit();
     }
 
@@ -57,26 +59,28 @@ public abstract class EntityMultiSeatsBase extends EntityAIDriveableBase {
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand, int partIndex) {
         //The DriverSeat is hitbox No 54
         if (!world.isRemote && /*partIndex >= 54 &&*/ !player.isSneaking()) {
-            int seatIndex = partIndex/* - 54*/;
             int[] seating_data = this.dataManager.get(SEATING_DATA);
-            if (seatIndex >= seatAmount)
+            if (partIndex >= seatAmount)
                 return super.processInitialInteract(player, hand, partIndex);
-            if (seating_data.length > seatIndex && seating_data[seatIndex] != -1)
+            if (seating_data.length > partIndex && seating_data[partIndex] != -1)
                 return super.processInitialInteract(player, hand, partIndex);
             if (player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer) {
                 ItemStack spawnEgg = player.getHeldItem(player.getActiveHand());
                 Entity entity = ItemMonsterPlacer.spawnCreature(this.world, ItemMonsterPlacer.getNamedIdFrom(spawnEgg), this.posX, this.posY, this.posZ);
                 if (entity != null) {
                     if (entity.startRiding(this)) {
-                        this.setSeatingData(seating_data, seatIndex, entity.getEntityId());
+                        this.setSeatingData(seating_data, partIndex, entity.getEntityId());
                         return true;
                     }
                 }
             }
-
+            int old_seat = this.getSeatByPassenger(player);
+            if (old_seat != -1) {
+                seating_data = this.setSeatingData(seating_data, old_seat, -1);
+            }
             boolean b = player.startRiding(this);
             if (b) {
-                this.setSeatingData(seating_data, seatIndex, player.getEntityId());
+                this.setSeatingData(seating_data, partIndex, player.getEntityId());
             }
             return b;
         }
@@ -93,12 +97,12 @@ public abstract class EntityMultiSeatsBase extends EntityAIDriveableBase {
         super.removePassenger(passenger);
     }
 
-    private void setSeatingData(int[] seats, int index, int value) {
+    private int[] setSeatingData(int[] seats, int index, int value) {
         //The EntityDataManager only syncs if the old data != new data, so we have to clone the array
-        int[] newseats = new int[Math.max(index + 1, seats.length)];
-        System.arraycopy(seats, 0, newseats, 0, seats.length);
+        int[] newseats = Arrays.copyOf(seats, seats.length); //new int[seats.length];
         newseats[index] = value;
         this.dataManager.set(SEATING_DATA, newseats);
+        return newseats;
     }
 
 
