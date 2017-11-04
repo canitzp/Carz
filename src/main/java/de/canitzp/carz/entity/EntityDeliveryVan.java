@@ -26,7 +26,9 @@ public class EntityDeliveryVan extends EntityMultiSeatsBase implements IWheelCla
         EntityPartedBase.PartBuilder builder = builder();
         builder.addInteractOnlyPart(0.4f, 0.3f, 0.6f, 0.7f, 1f);
         builder.addInteractOnlyPart(-0.4f, 0.3f, 0.6f, 0.7f, 1f);
-
+        //backseats
+        builder.addInteractOnlyPart(-0.4f, 0.3f, -1.6f, 0.7f, 0.5f);
+        builder.addInteractOnlyPart(0.4f, 0.3f, -1.6f, 0.7f, 0.5f);
         //Floor
         builder.addCollidingPart(0.35f, 0.3f, 1.05f, 0.7f, 0.4f);
         builder.addCollidingPart(-0.35f, 0.3f, 1.05f, 0.7f, 0.4f);
@@ -58,12 +60,16 @@ public class EntityDeliveryVan extends EntityMultiSeatsBase implements IWheelCla
     }
 
     public EntityDeliveryVan(World world) {
-        super(world, 2);
+        super(world, 4);
 //        this.setSize(4.0F, 3.0F);
         this.setSize(0.2f, 0.2f);
 
         this.setDriverSeat(0.5, 0.3D, -0.4);
         this.addSeat(0.5, 0.3D, 0.4);
+
+        //Seats in the back
+        this.addSeat(-1.9, 0.3D, .5, 180);
+        this.addSeat(-1.9, 0.3D, -.5, 180);
     }
 
     @Override

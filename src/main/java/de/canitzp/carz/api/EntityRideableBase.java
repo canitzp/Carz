@@ -7,7 +7,6 @@ import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +23,7 @@ import java.util.List;
  */
 public abstract class EntityRideableBase extends EntityMoveableBase {
 
-    private List<Vec3d> seats = Lists.newArrayList(new Vec3d(0.0D, 0.0D, 0.0D));
+    private List<double[]> seats = Lists.newArrayList(new double[]{0.0D, 0.0D, 0.0D});
 
     public EntityRideableBase(World worldIn) {
         super(worldIn);
@@ -38,7 +37,19 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
      * @param z offset from entity center
      */
     protected void addSeat(double x, double y, double z) {
-        this.seats.add(new Vec3d(x, y, z));
+        this.seats.add(new double[]{x, y, z});
+    }
+
+    /**
+     * Add a seat position.
+     *
+     * @param x           offset from entity center
+     * @param y           offset from entity center
+     * @param z           offset from entity center
+     * @param yawRotation extra yaw Rotation
+     */
+    protected void addSeat(double x, double y, double z, double yawRotation) {
+        this.seats.add(new double[]{x, y, z, yawRotation});
     }
 
     /**
@@ -49,7 +60,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
      * @param z offset from entity center
      */
     protected void setDriverSeat(double x, double y, double z) {
-        this.seats.set(0, new Vec3d(x, y, z));
+        this.seats.set(0, new double[]{x, y, z});
     }
 
     @Nullable
@@ -94,9 +105,10 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
     /**
      * Applies this boat's yaw to the given entity. Used to update the orientation of its passenger.
      */
-    protected void applyYawToEntity(Entity entityToUpdate) {
+    protected void applyYawToEntity(Entity entityToUpdate, double[] seat) {
         entityToUpdate.setRenderYawOffset(this.rotationYaw);
-        float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
+        float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw - (seat.length == 3 ? 0 : (float) seat[3]));
+
         float f1 = /*f;//*/MathHelper.clamp(f, -105.0F, 105.0F);
         entityToUpdate.prevRotationYaw += f1 - f;
         entityToUpdate.rotationYaw += f1 - f;
@@ -108,7 +120,9 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
      */
     @SideOnly(Side.CLIENT)
     public void applyOrientationToEntity(Entity entityToUpdate) {
-        this.applyYawToEntity(entityToUpdate);
+        int seatI = getSeatByPassenger(entityToUpdate);
+        if (seatI == -1) return;
+        this.applyYawToEntity(entityToUpdate, seats.get(seatI));
     }
 
     /**
@@ -121,7 +135,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         if (this.getPassengers().size() > 1) {
             return this.getPassengers().indexOf(passenger);
         }
-        return 0;
+        return -1;
     }
 
     public void updatePassenger(@Nonnull Entity passenger) {
@@ -132,19 +146,26 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
             if (index == -1)
                 return;
 
-            Vec3d seat = this.seats.get(index);
-
-            Vec3d vec3d = seat.rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
+            double[] seat = this.seats.get(index);
+            double[] vec3d = rotateYaw(seat, -this.rotationYaw * 0.017453292F - ((float) Math.PI / 2F));
             if (this instanceof EntitySteerableBase)
-                passenger.setPosition(this.posX + ((EntitySteerableBase) this).rotationTranslationX + vec3d.x,
-                        this.posY + (double) f1 + vec3d.y,
-                        this.posZ + ((EntitySteerableBase) this).rotationTranslationZ + vec3d.z);
+                passenger.setPosition(this.posX + ((EntitySteerableBase) this).rotationTranslationX + vec3d[0],
+                        this.posY + (double) f1 + vec3d[1],
+                        this.posZ + ((EntitySteerableBase) this).rotationTranslationZ + vec3d[2]);
             else
-                passenger.setPosition(this.posX + vec3d.x, this.posY + (double) f1 + vec3d.y, this.posZ + vec3d.z);
+                passenger.setPosition(this.posX + vec3d[0], this.posY + (double) f1 + vec3d[1], this.posZ + vec3d[2]);
             passenger.rotationYaw += this.deltaRotationYaw;
             passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotationYaw);
             passenger.rotationPitch += prevRotationPitch - rotationPitch;
-            this.applyYawToEntity(passenger);
+            this.applyYawToEntity(passenger, seat);
         }
+    }
+
+    private double[] rotateYaw(double[] seat, float yaw) {
+        float cos = MathHelper.cos(yaw);
+        float pitch = MathHelper.sin(yaw);
+        double d0 = seat[0] * (double) cos + seat[2] * (double) pitch;
+        double d2 = seat[2] * (double) cos - seat[0] * (double) pitch;
+        return new double[]{d0, seat[1], d2};
     }
 }
