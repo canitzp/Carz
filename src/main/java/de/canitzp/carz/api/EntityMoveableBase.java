@@ -11,10 +11,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
@@ -51,6 +53,15 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         super(worldIn);
     }
 
+    private float movingAlongRotationYaw = 0;
+
+    @Override
+    protected void entityInit() {
+        this.dataManager.register(SPEED, 0f);
+        movingAlongRotationYaw = rotationYaw;
+    }
+
+
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -86,22 +97,27 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
 
         //(Math.PI / 180.0F) = 0.017453292F
-        double cosYaw = Math.cos(-this.deltaRotationYaw * 0.017453292F);
-        double sinYaw = Math.sin(this.deltaRotationYaw * 0.017453292F);
-        double deltaRotationPitch = prevRotationPitch - rotationPitch;
-        double cosPitch = Math.cos(-deltaRotationPitch * 0.017453292F);
-        double sinPitch = Math.sin(deltaRotationPitch * 0.017453292F);
 
-        double cosRoll = 1;
-        double sinRoll = 0;
 
         if (this.collidedHorizontally)
             this.rotationYaw = origRotationYaw;
         else {
+            float deltaYaw = rotationYaw - this.movingAlongRotationYaw;
+            //ToDo cos minus?
+            double cosYaw = Math.cos(deltaYaw * 0.017453292F);
+            double sinYaw = Math.sin(deltaYaw * 0.017453292F);
+            double deltaRotationPitch = prevRotationPitch - rotationPitch;
+            double cosPitch = Math.cos(-deltaRotationPitch * 0.017453292F);
+            double sinPitch = Math.sin(deltaRotationPitch * 0.017453292F);
+
+            double cosRoll = 1;
+            double sinRoll = 0;
             for (Entity e : movingAlong) {
-                if (world.isRemote || !(e instanceof EntityPlayerMP)) { //TODO: Do I really do not want to move Players?
-                    e.rotationYaw += deltaRotationYaw;
-                    e.setRotationYawHead(e.getRotationYawHead() + deltaRotationYaw);
+                if (world.isRemote || !(e instanceof EntityPlayer)) { //TODO: Do I really do not want to move Players?
+                    if (e instanceof EntityLiving)
+                        ((EntityLiving) e).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 10, 10));
+                    e.rotationYaw += deltaYaw;
+                    e.setRotationYawHead(e.getRotationYawHead() + deltaYaw);
 
                     double ox = e.posX - this.posX, oy = e.posY - this.posY, oz = e.posZ - this.posZ;
 
@@ -144,6 +160,7 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
                     );
                 }
             }
+            movingAlongRotationYaw = rotationYaw;
         }
     }
 
@@ -215,11 +232,6 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         this.deltaRotationYaw = 0;
     }
 
-    @Override
-    protected void entityInit() {
-        this.dataManager.register(SPEED, 0f);
-    }
-
     public void setSpeed(float speed) {
         remoteSpeed = speed;
         if (world.isRemote) {
@@ -284,6 +296,8 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         if (entityIn instanceof EntityMoveableBase) {
             //ToDo: Yeah... todo - again
         } else if (entityIn instanceof EntityLiving) {
+            if (isMovingAlong(entityIn))
+                return;
             if ((this.motionX * this.motionX) + (this.motionZ * this.motionZ) > 0.07 && !collisionCache.contains(entityIn.getEntityId())) {
                 //ToDo. more to come
                 entityIn.addVelocity(this.motionX * 9, 0.1, this.motionZ * 9);
