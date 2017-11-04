@@ -2,30 +2,21 @@ package de.canitzp.carz.entity;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
-import de.canitzp.carz.api.EntityAIDriveableBase;
+import de.canitzp.carz.api.EntityMultiSeatsBase;
 import de.canitzp.carz.api.EntityPartedBase;
-import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemMonsterPlacer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
 /**
  * @author canitzp, MisterErwin
  */
-public class EntityBus extends EntityAIDriveableBase {
+public class EntityBus extends EntityMultiSeatsBase {
 
     private static EntityPartedBase.PartData partData;
 
@@ -85,10 +76,9 @@ public class EntityBus extends EntityAIDriveableBase {
         partData = builder.build();
     }
 
-    private final static DataParameter<int[]> SEATING_DATA = EntityDataManager.createKey(EntityBus.class, NetworkHandler.VARINT_ARRAY);
 
     public EntityBus(World worldIn) {
-        super(worldIn);
+        super(worldIn, SEAT_AMOUNT);
         this.setSize(1.75F, 0.2f); //1.8125F
 
         this.setDriverSeat(2.75F, -1.3F, -0.9F);
@@ -111,80 +101,7 @@ public class EntityBus extends EntityAIDriveableBase {
     @Override
     protected void entityInit() {
         super.entityInit();
-        int[] seats = new int[SEAT_AMOUNT];
-        Arrays.fill(seats, -1);
-        this.dataManager.register(SEATING_DATA, seats);
     }
-
-    @Nullable
-    public Entity getControllingPassenger() {
-        int[] seats = this.dataManager.get(SEATING_DATA);
-        return seats.length > 0 && seats[0] != -1 ? world.getEntityByID(seats[0]) : null;
-    }
-
-    @Override
-    protected int getSeatByPassenger(Entity passenger) {
-        int[] seats = this.dataManager.get(SEATING_DATA);
-        for (int i = 0; i < seats.length; ++i) {
-            if (seats[i] == passenger.getEntityId())
-                return i;
-        }
-        return -1;
-    }
-
-    @Override
-    public boolean processInitialInteract(EntityPlayer player, EnumHand hand, int partIndex) {
-        //The DriverSeat is hitbox No 54
-        if (!world.isRemote && /*partIndex >= 54 &&*/ !player.isSneaking()) {
-            int seatIndex = partIndex/* - 54*/;
-            int[] seating_data = this.dataManager.get(SEATING_DATA);
-            if (seatIndex >= SEAT_AMOUNT)
-                return false;
-            if (seating_data.length > seatIndex && seating_data[seatIndex] != -1)
-                return false;
-            if (player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer) {
-                ItemStack spawnEgg = player.getHeldItem(player.getActiveHand());
-                Entity entity = ItemMonsterPlacer.spawnCreature(this.world, ItemMonsterPlacer.getNamedIdFrom(spawnEgg), this.posX, this.posY, this.posZ);
-                if (entity != null) {
-                    if (entity.startRiding(this)) {
-                        this.setSeatingData(seating_data, seatIndex, entity.getEntityId());
-                        return true;
-                    }
-                }
-            }
-
-            boolean b = player.startRiding(this);
-            if (b) {
-                this.setSeatingData(seating_data, seatIndex, player.getEntityId());
-            }
-            return b;
-        }
-
-        return super.processInitialInteract(player, hand, partIndex);
-    }
-
-    private void setSeatingData(int[] seats, int index, int value) {
-        //The EntityDataManager only syncs if the old data != new data, so we have to clone the array
-        int[] newseats = new int[Math.max(index + 1, seats.length)];
-        System.arraycopy(seats, 0, newseats, 0, seats.length);
-        newseats[index] = value;
-        this.dataManager.set(SEATING_DATA, newseats);
-    }
-
-
-    @Override
-    protected void removePassenger(Entity passenger) {
-        int seat = this.getSeatByPassenger(passenger);
-        if (seat != -1) {
-            this.setSeatingData(dataManager.get(SEATING_DATA), seat, -1);
-        }
-        super.removePassenger(passenger);
-    }
-
-//    @Override
-//    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-//        return false; //Interact with main-box
-//    }
 
     @Override
     public double getMountedYOffset() {

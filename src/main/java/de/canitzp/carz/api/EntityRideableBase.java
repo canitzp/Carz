@@ -73,9 +73,10 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
         return this.seats.size();
     }
 
+
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        if (!this.world.isRemote && !player.isSneaking()) {
+        if (!(this instanceof EntityMultiSeatsBase) && !this.world.isRemote && !player.isSneaking()) {
             if (player.getHeldItem(player.getActiveHand()).getItem() instanceof ItemMonsterPlacer) {
                 ItemStack spawnEgg = player.getHeldItem(player.getActiveHand());
                 Entity entity = ItemMonsterPlacer.spawnCreature(this.world, ItemMonsterPlacer.getNamedIdFrom(spawnEgg), this.posX, this.posY, this.posZ);

@@ -1,10 +1,7 @@
 package de.canitzp.carz.api;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 /**
  * @author elmexl
@@ -33,11 +30,11 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
         return super.canPassengerSteer();
     }
 
-    @Nullable
-    @Override
-    public Entity getControllingPassenger() {
-        return super.getControllingPassenger();
-    }
+//    @Nullable
+//    @Override
+//    public Entity getControllingPassenger() {
+//        return super.getControllingPassenger();
+//    }
 
     @Override
     protected void onUpdate(boolean canPassengerSteer) {
