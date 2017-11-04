@@ -1,7 +1,10 @@
 package de.canitzp.carz.api;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author elmexl
@@ -126,10 +129,28 @@ public abstract class EntityAIDriveableBase extends EntitySteerableBase {
     public boolean isAISteered() {
         boolean a = world.getTotalWorldTime() - lastAISteered < 60;
         if (a != _lastAISteered) {
-
             _lastAISteered = a;
         }
 
         return a;
+    }
+
+    @Override
+    public @Nonnull
+    NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        if (isAISteered()) {
+            compound.setFloat("AIControlledForward", AIForward);
+            compound.setFloat("AIControlledSteering", AISteering);
+        }
+        return super.writeToNBT(compound);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        if (compound.hasKey("AIControlledForward", 99))
+            AIForward = compound.getFloat("AIControlledForward");
+        if (compound.hasKey("AIControlledSteering", 99))
+            AISteering = compound.getFloat("AIControlledSteering");
+        super.readFromNBT(compound);
     }
 }
