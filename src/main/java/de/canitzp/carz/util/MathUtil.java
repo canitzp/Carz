@@ -2,7 +2,7 @@ package de.canitzp.carz.util;
 
 /**
  * Math utility class
- *
+ * http://planning.cs.uiuc.edu/node102.html
  * @author MisterErwin
  */
 public class MathUtil {
@@ -21,7 +21,7 @@ public class MathUtil {
 
     public static double rotZ(double x, double y, double z, double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll) {
         return x * sinYaw * cosRoll
-                + y * (sinYaw + sinRoll * cosPitch - cosYaw * sinPitch)
+                + y * (sinYaw * sinRoll * cosPitch - cosYaw * sinPitch)
                 + z * (sinYaw * sinRoll * sinPitch + cosYaw * cosPitch);
     }
 
