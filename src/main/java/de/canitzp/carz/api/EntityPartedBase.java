@@ -12,6 +12,7 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -31,9 +32,10 @@ import java.util.*;
  *
  * @author MisterErwin
  */
-public abstract class EntityPartedBase extends EntityWorldInteractionBase {
+public abstract class EntityPartedBase extends EntityRenderedBase {
     private EntityInvisibleCarPart[] partArray;
     private EntityInvisibleCarPart[] collidingParts;
+    private final boolean groupedMovingAlong = true;
 
     private AxisAlignedBB renderBoundingBox;
 
@@ -85,12 +87,49 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
         movingAlong.clear();
         //prev renderYawOffset
 
-        double cosYaw = Math.cos(this.rotationYaw * (Math.PI / 180.0F));
-        double sinYaw = Math.sin(this.rotationYaw * (Math.PI / 180.0F));
-        double cosPitch = Math.cos(-this.rotationPitch * (Math.PI / 180.0F));
-        double sinPitch = Math.sin(-this.rotationPitch * (Math.PI / 180.0F));
-        for (EntityInvisibleCarPart part : partArray) {
-            part.onUpdate(cosYaw, sinYaw, cosPitch, sinPitch, 1, 0);
+
+        if (groupedMovingAlong) {
+            //Fetch all possible collision canditates once in the "parent"
+            double maxX = this.getEntityBoundingBox().maxX, maxY = this.getEntityBoundingBox().maxY, maxZ = this.getEntityBoundingBox().maxZ,
+                    minX = this.getEntityBoundingBox().minX, minY = this.getEntityBoundingBox().minY, minZ = this.getEntityBoundingBox().minZ;
+            for (EntityInvisibleCarPart part : partArray) {
+                AxisAlignedBB bb = part.getEntityBoundingBox();
+                maxX = Math.max(maxX, bb.maxX - 0.01);
+                maxY = Math.max(maxY, bb.maxY + 0.5);
+                maxZ = Math.max(maxZ, bb.maxZ - 0.01);
+                minX = Math.min(minX, bb.minX + 0.01);
+                minY = Math.min(minY, bb.minY);
+                minZ = Math.min(minZ, bb.minZ + 0.01);
+            }
+
+
+            List<Entity> movingAlong_ = this.world.getEntitiesWithinAABBExcludingEntity(this,
+                    new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ));
+
+            double cosYaw = Math.cos(this.rotationYaw * (Math.PI / 180.0F));
+            double sinYaw = Math.sin(this.rotationYaw * (Math.PI / 180.0F));
+            double cosPitch = Math.cos(-this.rotationPitch * (Math.PI / 180.0F));
+            double sinPitch = Math.sin(-this.rotationPitch * (Math.PI / 180.0F));
+            if (this instanceof EntitySteerableBase) {
+                for (EntityInvisibleCarPart part : partArray) {
+                    part.onUpdate(((EntitySteerableBase) this).rotationTranslationX,
+                            0,
+                            ((EntitySteerableBase) this).rotationTranslationZ, cosYaw, sinYaw, cosPitch, sinPitch,
+                            1, 0, movingAlong_);
+                }
+            } else {
+                for (EntityInvisibleCarPart part : partArray) {
+                    part.onUpdate(cosYaw, sinYaw, cosPitch, sinPitch, 1, 0, movingAlong_);
+                }
+            }
+        } else {
+            double cosYaw = Math.cos(this.rotationYaw * (Math.PI / 180.0F));
+            double sinYaw = Math.sin(this.rotationYaw * (Math.PI / 180.0F));
+            double cosPitch = Math.cos(-this.rotationPitch * (Math.PI / 180.0F));
+            double sinPitch = Math.sin(-this.rotationPitch * (Math.PI / 180.0F));
+            for (EntityInvisibleCarPart part : partArray) {
+                part.onUpdate(cosYaw, sinYaw, cosPitch, sinPitch, 1, 0);
+            }
         }
 
         super.onUpdate();
@@ -120,6 +159,10 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     protected int[] constructCollidingPartIndizes() {
         return new int[]{};
+    }
+
+    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount, int partIndex) {
+        return this.attackEntityFrom(source, amount);
     }
 
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand, int partIndex) {
@@ -173,7 +216,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
     private void addEntity(Entity entityIn, Entity entityParentIgnored, AxisAlignedBB aabb, List<AxisAlignedBB> boxes,
                            Iterable<Entity> entitiesWithinAABB) {
         for (Entity entity : entitiesWithinAABB) {
-            if (entity == entityIn)continue; //ExcludingEntity
+            if (entity == entityIn) continue; //ExcludingEntity
             if (!entityIn.isRidingSameEntity(entity) && !entity.isEntityEqual(entityIn) && !entity.isEntityEqual(entityParentIgnored)) {
                 AxisAlignedBB axisalignedbb = entity.getCollisionBoundingBox();
 
@@ -474,7 +517,6 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                     else
                         this.rotationPitch = 0;
                 }
-//                System.out.println("Pitch => " + this.rotationPitch);
             }
 
             this.world.profiler.endSection();
@@ -517,6 +559,11 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
                 block.onLanded(this.world, this);
             }
 
+            if (onGround && canTriggerWalking()) {
+                //Used for boosting road etc
+                block.onEntityWalk(this.world, blockpos, this);
+            }
+
             try {
                 this.doBlockCollisions();
             } catch (Throwable throwable) {
@@ -553,6 +600,7 @@ public abstract class EntityPartedBase extends EntityWorldInteractionBase {
 
     /**
      * Called upon blocks that shall be crushed into gravel - or something along those lines
+     *
      * @param force      A number representing how strong the collision was (not really a force)
      * @param collisions All collisions happened
      */

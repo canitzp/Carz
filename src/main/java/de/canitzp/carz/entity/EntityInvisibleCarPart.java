@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -101,8 +102,78 @@ public class EntityInvisibleCarPart extends Entity {
     /**
      * Called from the parent (EntityPartedBase)
      *
-     * @param cosYaw the parent cos
-     * @param sinYaw the paren sin
+     * @param transX       an optional translation along the x-axis
+     * @param transY       an optional translation along the y-axis
+     * @param transZ       an optional translation along the z-axis
+     * @param cosYaw       the parent yaw-cos
+     * @param sinYaw       the parent yaw-sin
+     * @param cosPitch     the parent pitch-cos
+     * @param sinPitch     the parent pitch-sin
+     * @param cosRoll      the parent roll-cos
+     * @param sinRoll      the parent roll-sin
+     * @param movingAlong_ possible moving along candidates (grouped)
+     */
+    public void onUpdate(double transX, double transY, double transZ, double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll, List<Entity> movingAlong_) {
+        this.setPositionAndUpdate(
+                this.parent.posX + transX + MathUtil.rotX(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posY + transY + MathUtil.rotY(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posZ + transZ + MathUtil.rotZ(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
+
+        onUpdateAlong(movingAlong_);
+
+        super.onUpdate();
+    }
+
+    /**
+     * Called from the parent (EntityPartedBase)
+     *
+     * @param cosYaw       the parent yaw-cos
+     * @param sinYaw       the parent yaw-sin
+     * @param cosPitch     the parent pitch-cos
+     * @param sinPitch     the parent pitch-sin
+     * @param cosRoll      the parent roll-cos
+     * @param sinRoll      the parent roll-sin
+     * @param movingAlong_ possible moving along candidates (grouped)
+     */
+    public void onUpdate(double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll, List<Entity> movingAlong_) {
+        this.setPositionAndUpdate(
+                this.parent.posX + MathUtil.rotX(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posY + MathUtil.rotY(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+                this.parent.posZ + MathUtil.rotZ(this.offsetX, this.offsetY, this.offsetZ,
+                        cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
+
+        onUpdateAlong(movingAlong_);
+    }
+
+    private void onUpdateAlong(List<Entity> movingAlong_) {
+        if (!this.world.isRemote && colliding) {
+            if (moveAlong) {
+                this.moveAlongNearbyEntities(movingAlong_);
+            }
+            this.collideWithNearbyEntities();
+        } else if (this.world.isRemote && moveAlong) {
+            this.moveAlongNearbyEntities(movingAlong_);
+        }
+
+        super.onUpdate();
+    }
+
+    /**
+     * Called from the parent (EntityPartedBase)
+     * <p>
+     * Oh... for many parts, this is "kinda" performance hungry - be warned
+     *
+     * @param cosYaw   the parent yaw-cos
+     * @param sinYaw   the parent yaw-sin
+     * @param cosPitch the parent pitch-cos
+     * @param sinPitch the parent pitch-sin
+     * @param cosRoll  the parent roll-cos
+     * @param sinRoll  the parent roll-sin
      */
     public void onUpdate(double cosYaw, double sinYaw, double cosPitch, double sinPitch, double cosRoll, double sinRoll) {
         this.setPositionAndUpdate(
@@ -169,6 +240,15 @@ public class EntityInvisibleCarPart extends Entity {
                 .forEach(entity -> entity.applyEntityCollision(this.parent));
     }
 
+
+    private void moveAlongNearbyEntities(List<Entity> movingAlong_) {
+        //Check entities standing on us
+        AxisAlignedBB bb = this.getEntityBoundingBox().expand(-0.01, 0.5D, -0.01);
+        movingAlong_.stream()
+                .filter(entity -> entity != this && entity != this.parent && entity.getEntityBoundingBox().intersects(bb) && !(entity instanceof EntityInvisibleCarPart) && entity.canBePushed() && !this.parent.getPassengers().contains(entity))
+                .forEach(e -> parent.movingAlong.add(e));
+    }
+
     private void moveAlongNearbyEntities() {
         //Collect entities standing on us
         List<Entity> movingAlong_ = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(-0.01, 0.5D, -0.01));
@@ -209,11 +289,31 @@ public class EntityInvisibleCarPart extends Entity {
             if (world.isRemote) {
                 VehiclePackets.sendCarInteractToServer(this.parent, hand, index);
             } else {
-                this.parent.processInitialInteract(player, hand, index);
+                return this.parent.processInitialInteract(player, hand, index);
             }
             return true;
         }
         return super.processInitialInteract(player, hand);
+    }
+
+    @Override
+    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
+        if (this.parent != null && !this.parent.isDead) {
+            int index = -1;
+            for (int i = 0; i < this.parent.getPartArray().length; ++i) {
+                if (parent.getPartArray()[i] == this) {
+                    index = i;
+                    break;
+                }
+            }
+            if (world.isRemote) {
+                VehiclePackets.sendCarInteractToServer(this.parent, (short) -1, index);
+            } else {
+                return this.parent.attackEntityFrom(source, amount);
+            }
+            return true;
+        }
+        return super.attackEntityFrom(source, amount);
     }
 
     @Override

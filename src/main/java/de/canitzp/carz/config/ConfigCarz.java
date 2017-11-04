@@ -56,25 +56,28 @@ public class ConfigCarz{
 
         @Config.Name("Rubber Tree biome blacklist")
         @Config.Comment({"Rubber trees won't spawn in biomes, that are listed with their correct name in here.",
-                "Vanilla biomes: Ocean, Plains, Desert, Extreme Hills, Forest, Taiga, Swampland, River, Hell, The End,",
-                "FrozenOcean, FrozenRiver, Ice Plains, Ice Mountains, MushroomIsland, MushroomIslandShore, Beach,",
-                "DesertHills, ForestHills, TaigaHills, Extreme Hills Edge, Jungle, JungleHills, JungleEdge, Deep Ocean,",
-                "Stone Beach, Cold Beach, Birch Forest, Birch Forest Hills, Roofed Forest, Cold Taiga, Cold Taiga Hills,",
-                "Mega Taiga, Mega Taiga Hills, Extreme Hills+, Savanna, Savanna Plateau, Mesa, Mesa Plateau F, Mesa Plateau,",
-                "The Void, Sunflower Plains, Desert M, Extreme Hills M, Flower Forest, Taiga M, Swampland M, Ice Plains Spikes,",
-                "Jungle M, JungleEdge M, Birch Forest M, Birch Forest Hills M, Roofed Forest M, Cold Taiga M, Mega Spruce Taiga,",
-                "Redwood Taiga Hills M, Extreme Hills+ M, Savanna M, Savanna Plateau M, Mesa (Bryce), Mesa Plateau F M, Mesa Plateau M",
+                "Vanilla biomes: ocean, plains, desert, extreme_hills, forest, taiga, swampland, river, hell, sky, frozen_ocean, frozen_river,",
+                "ice_flats, ice_mountains, mushroom_island, mushroom_island_shore, beaches, desert_hills, forest_hills, taiga_hills,",
+                "smaller_extreme_hills, jungle, jungle_hills, jungle_edge, deep_ocean, stone_beach, cold_beach, birch_forest, birch_forest_hills,",
+                "roofed_forest, taiga_cold, taiga_cold_hills, redwood_taiga, redwood_taiga_hills, extreme_hills_with_trees, savanna, savanna_rock,",
+                "mesa, mesa_rock, mesa_clear_rock, void, mutated_plains, mutated_desert, mutated_extreme_hills, mutated_forest, mutated_taiga,",
+                "mutated_swampland, mutated_ice_flats, mutated_jungle, mutated_jungle_edge, mutated_birch_forest, mutated_birch_forest_hills,",
+                "mutated_roofed_forest, mutated_taiga_cold, mutated_redwood_taiga, mutated_redwood_taiga_hills, mutated_extreme_hills_with_trees,",
+                "mutated_savanna, mutated_savanna_rock, mutated_mesa, mutated_mesa_rock, mutated_mesa_clear_rock",
                 "",
-                "Default: Ocean, Desert, Extreme Hills, Hell, The End, FrozenOcean, FrozenRiver, Ice Plains, Ice Mountains, DesertHills,",
-                "Extreme Hills Edge, Deep Ocean, Cold Beach, Cold Taiga, Cold Taiga Hills, Extreme Hills+, Savanna, Savanna Plateau, Mesa, Mesa Plateau F,",
-                "Mesa Plateau, The Void, Desert M, Extreme Hills M, Ice Plains Spikes, Cold Taiga M, Extreme Hills+ M,",
-                "Savanna M, Savanna Plateau M, Mesa (Bryce), Mesa Plateau F M, Mesa Plateau M"})
+                "Default: plains, forest, taiga, swampland, ",
+                "forest_hills, jungle, jungle_hills, jungle_edge, birch_forest, birch_forest_hills, roofed_forest, redwood_taiga,",
+                "redwood_taiga_hills, extreme_hills_with_trees, mutated_plains, mutated_forest, mutated_taiga, mutated_swampland, mutated_jungle,",
+                "mutated_jungle_edge, mutated_birch_forest, mutated_birch_forest_hills, mutated_roofed_forest, mutated_redwood_taiga,",
+                "mutated_redwood_taiga_hills, mutated_extreme_hills_with_trees"})
         @Config.RequiresMcRestart
-        public static String[] RUBBERTREE_BIOME_BLACKLIST = new String[]{"Ocean", "Desert", "Extreme Hills", "Hell", "The End", "FrozenOcean",
-                "FrozenRiver", "Ice Plains", "Ice Mountains", "DesertHills", "Extreme Hills Edge", "Deep Ocean", "Cold Beach", "Cold Taiga",
-                "Cold Taiga Hills", "Extreme Hills+", "Savanna", "Savanna Plateau", "Mesa", "Mesa Plateau F", "Mesa Plateau", "The Void",
-                "Desert M", "Extreme Hills M", "Ice Plains Spikes", "Cold Taiga M", "Extreme Hills+ M", "Savanna M", "Savanna Plateau M",
-                "Mesa (Bryce)", "Mesa Plateau F M", "Mesa Plateau M"};
+        public static String[] RUBBERTREE_BIOME_BLACKLIST = new String[]{
+                "plains", "forest", "taiga", "swampland", "forest_hills", "taiga_hills", "smaller_extreme_hills", "jungle", "jungle_hills",
+                "jungle_edge", "birch_forest", "birch_forest_hills", "roofed_forest", "redwood_taiga", "redwood_taiga_hills",
+                "extreme_hills_with_trees", "mutated_plains", "mutated_forest", "mutated_taiga", "mutated_swampland", "mutated_jungle",
+                "mutated_jungle_edge", "mutated_birch_forest", "mutated_birch_forest_hills", "mutated_roofed_forest", "mutated_redwood_taiga",
+                "mutated_redwood_taiga_hills", "mutated_extreme_hills_with_trees"
+        };
 
     }
 

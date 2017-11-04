@@ -5,9 +5,11 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'de.undercouch:gradle-download-task:3.3.0'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'de.undercouch.download'
 
 version = "${project.version}"
 group = "de.canitzp.${project.modid}"
@@ -17,7 +19,7 @@ sourceCompatibility = targetCompatibility = 1.8
 
 minecraft {
     version = "${project.mc_version}-${project.forge_version}"
-    runDir = "run"
+    runDir = "${project.run_dir}"
     mappings = "${project.forge_mapping}"
     makeObfSourceJar = false
     replaceIn "de/canitzp/carz/Carz.java"
@@ -35,6 +37,10 @@ repositories {
     maven { // CommonCapabilities
         url "https://dl.bintray.com/cyclopsmc/dev/"
     }
+    maven { //OpenComputers
+        name = "OpenComputers"
+        url = "http://maven.cil.li/"
+    }
 }
 
 dependencies {
@@ -42,6 +48,11 @@ dependencies {
     deobfCompile "de.ellpeck.actuallyadditions:ActuallyAdditions:${project.actadd_version}"
     deobfCompile "org.cyclops.commoncapabilities:CommonCapabilities:${project.cc_version}"
     deobfCompile "de.canitzp.tumat:TUMAT:${project.tumat_version}"
+    deobfCompile "li.cil.oc:OpenComputers:${project.oc_version}:api"
+    download {
+        src "https://github.com/MightyPirates/OpenComputers/releases/download/v1.7.0/OpenComputers-${project.oc_version}.jar"
+        dest "./${project.run_dir}/mods/OpenComputers-${project.oc_version}.jar"
+    }
 }
 
 processResources {

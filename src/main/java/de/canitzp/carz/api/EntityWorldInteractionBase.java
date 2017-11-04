@@ -1,9 +1,15 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.Registry;
 import de.canitzp.carz.inventory.ContainerCar;
+import de.canitzp.carz.items.ItemCardLinkedDriver;
+import de.canitzp.carz.items.ItemWheelClamp;
 import de.canitzp.carz.network.GuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
@@ -24,7 +30,7 @@ import javax.annotation.Nullable;
  *
  * @author canitzp
  */
-public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
+public abstract class EntityWorldInteractionBase extends EntityRideableBase {
 
     protected int currentInventoryPage = 0;
 
@@ -34,11 +40,37 @@ public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        if(!this.world.isRemote && player.isSneaking()){
+        ItemStack handItem = player.getHeldItem(hand);
+        /*if (handItem.getItem() == Registry.itemWheelClamp && ItemWheelClamp.doInteract(handItem, player, this)) {
+            return true;
+        } else*/ if (handItem.getItem() == Registry.itemCardLinkedDriver &&
+                ItemCardLinkedDriver.doInteract(handItem, player, this)) {
+            return true;
+        }
+
+        if (!this.world.isRemote && player.isSneaking()) {
             player.openGui(Carz.carz, GuiHandler.ID_CAR, this.world, this.getEntityId(), 0, 0);
             return true;
         }
         return super.processInitialInteract(player, hand);
+    }
+
+    /**
+     * Called when the entity is attacked.
+     */
+    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
+        if (this.isEntityInvulnerable(source)) {
+            return false;
+        } else if (!this.world.isRemote && !this.isDead) {
+            if (source instanceof EntityDamageSourceIndirect && source.getTrueSource() != null && this.isPassenger(source.getTrueSource())) {
+                return false;
+            } else {
+                this.setDead();
+                return true;
+            }
+        } else {
+            return true;
+        }
     }
 
     @Override
@@ -61,9 +93,9 @@ public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
                 return CapabilityEnergy.ENERGY.cast(energyStorage);
             }
         }
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             IItemHandler itemHandler = this.getInventory(facing);
-            if(itemHandler != null){
+            if (itemHandler != null) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
             }
         }
@@ -102,7 +134,7 @@ public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
      * @return The corresponding {@link IItemHandler} for the {@link EnumFacing}
      */
     @Nullable
-    public IItemHandler getInventory(@Nullable EnumFacing facing){
+    public IItemHandler getInventory(@Nullable EnumFacing facing) {
         return null;
     }
 
@@ -112,11 +144,11 @@ public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
      *
      * @param container The current Container of the car.
      * @param inventory The current inventory. Same as {@link #getInventory(EnumFacing)}
-     * @param row The row of the slot
-     * @param column The column of the slot
+     * @param row       The row of the slot
+     * @param column    The column of the slot
      * @return A new index
      */
-    public int getInventoryIndexOffset(@Nonnull ContainerCar container, @Nonnull IItemHandler inventory, int row, int column){
+    public int getInventoryIndexOffset(@Nonnull ContainerCar container, @Nonnull IItemHandler inventory, int row, int column) {
         return (inventory.getSlots() - 1) * this.currentInventoryPage;
     }
 
@@ -126,7 +158,7 @@ public abstract class EntityWorldInteractionBase extends EntityRenderedBase {
      *
      * @param newIndex The new page index.
      */
-    public void setInventoryPageIndex(int newIndex){
+    public void setInventoryPageIndex(int newIndex) {
         this.currentInventoryPage = newIndex;
     }
 

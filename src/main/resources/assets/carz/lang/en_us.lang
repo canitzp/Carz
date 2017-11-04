@@ -4,11 +4,13 @@ itemGroup.carz_fire=Carz Fire Department
 # Blocks
 tile.carz:fuel_station.name=Fuel Station
 tile.carz:road.name=Road
+tile.carz:road_boosting.name=Road (Boosting)
+tile.carz:road_slope.name=Slope
 tile.carz:road_sign.name=Road Sign
 tile.carz:plant_fermenter.name=Plant Fermenter
-tile.carz:road_slope.name=Slope
 tile.carz:block_log.name=Rubber Log
 tile.carz:rubber_leaves.name=Rubber Leaves
+tile.carz:basic_pylon_european.name=Pylon (European)
 
 # Items
 item.carz:painter.name=Painter
@@ -20,6 +22,8 @@ item.carz:key.name=Key
 item.carz:raw_rubber.name=Raw rubber
 item.carz:tree_tap.name=Tree tap
 item.carz:license_driver.name=Driver license
+item.carz:road_configurator.name=Road configurator
+item.carz:wheel_clamp.name=Wheel clamp
 
 # Fluids
 fluid.carz:bio_fuel.name=Bio fuel

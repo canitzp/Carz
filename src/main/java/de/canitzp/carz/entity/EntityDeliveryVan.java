@@ -4,6 +4,7 @@ import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntityAIDriveableBase;
 import de.canitzp.carz.api.EntityPartedBase;
+import de.canitzp.carz.api.IWheelClampable;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,95 +18,58 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
- * @author canitzp, MisterErwin
+ * @author canitzp
  */
-public class EntityBus extends EntityAIDriveableBase {
-
+public class EntityDeliveryVan extends EntityAIDriveableBase implements IWheelClampable {
     private static EntityPartedBase.PartData partData;
+    private boolean isClamped;
 
-    private final static int SEAT_AMOUNT = 7;
+    private static final DataParameter<int[]> SEATING_DATA = EntityDataManager.createKey(EntityDeliveryVan.class, NetworkHandler.VARINT_ARRAY);
+    private final static int SEAT_AMOUNT = 2;
 
     static {
         EntityPartedBase.PartBuilder builder = builder();
+        builder.addInteractOnlyPart(0.4f, 0.3f, 0.6f, 0.7f, 1f);
+        builder.addInteractOnlyPart(-0.4f, 0.3f, 0.6f, 0.7f, 1f);
 
-        //Driver
-        builder.addInteractOnlyPart(.9f, 0.4f, 2.9f, .8f, 1.1f);
+        builder.addCollidingPart(0.35f, 0.3f, 1.05f, 0.7f, 0.4f);
+        builder.addCollidingPart(-0.35f, 0.3f, 1.05f, 0.7f, 0.4f);
+        builder.addCollidingPart(0.35f, 0.3f, 0.35f, 0.7f, 0.4f);
+        builder.addCollidingPart(-0.35f, 0.3f, 0.35f, 0.7f, 0.4f);
+        builder.addCollidingPart(0.35f, 0.3f, -0.35f, 0.7f, 0.4f);
+        builder.addCollidingPart(-0.35f, 0.3f, -0.35f, 0.7f, 0.4f);
+        builder.addCollidingPart(0.35f, 0.3f, -1.05f, 0.7f, 0.4f);
+        builder.addCollidingPart(-0.35f, 0.3f, -1.05f, 0.7f, 0.4f);
 
-        //first row
-        builder.addInteractOnlyPart(.9f, 0.4f, 1.4f, .8f, 1.1f);
-        builder.addInteractOnlyPart(-.9f, 0.4f, 1.4f, .8f, 1.1f);
+        builder.addCollidingPart(-0.65f, 0.3f, 1.55f, 0.4f, 1f);
+        builder.addCollidingPart(0, 0.3f, 1.55f, 0.4f, 1f);
+        builder.addCollidingPart(+0.65f, 0.3f, 1.55f, 0.4f, 1f);
 
-        //2nd row
-        builder.addInteractOnlyPart(.9f, 0.3f, 0.2f, .8f, 1.1f);
-        builder.addInteractOnlyPart(-.9f, 0.3f, 0.2f, .8f, 1.1f);
+        builder.addCollidingPart(-0.5f, 0.5f, 0.25f, 0.1f, 1.6f);
+        builder.addCollidingPart(0f, 0.5f, 0.25f, 0.1f, 1.6f);
+        builder.addCollidingPart(+0.5f, 0.5f, 0.25f, 0.1f, 1.6f);
 
-        builder.addInteractOnlyPart(.9f, 0.3f, -2.7f, .8f, 1.1f);
-        builder.addInteractOnlyPart(-.9f, 0.3f, -2.7f, .8f, 1.1f);
-
-        //Under**fucking**ground
-        for (int z = -3; z <= 3; ++z)
-            for (int x = -1; x <= 1; ++x)
-                builder.addCollidingPart(x, 0, z, 1, 0.2f);
-
-        float wh = 1.6f;
-        float wo = 0.1f; //wall offset Y
-        for (float z = -3; z <= 3; z += 0.5f)
-            builder.addPart(1.5f, 0, z, 0.2f, wh);
-
-        //Seitenwand
-        builder.addPart(-1.5f, wo, -3.0f, 0.2f, wh);
-        builder.addPart(-1.5f, wo, -2.5f, 0.2f, wh);
-        builder.addPart(-1.5f, wo, -2.0f, 0.2f, wh);
-        builder.addPart(-1.5f, wo, -1.65f, 0.2f, wh);
-        //-1
-        //-0.5
-        builder.addPart(-1.5f, wo, +0.0f, 0.2f, wh);
-        builder.addPart(-1.5f, wo, +0.5f, 0.2f, wh);
-        builder.addPart(-1.5f, wo, +1.0f, 0.2f, wh);
-        builder.addPart(-1.5f, wo, +1.5f, 0.2f, wh);
-        builder.addPart(-1.5f, wo, +1.85f, 0.2f, wh);
-        //2.5
-        builder.addPart(-1.5f, wo, +3.2f, 0.2f, wh);
-
-        for (float x = -1f; x <= 1; x += 0.5f) {
-            builder.addPart(x, wo, -3.5f, 0.2f, wh);
-            if (x % 1 == 0)
-                builder.addPart(x, wo, +3.5f, 0.2f, wh);
-            else
-                builder.addCollidingPart(x, wo, +3.5f, 0.2f, wh);
+        for (float z = -0.14f; z > -1.9; z -= 0.4) {
+            builder.addCollidingPart(-0.94f, 0.5f, z, 0.1f, 2.3f);
+            builder.addCollidingPart(+0.94f, 0.5f, z, 0.1f, 2.3f);
         }
-
-
         partData = builder.build();
     }
 
-    private final static DataParameter<int[]> SEATING_DATA = EntityDataManager.createKey(EntityBus.class, NetworkHandler.VARINT_ARRAY);
+    public EntityDeliveryVan(World world) {
+        super(world);
+//        this.setSize(4.0F, 3.0F);
+        this.setSize(0.2f, 0.2f);
 
-    public EntityBus(World worldIn) {
-        super(worldIn);
-        this.setSize(1.75F, 0.2f); //1.8125F
-
-        this.setDriverSeat(2.75F, -1.3F, -0.9F);
-        this.addSeat(1.05F, -1.3F, -0.9F);
-        this.addSeat(1.05F, -1.3F, 0.9F);
-
-        this.addSeat(0.05F, -1.3F, -0.9F);
-        this.addSeat(0.05F, -1.3F, 0.9F);
-
-        this.addSeat(-2.7f, -1.3F, -0.9F);
-        this.addSeat(-2.7f, -1.3F, 0.9F);
-
-        this.wheelLength = 7 / 2;
-        this.wheelWidth = 3 / 2;
-
-        this.steeringMax = 2;
-        this.steeringMod = 0.07;
+        this.setDriverSeat(0.5, 0.3D, -0.4);
+        this.addSeat(0.5, 0.3D, 0.4);
     }
 
     @Override
@@ -116,11 +80,45 @@ public class EntityBus extends EntityAIDriveableBase {
         this.dataManager.register(SEATING_DATA, seats);
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public ModelBase getCarModel() {
+        return Registry.MODEL_DELIVERY_VAN;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    @Override
+    public ResourceLocation getCarTexture() {
+        return new ResourceLocation(Carz.MODID, "textures/cars/delivery_van.png");
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void setupGL(double x, double y, double z, float entityYaw, float partialTicks) {
+        GlStateManager.translate(x, y + 1.5, z);
+        GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(entityYaw, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(this.rotationPitch, 1.0F, 0.0F, 0.0F);
+    }
+
+    @Override
+    protected EntityInvisibleCarPart[] constructPartArray() {
+        return partData.spawnInvisibleParts(this);
+    }
+
+    @Override
+    protected int[] constructCollidingPartIndizes() {
+        return partData.getCollidingPartIndizes();
+    }
+
+
     @Nullable
     public Entity getControllingPassenger() {
         int[] seats = this.dataManager.get(SEATING_DATA);
         return seats.length > 0 && seats[0] != -1 ? world.getEntityByID(seats[0]) : null;
     }
+
 
     @Override
     protected int getSeatByPassenger(Entity passenger) {
@@ -181,52 +179,23 @@ public class EntityBus extends EntityAIDriveableBase {
         super.removePassenger(passenger);
     }
 
-//    @Override
-//    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-//        return false; //Interact with main-box
-//    }
-
     @Override
-    public double getMountedYOffset() {
-        return 1.45; //1.812*0.8
+    public void setClamped(boolean clamped) {
+        this.isClamped = clamped;
     }
 
     @Override
-    protected EntityInvisibleCarPart[] constructPartArray() {
-        return partData.spawnInvisibleParts(this);
+    public boolean isClamped() {
+        return this.isClamped;
     }
 
     @Override
-    protected int[] constructCollidingPartIndizes() {
-        return partData.getCollidingPartIndizes();
+    protected void readEntityFromNBT(NBTTagCompound compound) {
+        this.isClamped = compound.getBoolean("clamped");
     }
 
     @Override
-    public ModelBase getCarModel() {
-        return Registry.MODEL_BUS;
-    }
-
-    @Nullable
-    @Override
-    public ResourceLocation getCarTexture() {
-        return new ResourceLocation(Carz.MODID, "textures/cars/bus.png");
-    }
-
-    @Override
-    public void setupGL(double x, double y, double z, float entityYaw, float partialTicks) {
-        GlStateManager.translate(x, y + 1.5, z);
-        GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate(entityYaw, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(this.rotationPitch, 1.0F, 0.0F, 0.0F);
-    }
-
-    @Override
-    protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
-
-    }
-
-    @Override
-    protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
-
+    protected void writeEntityToNBT(NBTTagCompound compound) {
+        compound.setBoolean("clamped", this.isClamped);
     }
 }

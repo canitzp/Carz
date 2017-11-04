@@ -1,5 +1,6 @@
 package de.canitzp.carz.api;
 
+import de.canitzp.carz.Carz;
 import de.canitzp.carz.blocks.BlockRoad;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.network.MessageCarSpeed;
@@ -21,7 +22,6 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.List;
 
 
 /**
@@ -62,6 +62,13 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         }
         this.doBlockCollisions();
 
+        if (this instanceof IWheelClampable && ((IWheelClampable) this).isClamped()) {
+            this.motionX = 0;
+            this.motionZ = 0;
+            this.setSpeed(0);
+            return;
+        }
+
         float speed = getSpeed();
 
         if (this.rotationPitch > 5)
@@ -85,6 +92,8 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
         double cosPitch = Math.cos(-deltaRotationPitch * 0.017453292F);
         double sinPitch = Math.sin(deltaRotationPitch * 0.017453292F);
 
+        double cosRoll = 1;
+        double sinRoll = 0;
 
         if (this.collidedHorizontally)
             this.rotationYaw = origRotationYaw;
@@ -103,6 +112,28 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
                     //TODO: Sometimes this is needed, sometimes not
 //                    if (ny > 0)
 //                        ny += 0.1;
+
+                    //TODO: Fix this?
+
+//                      cosYaw = Math.cos(-this.rotationYaw * 0.017453292F);
+//                      sinYaw = Math.sin(this.rotationYaw * 0.017453292F);
+//
+//                      ox = 1;
+//                      oz = 0;
+//
+//                    e.setPosition(
+//                            this.posX +MathUtil.rotX(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+//                            this.posY +this.motionY,
+//                            this.posZ + this.motionZ );
+
+//                    e.setPosition(
+//                            this.posX +this.motionX + MathUtil.rotX(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll),
+//                            this.posY +this.motionY + Math.abs(MathUtil.rotY(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll)),
+//                            this.posZ + this.motionZ + MathUtil.rotZ(ox, oy, oz,
+//                                    cosYaw, sinYaw, cosPitch, sinPitch, cosRoll, sinRoll));
 
                     e.setPosition(
                             this.posX + this.motionX + MathUtil.rotX(ox, oy, oz,
@@ -292,20 +323,21 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     }
 
     private void blockCollisionCheck() {
-        List<AxisAlignedBB> list = this.world.getCollisionBoxes(this, this.getEntityBoundingBox().grow(0.01, -0.01, 0.01));
-        Vec3d ourCenter = getCenter(this.getCollisionBoundingBox());
-        //TODO: get side of collision and apply damage
-        for (AxisAlignedBB bb : list) {
-            rayCheck(bb.maxX, ourCenter.y, bb.maxZ, ourCenter);
-            rayCheck(bb.maxX, ourCenter.y, bb.minZ, ourCenter);
-            rayCheck(bb.minX, ourCenter.y, bb.maxZ, ourCenter);
-            rayCheck(bb.minX, ourCenter.y, bb.minZ, ourCenter);
-            Vec3d c = getCenter(bb);
-            double colYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.posZ - c.z, this.posX - c.x) * 180 / Math.PI) - 90;
-            double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
-            double colAngle = -(MathHelper.wrapDegrees(rotYaw - colYaw) - 90) + 90;
-            //ToDO: yeah - do I really need this?
-        }
+        //Yeahs - let's
+//        List<AxisAlignedBB> list = this.world.getCollisionBoxes(this, this.getEntityBoundingBox().grow(0.01, -0.01, 0.01));
+//        Vec3d ourCenter = getCenter(this.getCollisionBoundingBox());
+//        //TODO: get side of collision and apply damage
+//        for (AxisAlignedBB bb : list) {
+//            rayCheck(bb.maxX, ourCenter.y, bb.maxZ, ourCenter);
+//            rayCheck(bb.maxX, ourCenter.y, bb.minZ, ourCenter);
+//            rayCheck(bb.minX, ourCenter.y, bb.maxZ, ourCenter);
+//            rayCheck(bb.minX, ourCenter.y, bb.minZ, ourCenter);
+//            Vec3d c = getCenter(bb);
+//            double colYaw = MathHelper.wrapDegrees(MathHelper.atan2(this.posZ - c.z, this.posX - c.x) * 180 / Math.PI) - 90;
+//            double rotYaw = MathHelper.wrapDegrees(this.rotationYaw);
+//            double colAngle = -(MathHelper.wrapDegrees(rotYaw - colYaw) - 90) + 90;
+//            //ToDO: yeah - do I really need this?
+//        }
     }
 
     @Nullable
@@ -333,8 +365,10 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     @Override
     protected void onCollision(double force, Collection<AxisAlignedBB> collisions) {
         if (force > 0.09 && this.speedSqAbs > 0.05) {
-            System.out.println("Collision with " + force);
-            System.out.println(collisions.size());
+            if (Carz.RENDER_DEBUG) {
+                System.out.println("Collision with " + force);
+                System.out.println(collisions.size());
+            }
             for (AxisAlignedBB bb : collisions) {
                 System.out.println(bb.maxX + "|" + bb.minX);
                 BlockPos pos = new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2);

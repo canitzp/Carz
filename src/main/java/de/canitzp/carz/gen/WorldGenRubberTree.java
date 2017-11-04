@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
@@ -42,7 +43,7 @@ public class WorldGenRubberTree implements IWorldGenerator {
     }
 
     private void generateAt(Random rand, World world, BlockPos position){
-        if(BIOME_BLACKLIST.contains(world.getBiome(position).getBiomeName()) || world.getBlockState(position.down()).getMaterial() != Material.GRASS){
+        if(BIOME_BLACKLIST.contains(Biome.REGISTRY.getNameForObject(world.getBiome(position)).getResourcePath()) || world.getBlockState(position.down()).getMaterial() != Material.GRASS){
             return;
         }
         int i = rand.nextInt(3) + this.minTreeHeight;

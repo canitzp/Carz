@@ -3,7 +3,7 @@ package de.canitzp.carz.util;
 import de.canitzp.carz.api.EntityMoveableBase;
 import de.canitzp.carz.api.EntityWorldInteractionBase;
 import de.canitzp.carz.network.MessageCarPartInteract;
-import de.canitzp.carz.network.MessageCarSpeed;
+import de.canitzp.carz.network.MessageCarStatus;
 import de.canitzp.carz.network.NetworkHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumHand;
@@ -47,6 +47,18 @@ public class VehiclePackets {
     }
 
     /**
+     * This sends an interaction with a car part from the client to the server.
+     *
+     * @param entity    the base car
+     * @param handIndex handIndex or -1 for damage
+     * @param partIndex The index of the car part
+     */
+    @SideOnly(Side.CLIENT)
+    public static void sendCarInteractToServer(@Nonnull Entity entity, short handIndex, int partIndex) {
+        NetworkHandler.net.sendToServer(new MessageCarPartInteract(entity.getEntityId(), handIndex, partIndex));
+    }
+
+    /**
      * Sends the vehicle speed from the client to the server.
      * You may want to use {@link EntityMoveableBase#setSpeed(float)} to sync
      *
@@ -58,4 +70,24 @@ public class VehiclePackets {
         /* just for documentation */
     }
 
+
+    /**
+     * This sends a car status from the client to the server.
+     *
+     * @param entity    the base car
+     * @param status      the status
+     */
+    public static void sendCarStatusToServer(@Nonnull Entity entity, @Nonnull MessageCarStatus.STATUS status) {
+        NetworkHandler.net.sendToServer(new MessageCarStatus(entity.getEntityId(), status));
+    }
+
+    /**
+     * This sends a car status from the client to the server.
+     *
+     * @param entity    the base car
+     * @param status      the status
+     */
+    public static void sendCarStatusToClients(@Nonnull Entity entity, @Nonnull MessageCarStatus.STATUS status) {
+        NetworkHandler.net.sendToAll(new MessageCarStatus(entity.getEntityId(), status));
+    }
 }

@@ -1,15 +1,16 @@
 package de.canitzp.carz;
 
 import de.canitzp.carz.api.EntityRenderedBase;
+import de.canitzp.carz.api.oc.DriverCardLinkedDriver;
 import de.canitzp.carz.blocks.*;
 import de.canitzp.carz.client.CustomModelLoader;
 import de.canitzp.carz.client.models.ModelBus;
+import de.canitzp.carz.client.models.ModelDeliveryVan;
 import de.canitzp.carz.client.models.ModelNakedBus;
+import de.canitzp.carz.client.models.ModelSpeedster;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
-import de.canitzp.carz.entity.EntityBus;
-import de.canitzp.carz.entity.EntityInvisibleCarPart;
-import de.canitzp.carz.entity.EntitySportscar;
+import de.canitzp.carz.entity.*;
 import de.canitzp.carz.fluid.FluidBase;
 import de.canitzp.carz.items.*;
 import de.canitzp.voxeler.VoxelBase;
@@ -20,24 +21,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -58,7 +52,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +61,7 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 @Mod.EventBusSubscriber
 public class Registry {
+
     /**
      * Internal Stuff:
      */
@@ -87,47 +81,52 @@ public class Registry {
             return new ItemStack(itemKey);
         }
     };
-    public static final CreativeTabs TAB_FIRE = new CreativeTabs(Carz.MODID + "_fire") {
+    /*public static final CreativeTabs TAB_FIRE = new CreativeTabs(Carz.MODID + "_fire") {
         @Override
         public ItemStack getTabIconItem() {
             return new ItemStack(Blocks.FIRE);
         }
-    };
+    };*/
 
     /**
      * Blocks:
      */
-    public static BlockFuelStation blockFuelStation = new BlockFuelStation().register();
-    public static BlockRoad blockRoad = new BlockRoad<>("road").register();
-    public static BlockRoadSlope blockRoadSlope = new BlockRoadSlope().register();
-    public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
-    public static BlockPlantFermenter blockPlantFermenter = new BlockPlantFermenter().register();
-    public static BlockBasic blockBasic = new BlockBasic().register();
-    public static BlockRubberLog blockLog = new BlockRubberLog().register();
-    public static BlockRubberLeaves blockRubberLeaves = new BlockRubberLeaves().register();
+    public static BlockFuelStation blockFuelStation;
+    public static BlockRoad blockRoad;
+    public static BlockBoostingRoad blockBoostingRoad;
+    public static BlockRoadSlope blockRoadSlope;
+    public static BlockRoadSign blockRoadSign;
+    public static BlockPlantFermenter blockPlantFermenter;
+    public static BlockRubberLog blockLog;
+    public static BlockRubberLeaves blockRubberLeaves;
 
     /**
      * Items:
      */
-    public static ItemCarPart itemCarPart = new ItemCarPart().register();
-    public static ItemPainter itemPainter = new ItemPainter().register();
-    public static ItemOilProbe itemOilProbe = new ItemOilProbe().register();
-    public static ItemBaseDefault itemPressedPlant = new ItemBaseDefault<>("pressed_plant").register();
-    public static ItemKey itemKey = new ItemKey().register();
-    public static ItemBaseDefault itemRawRubber = new ItemBaseDefault<>("raw_rubber").register();
-    public static ItemBaseDefault itemTreeTap = new ItemBaseDefault<>("tree_tap").register();
-    public static ItemLicense itemLicense = new ItemLicense().register();
+    public static ItemCarPart itemCarPart;
+    public static ItemPainter itemPainter;
+    public static ItemOilProbe itemOilProbe;
+    public static ItemBaseDefault itemPressedPlant;
+    public static ItemKey itemKey;
+    public static ItemBaseDefault itemRawRubber;
+    public static ItemBaseDefault itemTreeTap;
+    public static ItemLicense itemLicense;
+    //public static ItemRoadConfigurator itemRoadConfigurator;
+    //public static ItemWheelClamp itemWheelClamp;
+    public static ItemCardLinkedDriver itemCardLinkedDriver;
 
     /**
      * Fluids:
      */
-    public static Fluid fluidBioFuel = new FluidBase("bio_fuel", 0xFFFFFFFF).setViscosity(6000);
+    public static Fluid fluidBioFuel;
 
     /**
      * Models:
      */
     public static VoxelBase MODEL_SPORTSCAR;
-    public static final ModelBus MODEL_BUS = getInstanceWithDebug(ModelBus.class, ModelNakedBus.class);
+    public static ModelBus MODEL_BUS;
+    public static ModelDeliveryVan MODEL_DELIVERY_VAN;
+    public static ModelSpeedster MODEL_SPEEDSTER;
 
     /**
      * Statistics:
@@ -155,6 +154,15 @@ public class Registry {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        blockFuelStation = new BlockFuelStation().register();
+        blockRoad = new BlockRoad<>("road").register();
+        blockBoostingRoad = new BlockBoostingRoad().register();
+        blockRoadSlope = new BlockRoadSlope().register();
+        blockRoadSign = new BlockRoadSign().register();
+        blockPlantFermenter = new BlockPlantFermenter().register();
+        blockLog = new BlockRubberLog().register();
+        blockRubberLeaves = new BlockRubberLeaves().register();
+        EnumBasicBlocks.registerBlocks();
         IForgeRegistry<Block> reg = event.getRegistry();
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             Carz.LOG.info("Registering Block: " + block.getRegistryName());
@@ -169,6 +177,17 @@ public class Registry {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
+        itemCarPart = new ItemCarPart().register();
+        itemPainter = new ItemPainter().register();
+        itemOilProbe = new ItemOilProbe().register();
+        itemPressedPlant = new ItemBaseDefault<>("pressed_plant").register();
+        itemKey = new ItemKey().register();
+        itemRawRubber = new ItemBaseDefault<>("raw_rubber").register();
+        itemTreeTap = new ItemBaseDefault<>("tree_tap").register();
+        itemLicense = new ItemLicense().register();
+        //itemRoadConfigurator = new ItemRoadConfigurator().register();
+        //itemWheelClamp = new ItemWheelClamp().register();
+        itemCardLinkedDriver = new ItemCardLinkedDriver().register();
         IForgeRegistry<Item> reg = event.getRegistry();
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             Carz.LOG.info("Registering ItemBlock: " + block.getRegistryName());
@@ -187,6 +206,11 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModel(ModelRegistryEvent event) {
+        MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
+        MODEL_BUS = getInstanceWithDebug(ModelBus.class, ModelNakedBus.class);
+        MODEL_DELIVERY_VAN = new ModelDeliveryVan();
+        MODEL_SPEEDSTER = new ModelSpeedster();
+
         ModelLoaderRegistry.registerLoader(new CustomModelLoader());
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();
@@ -209,8 +233,11 @@ public class Registry {
     }
 
     public static void preInit(FMLPreInitializationEvent event) {
+        fluidBioFuel = new FluidBase("bio_fuel", 0xFFFFFFFF).setViscosity(6000);
         registerEntity("sportscar", EntitySportscar.class, event.getSide());
         registerEntity("bus", EntityBus.class, event.getSide());
+        registerEntity("delivery_van", EntityDeliveryVan.class, event.getSide());
+        registerEntity("speedster", EntitySpeedster.class, event.getSide());
         EntityRegistry.registerModEntity(new ResourceLocation(Carz.MODID, "invispart"), EntityInvisibleCarPart.class, "invispart", entityId++, Carz.carz, 64, 5, true);
         if (event.getSide().isClient()) {
             /*((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener() {
@@ -233,7 +260,6 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     private static void initModels(){
         registerFluidRenderer(fluidBioFuel);
-        MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
     }
 
     public static void init(FMLInitializationEvent event){
