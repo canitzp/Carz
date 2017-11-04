@@ -1,5 +1,6 @@
 package de.canitzp.carz.api;
 
+import de.canitzp.carz.Carz;
 import de.canitzp.carz.blocks.BlockRoad;
 import de.canitzp.carz.entity.EntityInvisibleCarPart;
 import de.canitzp.carz.network.MessageCarSpeed;
@@ -364,8 +365,10 @@ public abstract class EntityMoveableBase extends EntityPartedBase /*EntityCollid
     @Override
     protected void onCollision(double force, Collection<AxisAlignedBB> collisions) {
         if (force > 0.09 && this.speedSqAbs > 0.05) {
-            System.out.println("Collision with " + force);
-            System.out.println(collisions.size());
+            if (Carz.RENDER_DEBUG) {
+                System.out.println("Collision with " + force);
+                System.out.println(collisions.size());
+            }
             for (AxisAlignedBB bb : collisions) {
                 System.out.println(bb.maxX + "|" + bb.minX);
                 BlockPos pos = new BlockPos(bb.maxX - 0.2, bb.maxY - 0.2, bb.maxZ - 0.2);

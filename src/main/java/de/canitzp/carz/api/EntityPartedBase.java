@@ -517,7 +517,6 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     else
                         this.rotationPitch = 0;
                 }
-//                System.out.println("Pitch => " + this.rotationPitch);
             }
 
             this.world.profiler.endSection();

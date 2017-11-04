@@ -55,7 +55,6 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         }
         GlStateManager.pushMatrix();
         if (car instanceof EntitySteerableBase) {
-//            ((EntitySteerableBase)car).updateRotationTranslation(); //BLARG
             car.setupGL(x + ((EntitySteerableBase) car).rotationTranslationX,
                     y,
                     z + ((EntitySteerableBase) car).rotationTranslationZ, entityYaw, partialTicks);
