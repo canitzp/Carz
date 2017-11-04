@@ -44,13 +44,13 @@ public class GuiLicense extends GuiScreen {
         GlStateManager.pushMatrix();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Gui.drawRect(guiLeft, guiTop, guiLeft + xSize, guiTop + ySize, 0xFFA9CFA3);
-        Gui.drawRect(halfWidth - 115, halfHeight - 45, halfWidth - 50, halfHeight + 55, 0xFF000000);
+        Gui.drawRect(halfWidth - 115, halfHeight - 55, halfWidth - 50, halfHeight + 55, 0xFF000000);
         GuiUtil.drawCenteredString(GuiUtil.getTextWithFormatting("Carz - Driver License", TextFormatting.BOLD, TextFormatting.UNDERLINE), guiLeft + 165, guiTop + 5, 0xFFE01F1F, false);
         GuiUtil.drawCenteredString(GuiUtil.getTextWithFormatting("Owner: ", TextFormatting.BOLD) + state.owner, guiLeft + 165, guiTop + 28, 0xF8000000, false);
         GuiUtil.drawCenteredString(GuiUtil.getTextWithFormatting("Expire Date: ", TextFormatting.BOLD) + state.expireDate, guiLeft + 165, guiTop + 42, 0xF8000000, false);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        EntityLivingBase entity = Minecraft.getMinecraft().world.getPlayerEntityByName(this.state.owner);
+        EntityLivingBase entity = Minecraft.getMinecraft().world.getPlayerEntityByUUID(state.ownerId);
         GuiInventory.drawEntityOnScreen(guiLeft + 42, guiTop + 115, 50, guiLeft + 42 - mouseX, guiTop + 50 - mouseY, entity != null ? entity : fakeCreeper);
 
         GlStateManager.translate(guiLeft + 29, guiTop + 116, 100.0);

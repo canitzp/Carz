@@ -1,13 +1,16 @@
 package de.canitzp.voxeler;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author canitzp
@@ -16,15 +19,20 @@ public class Voxeler {
 
     public static VoxelBase loadModelFromFile(ResourceLocation location){
         String path = "/assets/" + location.getResourceDomain() + "/" + location.getResourcePath() + ".vox";
-        return loadModelFromFile(new File(Voxeler.class.getResource(path).getFile()));
+        try {
+            return loadModelFromFile(Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static VoxelBase loadModelFromFile(File file) {
+    public static VoxelBase loadModelFromFile(InputStream is) {
         try {
-            if (file != null && file.getName().endsWith(".vox")) {
+            if (is != null) {
                 VoxelBase voxelBase = null;
                 ModelRenderer currentRenderer = null;
-                for (String line : FileUtils.readLines(file, "UTF-8")) {
+                for (String line : IOUtils.readLines(is, "UTF-8")) {
                     if(!line.startsWith("#")){
                         if(line.startsWith("Voxeler File Format")){
                             voxelBase = parseVoxelBase(line);
