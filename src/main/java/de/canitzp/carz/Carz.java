@@ -70,10 +70,10 @@ public class Carz {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         Registry.init(event);
-        if (ConfigCarz.Generation.OIL_CHUNKS_ACTIVE) {
+        if (ConfigCarz.OIL_CHUNKS_ACTIVE) {
             GameRegistry.registerWorldGenerator(new OilChunkGen(), 10);
         }
-        if(ConfigCarz.Generation.RUBBERTREES_ACTIVE){
+        if(ConfigCarz.RUBBERTREES_ACTIVE){
             GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 1);
         }
         proxy.init(event);

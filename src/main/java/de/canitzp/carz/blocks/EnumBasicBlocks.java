@@ -1,17 +1,26 @@
 package de.canitzp.carz.blocks;
 
 import com.google.common.collect.Lists;
+import de.canitzp.carz.Carz;
+import de.canitzp.carz.util.BlockProps;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,11 +51,11 @@ public enum EnumBasicBlocks implements IStringSerializable {
     };
 
     private BlockBasic instance;
-    private Material material;
-    private MapColor color;
-    private AxisAlignedBB boundingBox;
+    @Nonnull private Material material;
+    @Nonnull private MapColor color;
+    @Nonnull private AxisAlignedBB boundingBox;
 
-    EnumBasicBlocks(Material material, MapColor color, AxisAlignedBB boundingBox){
+    EnumBasicBlocks(@Nonnull Material material, @Nonnull MapColor color, @Nonnull AxisAlignedBB boundingBox){
         this.material = material;
         this.color = color;
         this.boundingBox = boundingBox;
@@ -77,6 +86,36 @@ public enum EnumBasicBlocks implements IStringSerializable {
     }
 
     @Nonnull
+    public IBlockState getDefaultState(IBlockState baseState){
+        return baseState;
+    }
+
+    @Nonnull
+    public BlockStateContainer createBlockState(BlockBasic block){
+        return new BlockStateContainer(block);
+    }
+
+    public int parseMeta(IBlockState state){
+        return 0;
+    }
+
+    @Nonnull
+    public IBlockState parseState(int meta, IBlockState defaultState){
+        return defaultState;
+    }
+
+    @Nonnull
+    public IBlockState getPlacementState(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, IBlockState defaultState){
+        return defaultState;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nonnull
+    public ModelResourceLocation getModelResourceLocation(){
+        return new ModelResourceLocation(new ResourceLocation(Carz.MODID, "basic"), "type=" + this.getName());
+    }
+
+    @Nonnull
     @Override
     public String getName() {
         return this.name().toLowerCase();
@@ -84,8 +123,10 @@ public enum EnumBasicBlocks implements IStringSerializable {
 
     public static void registerBlocks(){
         for(EnumBasicBlocks block : values()){
+            BlockBasic.staticTypeForCreatingThisBlockTheHackyWay = block;
             block.instance = new BlockBasic(block).register();
         }
+        BlockBasic.staticTypeForCreatingThisBlockTheHackyWay = null;
     }
 
 }

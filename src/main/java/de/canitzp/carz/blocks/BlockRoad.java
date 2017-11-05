@@ -58,9 +58,11 @@ public class BlockRoad<T extends BlockRoad> extends BlockContainerBase<T> implem
     @Override
     public boolean removedByPlayer(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileRoad){
-            if(((TileRoad) tile).getMesh() != null){
-                ((TileRoad) tile).setMesh(null);
+        if (tile instanceof TileRoad) {
+            if (((TileRoad) tile).getMesh() != null) {
+                if (!world.isRemote) {
+                    ((TileRoad) tile).setMesh(null);
+                }
                 return false;
             }
         }
@@ -89,10 +91,12 @@ public class BlockRoad<T extends BlockRoad> extends BlockContainerBase<T> implem
 
     @Override
     public void clickedWithPainter(World world, BlockPos pos, EntityPlayer player, IBlockState state, EnumHand hand, EnumFacing facing, PixelMesh mesh, float hitX, float hitY, float hitZ){
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileRoad){
-            ((TileRoad) tile).setMesh(mesh);
-            ((TileRoad) tile).setMeshFacing(player.getHorizontalFacing());
+        if(!world.isRemote){
+            TileEntity tile = world.getTileEntity(pos);
+            if(tile instanceof TileRoad){
+                ((TileRoad) tile).setMeshFacing(player.getHorizontalFacing());
+                ((TileRoad) tile).setMesh(mesh);
+            }
         }
     }
 

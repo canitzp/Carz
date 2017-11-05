@@ -5,6 +5,7 @@ import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.EntityRenderedBase;
 import de.canitzp.carz.api.EntitySteerableBase;
 import de.canitzp.carz.api.IColorableCar;
+import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -20,10 +21,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * @author canitzp
@@ -32,7 +35,7 @@ import java.io.IOException;
 public class RenderCar<T extends EntityRenderedBase> extends Render<T> implements IResourceManagerReloadListener {
     private ModelBase model;
     private ResourceLocation texture, overlay;
-    private int oldColor = -1;
+    private Map<UUID, Pair<Integer, UUID>> cachedCarRenderer = new HashMap<>();
 
     public RenderCar(RenderManager renderManager) {
         super(renderManager);
@@ -65,14 +68,25 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
                 try {
                     int color = 0xFFFFFF;
                     boolean calculate = false;
+                    PixelMesh mesh = null;
+                    List<Pair<Integer, Integer>> meshCoordinates = Collections.emptyList();
                     if(car instanceof IColorableCar){
                         color = ((IColorableCar) car).getCurrentColor();
-                        calculate = ((IColorableCar) car).shouldRecalculateTexture() || color != this.oldColor;
+                        mesh = ((IColorableCar) car).getCurrentMesh();
+                        meshCoordinates = ((IColorableCar) car).getPixelMeshCoordiantes();
+                        int oldColor = 0;
+                        UUID oldMesh = null;
+                        Pair<Integer, UUID> pair = this.cachedCarRenderer.get(car.getPersistentID());
+                        if(pair != null){
+                            oldColor = this.cachedCarRenderer.get(car.getPersistentID()).getLeft();
+                            oldMesh = this.cachedCarRenderer.get(car.getPersistentID()).getRight();
+                        }
+                        calculate = ((IColorableCar) car).shouldRecalculateTexture() || color != oldColor || (mesh != null && oldMesh != mesh.getId());
                         if(calculate){
-                            this.oldColor = color;
+                            this.cachedCarRenderer.put(car.getPersistentID(), Pair.of(color, mesh != null ? mesh.getId() : null));
                         }
                     }
-                    RenderUtil.bindLayeredTexture(this.texture, this.overlay, 0xFFFFFF, color, calculate);
+                    RenderUtil.bindLayeredTexture(car.getPersistentID(), this.texture, this.overlay, 0xFFFFFF, color, mesh, meshCoordinates, calculate);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -89,7 +103,9 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         //GlStateManager.disableAlpha();
         //GlStateManager.enableBlend();
         //GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        this.model.render(car, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+        if(this.model != null){
+            this.model.render(car, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+        }
         if (this.renderOutlines) {
             GlStateManager.disableOutlineMode();
             GlStateManager.disableColorMaterial();
@@ -163,6 +179,6 @@ public class RenderCar<T extends EntityRenderedBase> extends Render<T> implement
         this.model = null;
         this.texture = null;
         this.overlay = null;
-        this.oldColor = -1;
+        this.cachedCarRenderer.clear();
     }
 }

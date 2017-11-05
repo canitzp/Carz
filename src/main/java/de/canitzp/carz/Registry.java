@@ -97,6 +97,8 @@ public class Registry {
     public static BlockPlantFermenter blockPlantFermenter;
     public static BlockRubberLog blockLog;
     public static BlockRubberLeaves blockRubberLeaves;
+    public static BlockDelineator blockDelineator;
+    public static BlockRoadBarrier blockRoadBarrier;
 
     /**
      * Items:
@@ -109,7 +111,7 @@ public class Registry {
     public static ItemBaseDefault itemRawRubber;
     public static ItemBaseDefault itemTreeTap;
     public static ItemLicense itemLicense;
-    //public static ItemRoadConfigurator itemRoadConfigurator;
+    public static ItemRoadConfigurator itemRoadConfigurator;
     //public static ItemWheelClamp itemWheelClamp;
     public static ItemCardLinkedDriver itemCardLinkedDriver;
 
@@ -160,6 +162,8 @@ public class Registry {
         blockPlantFermenter = new BlockPlantFermenter().register();
         blockLog = new BlockRubberLog().register();
         blockRubberLeaves = new BlockRubberLeaves().register();
+        blockDelineator = new BlockDelineator().register();
+        blockRoadBarrier = new BlockRoadBarrier().register();
         EnumBasicBlocks.registerBlocks();
         IForgeRegistry<Block> reg = event.getRegistry();
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
@@ -183,7 +187,7 @@ public class Registry {
         itemRawRubber = new ItemBaseDefault<>("raw_rubber").register();
         itemTreeTap = new ItemBaseDefault<>("tree_tap").register();
         itemLicense = new ItemLicense().register();
-        //itemRoadConfigurator = new ItemRoadConfigurator().register();
+        itemRoadConfigurator = new ItemRoadConfigurator().register();
         //itemWheelClamp = new ItemWheelClamp().register();
         itemCardLinkedDriver = new ItemCardLinkedDriver().register();
         IForgeRegistry<Item> reg = event.getRegistry();
@@ -204,7 +208,7 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModel(ModelRegistryEvent event) {
-        MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar"));
+        MODEL_SPORTSCAR = Voxeler.loadModelFromFile(new ResourceLocation(Carz.MODID, "models/voxeler/sportscar.vox"));
         MODEL_BUS = getInstanceWithDebug(ModelBus.class, ModelNakedBus.class);
         MODEL_DELIVERY_VAN = new ModelDeliveryVan();
         MODEL_SPEEDSTER = new ModelSpeedster();

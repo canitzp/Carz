@@ -1,11 +1,15 @@
 package de.canitzp.carz.entity;
 
+import com.google.common.collect.Lists;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntityMultiSeatsBase;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.IColorableCar;
 import de.canitzp.carz.api.IWheelClampable;
+import de.canitzp.carz.client.PixelMesh;
+import de.canitzp.carz.events.WorldEvents;
+import de.canitzp.carz.items.ItemPainter;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +17,9 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
@@ -22,18 +28,50 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author canitzp
  */
 public class EntitySpeedster extends EntityMultiSeatsBase implements IWheelClampable, IColorableCar {
+
+    public static final DataSerializer<UUID> UUID_DATA_SERIALIZER = new DataSerializer<UUID>() {
+
+        @Override
+        public void write(PacketBuffer buf, UUID value) {
+            buf.writeUniqueId(value);
+        }
+
+        @Override
+        public UUID read(PacketBuffer buf) throws IOException {
+            return buf.readUniqueId();
+        }
+
+        @Override
+        public DataParameter<UUID> createKey(int id) {
+            return new DataParameter<>(id, this);
+        }
+
+        @Override
+        public UUID copyValue(UUID value) {
+            return new UUID(value.getMostSignificantBits(), value.getLeastSignificantBits());
+        }
+    };
+
+    static {
+        DataSerializers.registerSerializer(UUID_DATA_SERIALIZER);
+    }
+
     private static EntityPartedBase.PartData partData;
     private boolean clamped = false;
 
     private static final DataParameter<Integer> COLOR = EntityDataManager.createKey(EntitySpeedster.class, DataSerializers.VARINT);
-
+    private static final DataParameter<UUID> MESH = EntityDataManager.createKey(EntitySpeedster.class, UUID_DATA_SERIALIZER);
 
     static {
         EntityPartedBase.PartBuilder builder = builder();
@@ -64,6 +102,7 @@ public class EntitySpeedster extends EntityMultiSeatsBase implements IWheelClamp
     @Override
     protected void entityInit() {
         this.dataManager.register(COLOR, 0xD70404);
+        //this.dataManager.register(MESH, new UUID(0, 0));
         super.entityInit();
     }
 
@@ -139,17 +178,36 @@ public class EntitySpeedster extends EntityMultiSeatsBase implements IWheelClamp
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemDye) {
-            if (!player.world.isRemote) {
-                EnumDyeColor color = EnumDyeColor.byDyeDamage(stack.getMetadata());
-                this.dataManager.set(COLOR, color.getColorValue());
-                if (!player.isCreative()) {
-                    stack.shrink(1);
+        if (!stack.isEmpty()) {
+            if(stack.getItem() instanceof ItemDye){
+                if (!player.world.isRemote) {
+                    EnumDyeColor color = EnumDyeColor.byDyeDamage(stack.getMetadata());
+                    this.dataManager.set(COLOR, color.getColorValue());
+                    if (!player.isCreative()) {
+                        stack.shrink(1);
+                    }
                 }
-            }
-            return true;
+                return true;
+            }/* else if(stack.getItem() instanceof ItemPainter){
+                if (!player.world.isRemote) {
+                    this.dataManager.set(MESH, ItemPainter.getPixelMeshFromStack(stack).getId());
+                }
+                return true;
+            }*/
         }
         return super.processInitialInteract(player, hand);
     }
 
+    /*
+    @Nullable
+    @Override
+    public PixelMesh getCurrentMesh() {
+        return WorldEvents.getMeshByUUID(this.dataManager.get(MESH));
+    }
+
+    @Override
+    public List<Pair<Integer, Integer>> getPixelMeshCoordiantes() {
+        return Lists.newArrayList(Pair.of(48, 36));
+    }
+    */
 }

@@ -1,16 +1,25 @@
 package de.canitzp.carz.api;
 
 import de.canitzp.carz.Carz;
+import de.canitzp.carz.util.GuiUtil;
 import de.canitzp.carz.util.MathUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 /**
  * Represents steerable vehicles
@@ -216,4 +225,31 @@ public abstract class EntitySteerableBase extends EntityWorldInteractionBase {
             //moved to EntityMoveable
         }
     }
+
+    private static final ResourceLocation HUD_RES = new ResourceLocation(Carz.MODID, "textures/gui/gui_car_hud.png");
+
+    @SideOnly(Side.CLIENT)
+    public void renderHUD(WorldClient world, EntityPlayerSP player, ScaledResolution res, float partialTicks){
+        GlStateManager.pushMatrix();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        float f = 0.25F * res.getScaleFactor();
+        GlStateManager.translate(2 * f, res.getScaledHeight() - 66 * f, 0);
+        GlStateManager.scale(f, f, f);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(HUD_RES);
+        GuiUtil.drawTexturedModalRect(0, 0, 0, 0, 224, 64);
+        GlStateManager.popMatrix();
+
+        GlStateManager.pushMatrix();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        String speed = String.format("%dkm/h", Math.round(this.speedSqAbs * 3.6D * 100.0D));
+        f = 0.24F * res.getScaleFactor();
+        GlStateManager.translate(53 * f, res.getScaledHeight() - 17 * f, 0);
+        GlStateManager.scale(f, f, f);
+        fontRenderer.drawString(speed, 0, 0, 0xFFFFFF);
+        GlStateManager.popMatrix();
+    }
+
 }

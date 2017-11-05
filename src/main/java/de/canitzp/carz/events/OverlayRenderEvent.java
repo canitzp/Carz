@@ -2,7 +2,6 @@ package de.canitzp.carz.events;
 
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.EntitySteerableBase;
-import de.canitzp.carz.client.GuiHud;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,7 +20,6 @@ import static net.minecraft.util.text.TextFormatting.*;
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Carz.MODID)
 public class OverlayRenderEvent {
 
-    private static GuiHud hud;
     private static final String pocText = GRAY.toString() + BOLD + Carz.MODNAME + RESET + ITALIC +  GRAY + " " + Carz.MODVERSION + " Build-Date: " + Carz.BUILDDATE + RESET;
 
     @SubscribeEvent
@@ -29,12 +27,7 @@ public class OverlayRenderEvent {
         if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             if (player.isRiding() && player.getRidingEntity() instanceof EntitySteerableBase && player.getRidingEntity().getControllingPassenger() == player) {
-                if (hud == null) {
-                    hud = new GuiHud();
-                }
-                hud.render(event.getResolution(), (EntitySteerableBase) player.getRidingEntity());
-            } else {
-                hud = null;
+                ((EntitySteerableBase) player.getRidingEntity()).renderHUD(Minecraft.getMinecraft().world, player, event.getResolution(), event.getPartialTicks());
             }
         } else if(event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
             /*if(Carz.MODVERSION.contains("Proof of Concept")){

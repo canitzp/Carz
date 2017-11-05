@@ -15,7 +15,7 @@ version = "${project.version}"
 group = "de.canitzp.${project.modid}"
 archivesBaseName = "${project.name}"
 
-sourceCompatibility = targetCompatibility = 1.8
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 minecraft {
     version = "${project.mc_version}-${project.forge_version}"

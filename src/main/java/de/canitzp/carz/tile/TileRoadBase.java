@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 /**
  * @author canitzp
  */
-public abstract class TileRoadBase extends TileEntity {
+public abstract class TileRoadBase extends TileBase {
 
     private EnumFacing meshFacing = EnumFacing.NORTH;
 

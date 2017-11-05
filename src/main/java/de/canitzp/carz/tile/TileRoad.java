@@ -4,15 +4,20 @@ import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.events.WorldEvents;
 import de.canitzp.carz.util.BlockProps;
+import de.canitzp.carz.util.GuiUtil;
+import de.canitzp.carz.util.RenderUtil;
 import de.canitzp.carz.util.TileUtil;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 
 /**
  * @author canitzp
@@ -26,13 +31,15 @@ public class TileRoad extends TileRoadBase{
         super.readFromNBT(compound);
         if (compound.hasUniqueId("MeshUUID")) {
             this.mesh = WorldEvents.getMeshByUUID(compound.getUniqueId("MeshUUID"));
+        } else {
+            this.mesh = null;
         }
     }
 
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        if (this.mesh != null) {
+        if(this.mesh != null){
             compound.setUniqueId("MeshUUID", this.mesh.getId());
         }
         return super.writeToNBT(compound);
@@ -52,9 +59,11 @@ public class TileRoad extends TileRoadBase{
         if(this.getMesh() != null){
             float f = 1/16F;
             GlStateManager.pushMatrix();
+            RenderHelper.disableStandardItemLighting();
             GlStateManager.translate(x, y + 1.01F, z);
             this.preRender(renderRoad, x, y, z, partialTicks, destroyStage, alpha, f);
             this.renderMesh(renderRoad, x, y, z, partialTicks, destroyStage, alpha, f);
+            RenderHelper.enableStandardItemLighting();
             GlStateManager.popMatrix();
         }
     }
@@ -88,7 +97,9 @@ public class TileRoad extends TileRoadBase{
     protected void renderMesh(RenderRoad renderRoad, double x, double y, double z, float partialTicks, int destroyStage, float alpha, float scaleFactor){
         GlStateManager.scale(scaleFactor, scaleFactor, scaleFactor);
         GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
-        this.getMesh().render(0, 0);
+        //this.getMesh().render(0, 0);
+        this.getMesh().bindTexture();
+        RenderUtil.render2DBoundTexture(0, 0, 0, 0, 16, 16, scaleFactor);
     }
 
 }

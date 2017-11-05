@@ -1,14 +1,22 @@
 package de.canitzp.carz.client;
 
 
+import com.sun.imageio.plugins.common.ImageUtil;
+import de.canitzp.carz.util.PlayerUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.WorldServer;
 import org.lwjgl.opengl.GL11;
+import sun.nio.ch.IOUtil;
 
 import javax.annotation.Nonnull;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -25,6 +33,7 @@ public class PixelMesh {
     private String name;
     private UUID id, owner = EMPTY_UUID;
     private int offsetX = 0, offsetY = 0;
+    private int glTextureId = -1;
 
     public PixelMesh(String name, int size, UUID id, UUID owner) {
         this.name = name;
@@ -96,6 +105,13 @@ public class PixelMesh {
             throw new RuntimeException("You want to set a line of Pixels to a PixelMesh, but the sizes are different! Your size: " + pixels.length + "  Size of the Mesh: " + this.pixels.length);
         }
         this.pixels[line] = pixels;
+        this.setChanged();
+        return this;
+    }
+
+    public PixelMesh setPixel(int x, int y, Pixel pixel){
+        this.getPixels()[x][y] = pixel;
+        this.setChanged();
         return this;
     }
 
@@ -172,7 +188,34 @@ public class PixelMesh {
 
     @SuppressWarnings("ConstantConditions")
     public boolean canBeEditedBy(EntityPlayer player){
-        return player.isCreative() || (player.world instanceof WorldServer && player.world.getMinecraftServer().getPlayerList().getOppedPlayers().getPermissionLevel(player.getGameProfile()) == 4) || player.getGameProfile().getId().equals(this.owner);
+        return player.isCreative() || PlayerUtil.isOperator(player) || player.getGameProfile().getId().equals(this.owner);
+    }
+
+    public PixelMesh setChanged(){
+        this.glTextureId = -1;
+        return this;
+    }
+
+    public void bindTexture(){
+        if(glTextureId == -1){
+            BufferedImage meshImage = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+            Pixel[][] pixels1 = this.getPixels();
+            for (int row = 0; row < pixels1.length; row++) {
+                Pixel[] pixels = pixels1[row];
+                for (int column = 0; column < pixels.length; column++) {
+                    Pixel pixel = pixels[column];
+                    if(pixel.isValid()){
+                        meshImage.setRGB(column, row, pixel.toHex() | 0xFF000000); // disable the alpha if any exists
+                    } else {
+                        meshImage.setRGB(column, row, 0x00FFFFFF); // alpha
+                    }
+                }
+            }
+            this.glTextureId = TextureUtil.glGenTextures();
+            TextureUtil.uploadTextureImage(this.glTextureId, meshImage);
+        } else {
+            GlStateManager.bindTexture(this.glTextureId);
+        }
     }
 
 }

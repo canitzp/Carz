@@ -3,7 +3,6 @@ package de.canitzp.carz.gen;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.blocks.BlockRubberLog;
 import de.canitzp.carz.config.ConfigCarz;
-import net.minecraft.block.BlockVine;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -14,7 +13,6 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
 import java.util.Arrays;
@@ -29,8 +27,8 @@ public class WorldGenRubberTree implements IWorldGenerator {
     private int minTreeHeight = 5;
     private IBlockState log = Registry.blockLog.getDefaultState();
     private IBlockState leaves = Registry.blockRubberLeaves.getDefaultState();
-    private int populationValue = ConfigCarz.Generation.RUBBERTREES_POPULATION; // 1 = one tree per chunk
-    private final List<String> BIOME_BLACKLIST = Arrays.asList(ConfigCarz.Generation.RUBBERTREE_BIOME_BLACKLIST);
+    private int populationValue = ConfigCarz.RUBBERTREES_POPULATION; // 1 = one tree per chunk
+    private final List<String> BIOME_WHITELIST = Arrays.asList(ConfigCarz.RUBBERTREE_BIOME_WHITELIST);
 
     @Override
     public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
@@ -43,7 +41,7 @@ public class WorldGenRubberTree implements IWorldGenerator {
     }
 
     private void generateAt(Random rand, World world, BlockPos position){
-        if(BIOME_BLACKLIST.contains(Biome.REGISTRY.getNameForObject(world.getBiome(position)).getResourcePath()) || world.getBlockState(position.down()).getMaterial() != Material.GRASS){
+        if(world.getBlockState(position.down()).getMaterial() != Material.GRASS || !BIOME_WHITELIST.contains(Biome.REGISTRY.getNameForObject(world.getBiome(position)).getResourcePath())){
             return;
         }
         int i = rand.nextInt(3) + this.minTreeHeight;
