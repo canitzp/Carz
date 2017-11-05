@@ -40,7 +40,7 @@ public class MessageSendPixelMeshesToServer implements IMessage, IMessageHandler
     public MessageSendPixelMeshesToServer onMessage(MessageSendPixelMeshesToServer message, MessageContext ctx) {
         FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
             WorldEvents.change(message.mesh);
-            NetworkHandler.net.sendToAll(new MessageSendPixelMeshesToClient(WorldEvents.MESHES_LOADED_INTO_WORLD.values()));
+            NetworkHandler.net.sendToAll(new MessageSendPixelMeshesToClient(WorldEvents.getMeshes()));
         });
         return null;
     }

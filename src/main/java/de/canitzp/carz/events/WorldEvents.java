@@ -18,9 +18,11 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author canitzp
@@ -30,15 +32,19 @@ public class WorldEvents {
 
     public static final Map<UUID, PixelMesh> MESHES_LOADED_INTO_WORLD = new ConcurrentHashMap<>();
 
+    public static Collection<PixelMesh> getMeshes() {
+        return MESHES_LOADED_INTO_WORLD.values().stream().filter(PixelMesh::isLoaded).collect(Collectors.toList());
+    }
+
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
         try {
             World world = event.getWorld();
-            if(!world.isRemote){
+            if (!world.isRemote) {
                 MapStorage storage = world.getMapStorage();
-                if(storage != null){
+                if (storage != null) {
                     WorldSavedData data = storage.getOrLoadData(WorldData.class, WorldData.NAME);
-                    if(data instanceof WorldData){
+                    if (data instanceof WorldData) {
                         data.markDirty();
                     } else {
                         data = new WorldData(WorldData.NAME);
@@ -77,13 +83,13 @@ public class WorldEvents {
     }
 
     @SubscribeEvent
-    public static void onWorldSave(WorldEvent.Save event){
+    public static void onWorldSave(WorldEvent.Save event) {
         World world = event.getWorld();
-        if(!world.isRemote){
+        if (!world.isRemote) {
             MapStorage storage = world.getMapStorage();
-            if(storage != null){
+            if (storage != null) {
                 WorldSavedData data = storage.getOrLoadData(WorldData.class, WorldData.NAME);
-                if(data instanceof WorldData){
+                if (data instanceof WorldData) {
                     data.markDirty();
                 } else {
                     data = new WorldData(WorldData.NAME);
@@ -104,11 +110,20 @@ public class WorldEvents {
 
     @Nullable
     public static PixelMesh getMeshByUUID(UUID id) {
-        return MESHES_LOADED_INTO_WORLD.getOrDefault(id, null);
+        PixelMesh loaded = MESHES_LOADED_INTO_WORLD.get(id);
+        if (loaded != null) {
+            return loaded;
+        }
+        loaded = new PixelMesh(id);
+        MESHES_LOADED_INTO_WORLD.put(id, loaded);
+        return loaded;
     }
 
-    public static void change(PixelMesh mesh){
+    public static void change(PixelMesh mesh) {
         MESHES_LOADED_INTO_WORLD.put(mesh.getId(), mesh);
     }
 
+    public static void clearLoaded() {
+        MESHES_LOADED_INTO_WORLD.entrySet().removeIf(e -> e.getValue().isLoaded());
+    }
 }

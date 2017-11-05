@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class PixelMeshScrollPane extends GuiScrollingList {
 
-    private List<PixelMesh> meshList = new ArrayList<>(WorldEvents.MESHES_LOADED_INTO_WORLD.values());
+    private List<PixelMesh> meshList = new ArrayList<>(WorldEvents.getMeshes());
     private PixelMesh currentMesh = null;
     private int selected = -1;
 

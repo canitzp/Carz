@@ -53,9 +53,14 @@ public class MessageSendPixelMeshesToClient implements IMessage, IMessageHandler
     @Override
     public MessageSendPixelMeshesToClient onMessage(MessageSendPixelMeshesToClient message, MessageContext ctx) {
         Minecraft.getMinecraft().addScheduledTask(() -> {
-            WorldEvents.MESHES_LOADED_INTO_WORLD.clear();
-            for(PixelMesh mesh : message.meshes){
-                WorldEvents.MESHES_LOADED_INTO_WORLD.put(mesh.getId(), mesh);
+            WorldEvents.clearLoaded();
+            for (PixelMesh mesh : message.meshes) {
+                PixelMesh loadedMesh = WorldEvents.MESHES_LOADED_INTO_WORLD.get(mesh.getId());
+                if (loadedMesh != null) {
+                    loadedMesh.loadFrom(mesh);
+                } else {
+                    WorldEvents.MESHES_LOADED_INTO_WORLD.put(mesh.getId(), mesh);
+                }
             }
         });
         return null;

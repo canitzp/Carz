@@ -1,22 +1,16 @@
 package de.canitzp.carz.client;
 
 
-import com.sun.imageio.plugins.common.ImageUtil;
 import de.canitzp.carz.util.PlayerUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.WorldServer;
 import org.lwjgl.opengl.GL11;
-import sun.nio.ch.IOUtil;
 
 import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -54,10 +48,28 @@ public class PixelMesh {
         this.fromBytes(buf);
     }
 
+    public PixelMesh(UUID id) {
+        this.id = id;
+        this.pixels = null;
+    }
+
+    public void loadFrom(PixelMesh mesh) {
+        this.name = mesh.name;
+        this.pixels = mesh.pixels;
+        this.owner = mesh.owner;
+        this.offsetX = mesh.offsetX;
+        this.offsetY = mesh.offsetY;
+        this.glTextureId = mesh.glTextureId;
+    }
+
     private Pixel[] getUniqueFilledPixelArray(int size){
         Pixel[] empty = new Pixel[size];
         Arrays.fill(empty, Pixel.EMPTY);
         return empty;
+    }
+
+    public boolean isLoaded() {
+        return pixels != null;
     }
 
     public Pixel[][] getPixels() {
@@ -217,5 +229,6 @@ public class PixelMesh {
             GlStateManager.bindTexture(this.glTextureId);
         }
     }
+
 
 }

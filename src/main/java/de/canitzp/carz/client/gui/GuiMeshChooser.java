@@ -49,7 +49,7 @@ public class GuiMeshChooser extends GuiScreen{
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
         this.lines.clear();
-        List<PixelMesh> meshes = new ArrayList<>(WorldEvents.MESHES_LOADED_INTO_WORLD.values());
+        List<PixelMesh> meshes = new ArrayList<>(WorldEvents.getMeshes());
         Map<UUID, Integer> tabRowMap = new HashMap<>();
         for (PixelMesh mesh : meshes) {
             int tabIndex = tabRowMap.getOrDefault(mesh.getOwner(), 0);
