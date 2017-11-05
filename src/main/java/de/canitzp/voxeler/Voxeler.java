@@ -1,14 +1,11 @@
 package de.canitzp.voxeler;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -22,9 +19,9 @@ public class Voxeler {
         try {
             return loadModelFromFile(Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            //Crash gracefully - with an error message to be exact
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public static VoxelBase loadModelFromFile(InputStream is) {
