@@ -1,11 +1,8 @@
 package de.canitzp.carz.tile;
 
-import de.canitzp.carz.client.renderer.RenderRoad;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -47,8 +44,4 @@ public abstract class TileRoadBase extends TileBase {
     public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
         this.readFromNBT(tag);
     }
-
-    @SideOnly(Side.CLIENT)
-    public abstract void render(RenderRoad renderRoad, double x, double y, double z, float partialTicks, int destroyStage, float alpha);
-
 }

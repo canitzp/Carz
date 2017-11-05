@@ -2,10 +2,7 @@
   "forge_marker": 1,
   "defaults": {
     "transform": "forge:default-block",
-    "model": "minecraft:cube_all",
-    "textures": {
-      "all": "carz:blocks/road"
-    }
+    "model": "carz:roadmodel/road"
   },
   "variants": {
     "normal": [{}],

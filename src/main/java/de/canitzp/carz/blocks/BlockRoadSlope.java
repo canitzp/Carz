@@ -1,8 +1,8 @@
 package de.canitzp.carz.blocks;
 
 import de.canitzp.carz.client.models.ModelRoadSlope;
-import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.tile.TileRoadSlope;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,8 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,8 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static de.canitzp.carz.util.BlockProps.FACING;
-import static de.canitzp.carz.util.BlockProps.SLOPE_NUMBER;
+import static de.canitzp.carz.util.BlockProps.*;
 
 /**
  * The meta for this looks like this:
@@ -46,24 +46,11 @@ public class BlockRoadSlope extends BlockRoad<BlockRoadSlope>{
         this.setDefaultState(this.getDefaultState().withProperty(FACING, EnumFacing.NORTH).withProperty(SLOPE_NUMBER, 0));
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerClient() {
-        StateMapperBase ignoreState = new StateMapperBase() {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-                return ModelRoadSlope.BAKED_MODEL;
-            }
-        };
-        ModelLoader.setCustomStateMapper(this, ignoreState);
-        //super.registerClient();
-    }
 
     @SideOnly(Side.CLIENT)
     @Override
     public void registerClientInit() {
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(this), 0, new ModelResourceLocation(this.getRegistryName().toString(), "inventory"));
-        ClientRegistry.bindTileEntitySpecialRenderer(TileRoadSlope.class, new RenderRoad());
     }
 
     @Nonnull
@@ -82,7 +69,8 @@ public class BlockRoadSlope extends BlockRoad<BlockRoadSlope>{
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, SLOPE_NUMBER);
+        return new ExtendedBlockState(this, new IProperty[]{FACING, SLOPE_NUMBER},
+                new IUnlistedProperty[]{FACING_MESH, MODEL});
     }
 
     @Override

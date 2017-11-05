@@ -41,7 +41,7 @@ public class CustomModelLoader implements ICustomModelLoader{
 
     @Override
     public boolean accepts(@Nonnull ResourceLocation modelLocation) {
-        return modelLocation.getResourceDomain().equals(Carz.MODID) && "road_slope".equals(modelLocation.getResourcePath());
+        return modelLocation.getResourceDomain().equals(Carz.MODID) && "road_slope_".equals(modelLocation.getResourcePath());
     }
 
     @Nonnull

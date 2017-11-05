@@ -97,15 +97,11 @@ public class Pixel {
         }
     }
 
-    public void render(int x, int y){
-        Tessellator tessy = Tessellator.getInstance();
-        BufferBuilder buffer = tessy.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+    public void render(int x, int y, BufferBuilder buffer){
         buffer.pos(x + 1, y, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
         buffer.pos(x, y, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
         buffer.pos(x, y + 1, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
         buffer.pos(x + 1, y + 1, 0.0F).color(this.r, this.g, this.b, this.a).endVertex();
-        tessy.draw();
     }
 
     public Pixel copy(){

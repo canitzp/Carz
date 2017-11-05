@@ -2,9 +2,12 @@ package de.canitzp.carz.client;
 
 
 import de.canitzp.carz.util.PlayerUtil;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import org.lwjgl.opengl.GL11;
@@ -184,16 +187,20 @@ public class PixelMesh {
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessy = Tessellator.getInstance();
+        BufferBuilder buffer = tessy.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         Pixel[][] pixels1 = this.pixels;
         for (int row = 0; row < pixels1.length; row++) {
             Pixel[] pixels = pixels1[row];
             for (int column = 0; column < pixels.length; column++) {
                 Pixel pixel = pixels[column];
                 if(pixel.isValid()){
-                    pixel.render(x + column, y + row);
+                    pixel.render(x + column, y + row, buffer);
                 }
             }
         }
+        tessy.draw();
         GlStateManager.enableTexture2D();
         //RenderHelper.enableStandardItemLighting();
     }
