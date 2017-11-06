@@ -58,7 +58,6 @@ public class ItemPainter extends ItemBase<ItemPainter> {
             PixelMesh mesh = getPixelMeshFromStack(player.getHeldItem(hand));
             if (mesh != null) {
                 ((IPaintableBlock) state.getBlock()).clickedWithPainter(world, pos, player, state, hand, facing, mesh, hitX, hitY, hitZ);
-                world.notifyBlockUpdate(pos, state, state, 3);
                 return EnumActionResult.SUCCESS;
             }
             return this.onItemRightClick(world, player, hand).getType();
