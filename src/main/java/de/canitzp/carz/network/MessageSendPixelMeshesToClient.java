@@ -13,6 +13,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author canitzp
@@ -53,7 +56,9 @@ public class MessageSendPixelMeshesToClient implements IMessage, IMessageHandler
     @Override
     public MessageSendPixelMeshesToClient onMessage(MessageSendPixelMeshesToClient message, MessageContext ctx) {
         Minecraft.getMinecraft().addScheduledTask(() -> {
-            WorldEvents.clearLoaded();
+            //Remove PixelMeshes no longer used (remember: the are cached by the tile entities)
+            Collection<UUID> meshIDs = message.meshes.stream().map(PixelMesh::getId).collect(Collectors.toCollection(HashSet::new));
+            WorldEvents.MESHES_LOADED_INTO_WORLD.entrySet().removeIf(e -> !meshIDs.contains(e.getKey()));
             for (PixelMesh mesh : message.meshes) {
                 PixelMesh loadedMesh = WorldEvents.MESHES_LOADED_INTO_WORLD.get(mesh.getId());
                 if (loadedMesh != null) {

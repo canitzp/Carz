@@ -3,21 +3,15 @@ package de.canitzp.carz.tile;
 import de.canitzp.carz.client.PixelMesh;
 import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.events.WorldEvents;
-import de.canitzp.carz.util.BlockProps;
-import de.canitzp.carz.util.GuiUtil;
 import de.canitzp.carz.util.RenderUtil;
 import de.canitzp.carz.util.TileUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
 
 /**
  * @author canitzp
@@ -56,7 +50,7 @@ public class TileRoad extends TileRoadBase{
 
     @SideOnly(Side.CLIENT)
     public void render(RenderRoad renderRoad, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if(this.getMesh() != null){
+        if (this.getMesh() != null && this.getMesh().isLoaded()) {
             float f = 1/16F;
             GlStateManager.pushMatrix();
             RenderHelper.disableStandardItemLighting();
