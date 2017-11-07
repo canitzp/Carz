@@ -1,17 +1,12 @@
 package de.canitzp.carz.blocks;
 
 import de.canitzp.carz.api.EntityMoveableBase;
-import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.tile.TileBoostingRoad;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,11 +32,5 @@ public class BlockBoostingRoad extends BlockRoad<BlockBoostingRoad> {
             if (!(tile instanceof TileBoostingRoad)) return;
             ((TileBoostingRoad) tile).applyEntityWalk((EntityMoveableBase) entity);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerClientInit() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileBoostingRoad.class, new RenderRoad());
     }
 }

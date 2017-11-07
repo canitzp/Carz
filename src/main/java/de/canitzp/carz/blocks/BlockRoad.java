@@ -3,11 +3,12 @@ package de.canitzp.carz.blocks;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.api.IPaintableBlock;
 import de.canitzp.carz.client.PixelMesh;
-import de.canitzp.carz.client.renderer.RenderRoad;
 import de.canitzp.carz.items.ItemPainter;
 import de.canitzp.carz.tile.TileRoad;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
@@ -21,13 +22,19 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+
+import static de.canitzp.carz.util.BlockProps.FACING_MESH;
+import static de.canitzp.carz.util.BlockProps.MODEL;
 
 /**
  * @author canitzp
@@ -42,17 +49,31 @@ public class BlockRoad<T extends BlockRoad> extends BlockContainerBase<T> implem
         this.setRegistryName(new ResourceLocation(Carz.MODID, name));
     }
 
+    @Override
+    @Nonnull
+    protected BlockStateContainer createBlockState() {
+        return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{MODEL, FACING_MESH});
+    }
+
+    @Override
+    @Nonnull
+    public IBlockState getExtendedState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        state = super.getExtendedState(state, world, pos);
+        if (te instanceof TileRoad&&state instanceof IExtendedBlockState) {
+            if (((TileRoad) te).getMesh()!=null) {
+                state = ((IExtendedBlockState) state).withProperty(MODEL, ((TileRoad) te).getMesh());
+                state = ((IExtendedBlockState) state).withProperty(FACING_MESH, ((TileRoad) te).getMeshFacing());
+            }
+        }
+        return state;
+    }
+
     @SuppressWarnings("ConstantConditions")
     @SideOnly(Side.CLIENT)
     @Override
     public void registerClient() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(this.getRegistryName(), "inventory"));
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerClientInit() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileRoad.class, new RenderRoad());
     }
 
     @Override

@@ -7,6 +7,7 @@ import de.canitzp.carz.client.models.ModelBus;
 import de.canitzp.carz.client.models.ModelDeliveryVan;
 import de.canitzp.carz.client.models.ModelNakedBus;
 import de.canitzp.carz.client.models.ModelSpeedster;
+import de.canitzp.carz.client.models.road.ModelLoaderRoad;
 import de.canitzp.carz.client.renderer.RenderCar;
 import de.canitzp.carz.client.renderer.RenderInvisibleCarPart;
 import de.canitzp.carz.entity.*;
@@ -213,6 +214,7 @@ public class Registry {
         MODEL_DELIVERY_VAN = new ModelDeliveryVan();
         MODEL_SPEEDSTER = new ModelSpeedster();
 
+        ModelLoaderRegistry.registerLoader(new ModelLoaderRoad());
         ModelLoaderRegistry.registerLoader(new CustomModelLoader());
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             block.registerClient();

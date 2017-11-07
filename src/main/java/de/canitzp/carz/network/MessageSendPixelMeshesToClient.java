@@ -1,6 +1,7 @@
 package de.canitzp.carz.network;
 
 import de.canitzp.carz.client.PixelMesh;
+import de.canitzp.carz.client.models.road.BakedRoadModel;
 import de.canitzp.carz.events.WorldEvents;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -59,6 +60,8 @@ public class MessageSendPixelMeshesToClient implements IMessage, IMessageHandler
             //Remove PixelMeshes no longer used (remember: the are cached by the tile entities)
             Collection<UUID> meshIDs = message.meshes.stream().map(PixelMesh::getId).collect(Collectors.toCollection(HashSet::new));
             WorldEvents.MESHES_LOADED_INTO_WORLD.entrySet().removeIf(e -> !meshIDs.contains(e.getKey()));
+            // Remove any baked models for this mesh
+            BakedRoadModel.MODEL_CACHE.asMap().entrySet().removeIf((v)->v.getKey().mesh!=null);
             for (PixelMesh mesh : message.meshes) {
                 PixelMesh loadedMesh = WorldEvents.MESHES_LOADED_INTO_WORLD.get(mesh.getId());
                 if (loadedMesh != null) {
