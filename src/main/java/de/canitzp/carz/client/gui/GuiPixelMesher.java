@@ -251,7 +251,7 @@ public class GuiPixelMesher extends GuiScreen {
         int column = (mouseX - this.guiLeft) / 9 - 1;
         int row = (mouseY - this.guiTop) / 9 - 1;
         if(column >= 0 && row >= 0){
-            this.currentMesh.getPixels()[row][column] = pixel;
+            this.currentMesh.setPixel(row, column, pixel);
         }
     }
 

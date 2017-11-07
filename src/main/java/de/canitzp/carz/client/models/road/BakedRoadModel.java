@@ -169,12 +169,12 @@ public class BakedRoadModel implements IBakedModel {
         return base.getItemCameraTransforms();
     }
 
-    private static class RoadCacheKey {
+    public static class RoadCacheKey {
         @Nullable
-        final UUID mesh;
+        public final UUID mesh;
         @Nullable
-        final EnumFacing dir;
-        final String base;
+        public final EnumFacing dir;
+        public final String base;
         // For facing+height of slopes
         final int additional;
 
