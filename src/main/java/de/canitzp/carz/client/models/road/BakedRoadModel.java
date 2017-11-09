@@ -98,6 +98,12 @@ public class BakedRoadModel implements IBakedModel {
                         tmp.y = 0.001F;
                         tmp.z = 0;
                         transform.translate(tmp);
+                        tmp.set(.5F, 0, .5F);
+                        transform.translate(tmp);
+                        tmp.set(1, 1, -1);
+                        transform.scale(tmp);
+                        tmp.set(-.5F, 0, -.5F);
+                        transform.translate(tmp);
                         Pixel[][] pixels = mesh.getPixels();
                         Vector4f v1 = new Vector4f(0, 0, 0, 1);
                         Vector4f v2 = new Vector4f(0, 0, 0, 1);
@@ -117,10 +123,10 @@ public class BakedRoadModel implements IBakedModel {
                                     Matrix4f.transform(transform, v3, v3);
                                     Matrix4f.transform(transform, v4, v4);
                                     ret.add(QuadUtil.createQuad(format,
-                                            v1.x, v1.y, v1.z,
                                             v2.x, v2.y, v2.z,
-                                            v3.x, v3.y, v3.z,
+                                            v1.x, v1.y, v1.z,
                                             v4.x, v4.y, v4.z,
+                                            v3.x, v3.y, v3.z,
                                             p.getR() / 255F, p.getG() / 255F, p.getB() / 255F));
                                 }
                             }
