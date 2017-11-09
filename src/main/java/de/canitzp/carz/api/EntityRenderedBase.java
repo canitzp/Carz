@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -96,17 +97,4 @@ public abstract class EntityRenderedBase extends Entity {
                  * 16; // cause the distance double is in micro blocks
     }
 
-    /**
-     * This is a special method where a car is able to manipulate the light level of the world.
-     * The background behind this is done via ASM {@link de.canitzp.carz.asm.CarzEntityLightTransformer}.
-     * The value the car does return here is recognized server and client side and should be zero,
-     * if no light is send out by the car at the moment.
-     *
-     * @param world The world of the car
-     * @param pos The position of the light that gets manipulated
-     * @return The new light level value at the given position. Range: 0-15 Default: 0
-     */
-    public int getLightAt(World world, BlockPos pos){
-        return 0;
-    }
 }
