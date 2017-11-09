@@ -90,16 +90,15 @@ public class Registry {
     /**
      * Blocks:
      */
-    public static BlockFuelStation blockFuelStation;
-    public static BlockRoad blockRoad;
-    public static BlockBoostingRoad blockBoostingRoad;
-    public static BlockRoadSlope blockRoadSlope;
-    public static BlockRoadSign blockRoadSign;
-    public static BlockPlantFermenter blockPlantFermenter;
-    public static BlockRubberLog blockLog;
-    public static BlockRubberLeaves blockRubberLeaves;
-    public static BlockDelineator blockDelineator;
-    public static BlockRoadBarrier blockRoadBarrier;
+    public static BlockFuelStation blockFuelStation = new BlockFuelStation().register();
+    public static BlockRoad blockRoad = new BlockRoad<>("road").register();
+    public static BlockBoostingRoad blockBoostingRoad = new BlockBoostingRoad().register();
+    public static BlockRoadSlope blockRoadSlope = new BlockRoadSlope().register();
+    public static BlockRoadSign blockRoadSign = new BlockRoadSign().register();
+    public static BlockPlantFermenter blockPlantFermenter = new BlockPlantFermenter().register();
+    public static BlockRubberLog blockLog = new BlockRubberLog().register();
+    public static BlockRubberLeaves blockRubberLeaves = new BlockRubberLeaves().register();
+    public static BlockStreetLantern blockStreetLantern = new BlockStreetLantern().register();
 
     /**
      * Items:
@@ -152,20 +151,10 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     public static KeyBinding keyStartEngine;
 
-
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        blockFuelStation = new BlockFuelStation().register();
-        blockRoad = new BlockRoad<>("road").register();
-        blockBoostingRoad = new BlockBoostingRoad().register();
-        blockRoadSlope = new BlockRoadSlope().register();
-        blockRoadSign = new BlockRoadSign().register();
-        blockPlantFermenter = new BlockPlantFermenter().register();
-        blockLog = new BlockRubberLog().register();
-        blockRubberLeaves = new BlockRubberLeaves().register();
-        blockDelineator = new BlockDelineator().register();
-        blockRoadBarrier = new BlockRoadBarrier().register();
         EnumBasicBlocks.registerBlocks();
+        EnumRotatableBasicBlocks.registerBlocks();
         IForgeRegistry<Block> reg = event.getRegistry();
         for (BlockBase block : BLOCKS_FOR_REGISTERING) {
             Carz.LOG.info("Registering Block: " + block.getRegistryName());

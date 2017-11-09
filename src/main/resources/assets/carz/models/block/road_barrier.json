@@ -1,7 +1,8 @@
 {
 	"__comment": "canitzp 05.11.2017",
 	"textures": {
-		"atlas": "carz:blocks/road_barrier"
+		"atlas": "carz:blocks/road_barrier",
+		"particle": "carz:blocks/road_barrier"
 	},
 	"elements": [ 	 
 		{

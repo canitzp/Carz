@@ -9,21 +9,26 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
  * @author canitzp
  */
-public class BlockDelineator extends BlockBase<BlockDelineator> {
+public class BlockBaseRotateable<T extends BlockBaseRotateable> extends BlockBase<T> {
 
-    public BlockDelineator() {
-        super(Material.CIRCUITS, MapColor.WHITE_STAINED_HARDENED_CLAY);
-        this.setRegistryName(new ResourceLocation(Carz.MODID, "delineator_german"));
-
+    public BlockBaseRotateable(Material material, MapColor mapColor, String name) {
+        super(material, mapColor);
+        this.setRegistryName(new ResourceLocation(Carz.MODID, name));
         this.setDefaultState(this.blockState.getBaseState().withProperty(BlockProps.FACING, EnumFacing.NORTH));
+    }
+
+    public BlockBaseRotateable(Material material, String name) {
+        this(material, material.getMaterialMapColor(), name);
+    }
+
+    protected EnumFacing transformDirection(EnumFacing direction){
+        return direction;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class BlockDelineator extends BlockBase<BlockDelineator> {
 
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(BlockProps.FACING, placer.getHorizontalFacing());
+        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(BlockProps.FACING, this.transformDirection(placer.getHorizontalFacing()));
     }
 
     @Override
@@ -56,16 +61,4 @@ public class BlockDelineator extends BlockBase<BlockDelineator> {
         return false;
     }
 
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        switch (state.getValue(BlockProps.FACING)){
-            case NORTH: {
-                return new AxisAlignedBB(13/16D, 0D, 6/16D, 1D, 1D, 9/16D);
-            }
-            case SOUTH: {
-                return new AxisAlignedBB(0D, 0D, 5/16D, 3/16D, 1D, 8/16D);
-            }
-        }
-        return FULL_BLOCK_AABB;
-    }
 }

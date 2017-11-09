@@ -3,12 +3,14 @@ package de.canitzp.carz.api;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.inventory.ContainerCar;
 import de.canitzp.carz.network.GuiHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -39,6 +41,12 @@ public abstract class EntityRenderedBase extends Entity {
 
     public EntityRenderedBase(World worldIn) {
         super(worldIn);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean isInRangeToRenderDist(double distance) {
+        return distance < getRenderDistance();
     }
 
     /**
@@ -77,6 +85,28 @@ public abstract class EntityRenderedBase extends Entity {
      */
     public float getRotationRoll(){
         //TODO @canitzp
+        return 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public double getRenderDistance(){
+        return 16 * // one block
+                16 * // one chunk
+                (Minecraft.getMinecraft().gameSettings.fancyGraphics ? 16 : 8) // we render it for 16 chunks if fancy grafics are active
+                 * 16; // cause the distance double is in micro blocks
+    }
+
+    /**
+     * This is a special method where a car is able to manipulate the light level of the world.
+     * The background behind this is done via ASM {@link de.canitzp.carz.asm.CarzEntityLightTransformer}.
+     * The value the car does return here is recognized server and client side and should be zero,
+     * if no light is send out by the car at the moment.
+     *
+     * @param world The world of the car
+     * @param pos The position of the light that gets manipulated
+     * @return The new light level value at the given position. Range: 0-15 Default: 0
+     */
+    public int getLightAt(World world, BlockPos pos){
         return 0;
     }
 }

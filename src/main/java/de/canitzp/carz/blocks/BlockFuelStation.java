@@ -49,12 +49,6 @@ public class BlockFuelStation extends BlockContainerBase<BlockFuelStation> {
         this.setDefaultState(this.blockState.getBaseState().withProperty(BOTTOM, true).withProperty(FACING, EnumFacing.NORTH));
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerClient() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(new ResourceLocation(this.getRegistryName().toString()), "inventory"));
-    }
-
     @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
