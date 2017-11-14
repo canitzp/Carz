@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "carz:street_lantern_straight",
+    "textures": {
+      "particle": "carz:blocks/street_lantern_straight"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "bottom": {
+      "false": {
+        "model": "carz:empty"
+      },
+      "true": {}
+    }
+  }
+}

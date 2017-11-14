@@ -61,4 +61,8 @@ public class BlockBaseRotateable<T extends BlockBaseRotateable> extends BlockBas
         return false;
     }
 
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 }
