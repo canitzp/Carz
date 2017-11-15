@@ -5,11 +5,20 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,10 +52,75 @@ public enum EnumRotatableBasicBlocks {
             return direction.getOpposite();
         }
     },
-    ROAD_BARIER_BUILDING_SITE_ROUND(Material.CIRCUITS, MapColor.ORANGE_STAINED_HARDENED_CLAY),
-    ROAD_BARRIER_BUILDING_SITE_WHITE(Material.CIRCUITS, MapColor.WHITE_STAINED_HARDENED_CLAY),
-    ROAD_BARRIER_BUILDING_SITE_RED(Material.CIRCUITS, MapColor.RED),
-    HYDRANT(Material.IRON, MapColor.RED),
+    ROAD_BARRIER_BUILDING_SITE_ROUND(Material.CIRCUITS, MapColor.ORANGE_STAINED_HARDENED_CLAY){
+        @Nonnull
+        @Override
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+            return new AxisAlignedBB(5/16F, 0, 5/16F, 11/16F, 11/16F, 11/16F);
+        }
+    },
+    ROAD_BARRIER_BUILDING_SITE_WHITE(Material.CIRCUITS, MapColor.WHITE_STAINED_HARDENED_CLAY){
+        @Nonnull
+        @Override
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+            if(state.getValue(BlockProps.FACING) == EnumFacing.NORTH || state.getValue(BlockProps.FACING) == EnumFacing.SOUTH){
+                return new AxisAlignedBB(0, 0, 4/16F, 1, 11/16F, 12/16F);
+            } else {
+                return new AxisAlignedBB(4/16F, 0, 0, 12/16F, 11/16F, 1);
+            }
+        }
+    },
+    ROAD_BARRIER_BUILDING_SITE_RED(Material.CIRCUITS, MapColor.RED){
+        @Nonnull
+        @Override
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+            if(state.getValue(BlockProps.FACING) == EnumFacing.NORTH || state.getValue(BlockProps.FACING) == EnumFacing.SOUTH){
+                return new AxisAlignedBB(0, 0, 4/16F, 1, 11/16F, 12/16F);
+            } else {
+                return new AxisAlignedBB(4/16F, 0, 0, 12/16F, 11/16F, 1);
+            }
+        }
+    },
+    HYDRANT(Material.IRON, MapColor.RED){
+        @Nonnull
+        @Override
+        public EnumFacing transformDirection(EnumFacing direction) {
+            return direction.getOpposite();
+        }
+        @Nonnull
+        @Override
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+            return new AxisAlignedBB(5/16F, 0, 5/16F, 11/16F, 12/16F, 11/16F);
+        }
+        @Override
+        public boolean onClicked(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+            ItemStack held = player.getHeldItem(hand);
+            if (!held.isEmpty() && held.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                if (!world.isRemote) {
+                    ItemStack heldCopy = held.copy();
+                    heldCopy.setCount(1);
+                    IFluidHandlerItem handler = heldCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                    if (handler != null) {
+                        FluidStack fluidStack = new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
+                        if (handler.fill(fluidStack, false) == Fluid.BUCKET_VOLUME) {
+                            handler.fill(fluidStack, true);
+                            ItemStack stack = handler.getContainer();
+                            held.shrink(1);
+                            if(held.isEmpty()){
+                                player.setHeldItem(hand, stack);
+                            } else {
+                                if(!player.inventory.addItemStackToInventory(stack)){
+                                    world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY() + 1, pos.getZ(), stack));
+                                }
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+    },
     ;
 
     private Material material;
@@ -77,6 +151,10 @@ public enum EnumRotatableBasicBlocks {
         return Collections.singletonList(this.getBoundingBox(state, world, pos));
     }
 
+    public boolean onClicked(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+        return false;
+    }
+
     public static void registerBlocks(){
         for(EnumRotatableBasicBlocks base : values()){
             base.block = new BlockBaseRotateable(base.material, base.color, base.name().toLowerCase()){
@@ -95,6 +173,11 @@ public enum EnumRotatableBasicBlocks {
                     for(AxisAlignedBB hitBox : base.getHitBoxes(state, worldIn, pos, entityBox, collidingBoxes, entityIn, p_185477_7_)){
                         addCollisionBoxToList(pos, entityBox, collidingBoxes, hitBox);
                     }
+                }
+
+                @Override
+                public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+                    return base.onClicked(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
                 }
             };
             base.block.register();

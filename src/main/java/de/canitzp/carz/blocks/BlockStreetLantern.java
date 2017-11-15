@@ -7,12 +7,19 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+
+import java.util.Random;
 
 import static de.canitzp.carz.util.BlockProps.BOTTOM;
 
@@ -20,6 +27,8 @@ import static de.canitzp.carz.util.BlockProps.BOTTOM;
  * @author canitzp
  */
 public class BlockStreetLantern extends BlockBase<BlockStreetLantern> {
+
+    private static final AxisAlignedBB BOUNDS = new AxisAlignedBB(6/16F, 0, 6/16F, 10/16F, 1, 10/16F);
 
     public BlockStreetLantern() {
         super(Material.IRON);
@@ -74,5 +83,28 @@ public class BlockStreetLantern extends BlockBase<BlockStreetLantern> {
     @Override
     public int getLightValue(IBlockState state) {
         return !state.getValue(BOTTOM) ? 15 : 0;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
+        if(!state.getValue(BOTTOM)){
+            world.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + (8/16F), pos.getY() + (14/16F), pos.getZ() + (8/16F), 0, 0, 0);
+        }
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return BOUNDS;
     }
 }
