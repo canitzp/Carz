@@ -6,7 +6,6 @@ import de.canitzp.carz.api.EntityMultiSeatsBase;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.IColorableCar;
 import de.canitzp.carz.api.IWheelClampable;
-import de.canitzp.carz.items.ItemPainter;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,29 +41,29 @@ public class EntityDeliveryVan extends EntityMultiSeatsBase implements IWheelCla
         builder.addInteractOnlyPart(-0.4f, 0.3f, -1.6f, 0.7f, 0.5f);
         builder.addInteractOnlyPart(0.4f, 0.3f, -1.6f, 0.7f, 0.5f);
         //Floor
-        builder.addCollidingPart(0.35f, 0.3f, 1.05f, 0.7f, 0.4f);
-        builder.addCollidingPart(-0.35f, 0.3f, 1.05f, 0.7f, 0.4f);
-        builder.addCollidingPart(0.35f, 0.3f, 0.35f, 0.7f, 0.4f);
-        builder.addCollidingPart(-0.35f, 0.3f, 0.35f, 0.7f, 0.4f);
-        builder.addCollidingPart(0.35f, 0.3f, -0.35f, 0.7f, 0.4f);
-        builder.addCollidingPart(-0.35f, 0.3f, -0.35f, 0.7f, 0.4f);
-        builder.addCollidingPart(0.35f, 0.3f, -1.05f, 0.7f, 0.4f);
-        builder.addCollidingPart(-0.35f, 0.3f, -1.05f, 0.7f, 0.4f);
+        builder.addFloor(0.35f, 0.0f, 1.05f, 0.7f, 0.4f);
+        builder.addFloor(-0.35f, 0.0f, 1.05f, 0.7f, 0.4f);
+        builder.addFloor(0.35f, 0.0f, 0.35f, 0.7f, 0.4f);
+        builder.addFloor(-0.35f, 0.0f, 0.35f, 0.7f, 0.4f);
+        builder.addFloor(0.35f, 0.0f, -0.35f, 0.7f, 0.4f);
+        builder.addFloor(-0.35f, 0.0f, -0.35f, 0.7f, 0.4f);
+        builder.addFloor(0.35f, 0.0f, -1.05f, 0.7f, 0.4f);
+        builder.addFloor(-0.35f, 0.0f, -1.05f, 0.7f, 0.4f);
 
         //Motor block
-        builder.addCollidingPart(-0.65f, 0.3f, 1.55f, 0.4f, 1f);
-        builder.addCollidingPart(0, 0.3f, 1.55f, 0.4f, 1f);
-        builder.addCollidingPart(+0.65f, 0.3f, 1.55f, 0.4f, 1f);
+        builder.addCollidingPart(-0.65f, 0.0f, 1.55f, 0.4f, 1f);
+        builder.addCollidingPart(0, 0.0f, 1.55f, 0.4f, 1f);
+        builder.addCollidingPart(+0.65f, 0.0f, 1.55f, 0.4f, 1f);
 
         //Seperator
-        builder.addCollidingPart(-0.5f, 0.5f, 0.25f, 0.1f, 1.6f);
-        builder.addCollidingPart(0f, 0.5f, 0.25f, 0.1f, 1.6f);
-        builder.addCollidingPart(+0.5f, 0.5f, 0.25f, 0.1f, 1.6f);
+        builder.addCollidingPart(-0.5f, 0.2f, 0.25f, 0.1f, 1.6f);
+        builder.addCollidingPart(0f, 0.2f, 0.25f, 0.1f, 1.6f);
+        builder.addCollidingPart(+0.5f, 0.2f, 0.25f, 0.1f, 1.6f);
 
         //Walls
         for (float z = -0.14f; z > -1.9; z -= 0.4) {
-            builder.addPart(-0.94f, 0.5f, z, 0.1f, 2.3f);
-            builder.addPart(+0.94f, 0.5f, z, 0.1f, 2.3f);
+            builder.addPart(-0.94f, 0.2f, z, 0.1f, 2.3f);
+            builder.addPart(+0.94f, 0.2f, z, 0.1f, 2.3f);
         }
 
 
