@@ -42,7 +42,7 @@ public class EntityBus extends EntityMultiSeatsBase {
         //Under**fucking**ground
         for (int z = -3; z <= 3; ++z)
             for (int x = -1; x <= 1; ++x)
-                builder.addCollidingPart(x, 0, z, 1, 0.2f);
+                builder.addFloor(x, 0, z, 1, 0.2f);
 
         float wh = 1.6f;
         float wo = 0.1f; //wall offset Y
@@ -96,6 +96,8 @@ public class EntityBus extends EntityMultiSeatsBase {
 
         this.steeringMax = 2;
         this.steeringMod = 0.07;
+
+        this.zPitchOffset = 1.3;
     }
 
     @Override

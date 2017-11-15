@@ -33,6 +33,8 @@ public class EntityInvisibleCarPart extends Entity {
      */
     public boolean colliding = true;
 
+    public boolean isFloor = false;
+
     /**
      * If true, other entities are able to stand on this part and will be moved along
      */

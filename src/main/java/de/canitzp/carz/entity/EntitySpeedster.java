@@ -1,15 +1,11 @@
 package de.canitzp.carz.entity;
 
-import com.google.common.collect.Lists;
 import de.canitzp.carz.Carz;
 import de.canitzp.carz.Registry;
 import de.canitzp.carz.api.EntityMultiSeatsBase;
 import de.canitzp.carz.api.EntityPartedBase;
 import de.canitzp.carz.api.IColorableCar;
 import de.canitzp.carz.api.IWheelClampable;
-import de.canitzp.carz.client.PixelMesh;
-import de.canitzp.carz.events.WorldEvents;
-import de.canitzp.carz.items.ItemPainter;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,11 +24,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -78,14 +72,14 @@ public class EntitySpeedster extends EntityMultiSeatsBase implements IWheelClamp
         builder.addInteractOnlyPart(0.3f, 0.3f, -0.4f, 0.6f, 1f);
         builder.addInteractOnlyPart(-0.3f, 0.3f, -0.4f, 0.6f, 1f);
 
-        builder.addCollidingPart(0.35f, 0.3f, 0.35f, 0.7f, 0.4f);
-        builder.addCollidingPart(-0.35f, 0.3f, 0.35f, 0.7f, 0.4f);
-        builder.addCollidingPart(0.35f, 0.3f, -0.35f, 0.7f, 0.4f);
-        builder.addCollidingPart(-0.35f, 0.3f, -0.35f, 0.7f, 0.4f);
+        builder.addFloor(0.35f, 0.0f, 0.35f, 0.7f, 0.4f);
+        builder.addFloor(-0.35f, 0.0f, 0.35f, 0.7f, 0.4f);
+        builder.addFloor(0.35f, 0.0f, -0.35f, 0.7f, 0.4f);
+        builder.addFloor(-0.35f, 0.0f, -0.35f, 0.7f, 0.4f);
 
-        builder.addCollidingPart(-0.35f, 0.9f, 0.6f, 0.2f, 1f);
-        builder.addCollidingPart(0f, 0.9f, 0.6f, 0.2f, 1f);
-        builder.addCollidingPart(0.35f, 0.9f, 0.6f, 0.2f, 1f);
+        builder.addCollidingPart(-0.35f, 0.6f, 0.6f, 0.2f, 1f);
+        builder.addCollidingPart(0f, 0.6f, 0.6f, 0.2f, 1f);
+        builder.addCollidingPart(0.35f, 0.6f, 0.6f, 0.2f, 1f);
 
         partData = builder.build();
     }
@@ -97,6 +91,8 @@ public class EntitySpeedster extends EntityMultiSeatsBase implements IWheelClamp
 
         this.setDriverSeat(-0.3, 0.25D, -0.3);
         this.addSeat(-0.2, 0.25D, 0.3);
+
+        this.zPitchOffset = 0.2;
     }
 
     @Override

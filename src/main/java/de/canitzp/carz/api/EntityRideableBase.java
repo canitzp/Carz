@@ -133,7 +133,7 @@ public abstract class EntityRideableBase extends EntityMoveableBase {
      * @return the index of the seat, or -1 if said entity is not an passenger
      */
     protected int getSeatByPassenger(Entity passenger) {
-        if (this.getPassengers().size() > 1) {
+        if (!this.getPassengers().isEmpty()) {
             return this.getPassengers().indexOf(passenger);
         }
         return -1;
