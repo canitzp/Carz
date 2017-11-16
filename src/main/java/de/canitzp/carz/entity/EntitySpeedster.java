@@ -22,6 +22,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -178,7 +179,8 @@ public class EntitySpeedster extends EntityMultiSeatsBase implements IWheelClamp
             if(stack.getItem() instanceof ItemDye){
                 if (!player.world.isRemote) {
                     EnumDyeColor color = EnumDyeColor.byDyeDamage(stack.getMetadata());
-                    this.dataManager.set(COLOR, color.getColorValue());
+                    int colorRGB = ReflectionHelper.getPrivateValue(EnumDyeColor.class, color, "field_193351_w", "colorValue");
+                    this.dataManager.set(COLOR, colorRGB);
                     if (!player.isCreative()) {
                         stack.shrink(1);
                     }

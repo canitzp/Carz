@@ -263,7 +263,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
 
 
             Set<AxisAlignedBB> worldCollisionBoxes = this.getWorldCollisionBoxes(this, x, y, z);
-            AxisAlignedBB[] originalBBs = new AxisAlignedBB[this.collidingParts.length + 1];
+            AxisAlignedBB[] originalBBs = new AxisAlignedBB[1]; //new AxisAlignedBB[this.collidingParts.length + 1];
 
             double temp;
 
@@ -340,7 +340,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                 double noStepHeightX = x;
                 double noStepHeightY = y;
                 double NoStepHeightZ = z;
-                AxisAlignedBB[] noStepHeightBBs = new AxisAlignedBB[this.collidingParts.length + 1];
+                AxisAlignedBB[] noStepHeightBBs = new AxisAlignedBB[1]; //new AxisAlignedBB[this.collidingParts.length + 1];
                 for (int i = 0; i < noStepHeightBBs.length; ++i) {
                     Entity e = i == 0 ? this : this.collidingParts[i - 1];
                     noStepHeightBBs[i] = e.getEntityBoundingBox();
@@ -500,7 +500,8 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     }
                 }
             }
-            if (yFront > 0 && yBack == 0) {
+            //TODO BTM preparation
+            /*if (yFront > 0 && yBack == 0) {
                 this.rotationPitch = Math.max(-14, this.rotationPitch - 0.5f);
             } else if (yBack > 0 && yFront == 0) {
                 this.rotationPitch = Math.min(14, this.rotationPitch + 0.5f);
@@ -512,7 +513,7 @@ public abstract class EntityPartedBase extends EntityRenderedBase {
                     else
                         this.rotationPitch = 0;
                 }
-            }
+            }*/
 
             //On impact: reduce
             if (x != origX && z == origZ) {
