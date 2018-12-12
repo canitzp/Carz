@@ -32,7 +32,7 @@ public class BlockRubberLog extends BlockLog {
     public BlockRubberLog() {
         this.setDefaultState(this.blockState.getBaseState().withProperty(RUBBER, false).withProperty(FACING, EnumFacing.NORTH).withProperty(LOG_AXIS, EnumAxis.NONE).withProperty(CURRENT_RUBBER, false));
         this.setRegistryName(Carz.MODID, "block_log");
-        this.setUnlocalizedName(this.getRegistryName().toString());
+        this.setTranslationKey(this.getRegistryName().toString());
         this.setCreativeTab(Registry.TAB_GENERAL);
         this.setTickRandomly(true);
     }
@@ -48,7 +48,7 @@ public class BlockRubberLog extends BlockLog {
         boolean isRubber = ((meta >> 2) & 1) == 1;
         if(isRubber){
             boolean rubbery = (meta >> 3) == 1;
-            return this.getDefaultState().withProperty(RUBBER, true).withProperty(CURRENT_RUBBER, rubbery).withProperty(FACING, EnumFacing.getHorizontal(axisFacing)).withProperty(LOG_AXIS, EnumAxis.Y);
+            return this.getDefaultState().withProperty(RUBBER, true).withProperty(CURRENT_RUBBER, rubbery).withProperty(FACING, EnumFacing.byHorizontalIndex(axisFacing)).withProperty(LOG_AXIS, EnumAxis.Y);
         } else {
             return this.getDefaultState().withProperty(RUBBER, false).withProperty(LOG_AXIS, EnumAxis.values()[axisFacing]);
         }

@@ -121,7 +121,7 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
     }
 
     @Override
-    public void onBlockDestroyedByPlayer(World worldIn, BlockPos pos, IBlockState state) {
+    public void onPlayerDestroy(World worldIn, BlockPos pos, IBlockState state) {
         if (!worldIn.isRemote) {
             if (state.getValue(BOTTOM)) {
                 worldIn.destroyBlock(pos.up(), false);
@@ -132,8 +132,8 @@ public class BlockRoadSign extends BlockContainerBase<BlockRoadSign> implements 
     }
 
     @Override
-    public void onBlockDestroyedByExplosion(World worldIn, BlockPos pos, Explosion explosionIn) {
-        this.onBlockDestroyedByPlayer(worldIn, pos, worldIn.getBlockState(pos));
+    public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
+        this.onPlayerDestroy(worldIn, pos, worldIn.getBlockState(pos));
     }
 
     @Override

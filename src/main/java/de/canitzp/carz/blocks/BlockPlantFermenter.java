@@ -54,7 +54,7 @@ public class BlockPlantFermenter extends BlockContainerBase<BlockPlantFermenter>
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return super.getStateFromMeta(meta).withProperty(FACING, EnumFacing.getHorizontal(meta));
+        return super.getStateFromMeta(meta).withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
     }
 
     @Override

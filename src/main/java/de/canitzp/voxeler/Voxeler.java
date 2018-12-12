@@ -15,7 +15,7 @@ import java.io.InputStream;
 public class Voxeler {
 
     public static VoxelBase loadModelFromFile(ResourceLocation location){
-        String path = "/assets/" + location.getResourceDomain() + "/" + location.getResourcePath() + ".vox";
+        String path = "/assets/" + location.getNamespace() + "/" + location.getPath() + ".vox";
         try {
             return loadModelFromFile(Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream());
         } catch (IOException e) {

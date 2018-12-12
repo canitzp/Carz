@@ -13,7 +13,7 @@ public class BlockFluid extends BlockFluidClassic {
     public BlockFluid(Fluid fluid) {
         super(fluid, Material.WATER);
         this.setRegistryName(Carz.MODID, fluidName.toLowerCase());
-        this.setUnlocalizedName(this.getRegistryName().toString());
+        this.setTranslationKey(this.getRegistryName().toString());
     }
 
 

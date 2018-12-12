@@ -33,7 +33,7 @@ public class BlockBaseRotateable<T extends BlockBaseRotateable> extends BlockBas
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return super.getStateFromMeta(meta).withProperty(BlockProps.FACING, EnumFacing.getHorizontal(meta));
+        return super.getStateFromMeta(meta).withProperty(BlockProps.FACING, EnumFacing.byHorizontalIndex(meta));
     }
 
     @Override

@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'de.undercouch:gradle-download-task:3.3.0'
+        classpath 'de.undercouch:gradle-download-task:3.4.3'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -44,6 +44,9 @@ repositories {
     maven { // Mirage
         url = 'https://repo.elytradev.com/'
     }
+    maven {
+        url = 'https://jitpack.io'
+    }
 }
 
 dependencies {
@@ -51,12 +54,12 @@ dependencies {
     deobfCompile "de.ellpeck.actuallyadditions:ActuallyAdditions:${project.actadd_version}"
     deobfCompile "org.cyclops.commoncapabilities:CommonCapabilities:${project.cc_version}"
     deobfCompile "de.canitzp.tumat:TUMAT:${project.tumat_version}"
-    deobfCompile "li.cil.oc:OpenComputers:${project.oc_version}:api"
-    compile 'com.elytradev:mirage:2.0.3-rc2-SNAPSHOT'
-    download {
-        src "https://github.com/MightyPirates/OpenComputers/releases/download/v1.7.0/OpenComputers-${project.oc_version}.jar"
-        dest "./${project.run_dir}/mods/OpenComputers-${project.oc_version}.jar"
-    }
+    deobfProvided "li.cil.oc:OpenComputers:${project.oc_version}:api"
+    //compile 'com.elytradev:mirage:2.0.3-rc2-SNAPSHOT'
+
+
+    /** Runtime Mods **/
+    runtime 'com.github.MightyPirates:OpenComputers:v1.7.3'
 }
 
 processResources {

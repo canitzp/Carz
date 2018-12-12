@@ -25,7 +25,6 @@ public class ItemRoadConfigurator extends ItemBase<ItemRoadConfigurator> {
     @SuppressWarnings("ConstantConditions")
     public ItemRoadConfigurator() {
         this.setRegistryName(Carz.MODID, "road_configurator");
-        this.setUnlocalizedName(this.getRegistryName().toString());
     }
 
     @Nonnull

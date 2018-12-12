@@ -98,11 +98,11 @@ public class ItemLicense extends ItemBaseDefault<ItemLicense> {
 
     @Nonnull
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
+    public String getTranslationKey(ItemStack stack) {
         if(stack.hasTagCompound()){
             return "item." + Carz.MODID + ":license_" + Type.values()[stack.getTagCompound().getInteger("Type")].name().toLowerCase();
         }
-        return super.getUnlocalizedName(stack);
+        return super.getTranslationKey(stack);
     }
 
     @SideOnly(Side.CLIENT)

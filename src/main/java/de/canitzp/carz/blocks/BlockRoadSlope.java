@@ -58,7 +58,7 @@ public class BlockRoadSlope extends BlockRoad<BlockRoadSlope>{
     public IBlockState getStateFromMeta(int meta) {
         int slopeNumber = (meta >> 2) & 3; // 1110 => 0011
         int facing = meta & 3; // 1110 => 0010
-        return super.getStateFromMeta(meta).withProperty(SLOPE_NUMBER, slopeNumber).withProperty(FACING, EnumFacing.getHorizontal(facing));
+        return super.getStateFromMeta(meta).withProperty(SLOPE_NUMBER, slopeNumber).withProperty(FACING, EnumFacing.byHorizontalIndex(facing));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class BlockRoadSlope extends BlockRoad<BlockRoadSlope>{
     }
 
     @Override
-    public void onBlockDestroyedByPlayer(World world, BlockPos pos, IBlockState state) {
+    public void onPlayerDestroy(World world, BlockPos pos, IBlockState state) {
         if (!world.isRemote) {
             int slopeNumber = state.getValue(SLOPE_NUMBER);
             EnumFacing baseFacing = state.getValue(FACING);
@@ -105,8 +105,8 @@ public class BlockRoadSlope extends BlockRoad<BlockRoadSlope>{
     }
 
     @Override
-    public void onBlockDestroyedByExplosion(World worldIn, BlockPos pos, Explosion explosionIn) {
-        this.onBlockDestroyedByPlayer(worldIn, pos, worldIn.getBlockState(pos));
+    public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
+        this.onPlayerDestroy(worldIn, pos, worldIn.getBlockState(pos));
     }
 
     @Override

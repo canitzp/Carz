@@ -35,7 +35,7 @@ public class BlockRubberLeaves extends BlockLeaves implements IColoredBlock{
         this.setDefaultState(this.blockState.getBaseState().withProperty(CHECK_DECAY, true).withProperty(DECAYABLE, true));
         this.setCreativeTab(Registry.TAB_GENERAL);
         this.setRegistryName(Carz.MODID, "rubber_leaves");
-        this.setUnlocalizedName(this.getRegistryName().toString());
+        this.setTranslationKey(this.getRegistryName().toString());
     }
 
     public BlockRubberLeaves register(){
@@ -70,8 +70,8 @@ public class BlockRubberLeaves extends BlockLeaves implements IColoredBlock{
 
     @SideOnly(Side.CLIENT)
     @Override
-    public BlockRenderLayer getBlockLayer() {
-        return Blocks.LEAVES.getBlockLayer();
+    public BlockRenderLayer getRenderLayer() {
+        return Blocks.LEAVES.getRenderLayer();
     }
 
     @SideOnly(Side.CLIENT)

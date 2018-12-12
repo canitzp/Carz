@@ -76,7 +76,7 @@ public class Registry {
      */
     public static final CreativeTabs TAB_GENERAL = new CreativeTabs(Carz.MODID) {
         @Override
-        public ItemStack getTabIconItem() {
+        public ItemStack createIcon(){
             return new ItemStack(itemKey);
         }
     };

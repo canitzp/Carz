@@ -27,7 +27,7 @@ public class ItemOilProbe extends ItemBase<ItemOilProbe> {
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if(!world.isRemote){
-            Chunk chunk = world.getChunkFromBlockCoords(pos);
+            Chunk chunk = world.getChunk(pos);
             if(WorldData.hasChunkOil(world, chunk.x, chunk.z)){
                 player.sendStatusMessage(new TextComponentTranslation("item.carz:oil_probe.found", WorldData.getOilInChunk(world, chunk.x, chunk.z)), false);
             }

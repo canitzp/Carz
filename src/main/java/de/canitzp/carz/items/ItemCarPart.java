@@ -44,11 +44,11 @@ public class ItemCarPart extends ItemBase<ItemCarPart> {
     @SuppressWarnings("ConstantConditions")
     @Nonnull
     @Override
-    public String getUnlocalizedName(@Nonnull ItemStack stack) {
+    public String getTranslationKey(@Nonnull ItemStack stack) {
         if (this.hasStackPart(stack)) {
-            return this.getUnlocalizedName() + "." + this.getPartFromStack(stack).name().toLowerCase();
+            return this.getTranslationKey() + "." + this.getPartFromStack(stack).name().toLowerCase();
         }
-        return super.getUnlocalizedName(stack);
+        return super.getTranslationKey(stack);
     }
 
     @SideOnly(Side.CLIENT)

@@ -1,4 +1,4 @@
-package de.canitzp.carz.compat.commoncapabilities;
+/*package de.canitzp.carz.compat.commoncapabilities;
 
 import de.canitzp.carz.compat.ICompat;
 import de.canitzp.carz.tile.TileBase;
@@ -15,6 +15,7 @@ import java.util.Locale;
 /**
  * @author canitzp
  */
+/*
 public class CommonCapabilities implements ICompat{
 
     @Nullable
@@ -36,3 +37,4 @@ public class CommonCapabilities implements ICompat{
         return null;
     }
 }
+*/

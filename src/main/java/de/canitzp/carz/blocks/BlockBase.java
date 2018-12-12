@@ -61,14 +61,14 @@ public abstract class BlockBase<T extends BlockBase> extends Block {
 
     @Nonnull
     @Override
-    public CreativeTabs getCreativeTabToDisplayOn() {
+    public CreativeTabs getCreativeTab() {
         return Registry.TAB_GENERAL;
     }
 
     @SuppressWarnings("ConstantConditions")
     @Nonnull
     @Override
-    public String getUnlocalizedName() {
+    public String getTranslationKey() {
         return "tile." + this.getRegistryName().toString();
     }
 }

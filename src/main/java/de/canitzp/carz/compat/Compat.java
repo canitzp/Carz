@@ -1,6 +1,5 @@
 package de.canitzp.carz.compat;
 
-import de.canitzp.carz.compat.commoncapabilities.CommonCapabilities;
 import de.canitzp.carz.tile.TileBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -22,7 +21,7 @@ public class Compat {
 
     static {
         if(Loader.isModLoaded("commoncapabilities")){
-            compatsLoaded.add(new CommonCapabilities());
+            //compatsLoaded.add(new CommonCapabilities());
         }
     }
 

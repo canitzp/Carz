@@ -33,7 +33,7 @@ public class ItemPainter extends ItemBase<ItemPainter> {
     @SuppressWarnings("ConstantConditions")
     public ItemPainter() {
         this.setRegistryName(Carz.MODID, "painter");
-        this.setUnlocalizedName(this.getRegistryName().toString());
+        this.setTranslationKey(this.getRegistryName().toString());
     }
 
     @Nonnull

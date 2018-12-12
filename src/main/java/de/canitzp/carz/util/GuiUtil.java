@@ -31,7 +31,7 @@ public class GuiUtil {
     public static void drawFluid(FluidTank tank, int x, int y, int width, int height) {
         if (tank != null && tank.getFluid() != null && tank.getFluid().getFluid() != null) {
             ResourceLocation fluidTexture = tank.getFluid().getFluid().getStill();
-            fluidTexture = new ResourceLocation(fluidTexture.getResourceDomain(), "textures/" + fluidTexture.getResourcePath() + ".png");
+            fluidTexture = new ResourceLocation(fluidTexture.getNamespace(), "textures/" + fluidTexture.getPath() + ".png");
             Minecraft.getMinecraft().getTextureManager().bindTexture(fluidTexture);
             int factor = tank.getFluidAmount() * height / tank.getCapacity();
             Gui.drawModalRectWithCustomSizedTexture(x, y + height - factor, 0, 0, width, factor, 16, 512);

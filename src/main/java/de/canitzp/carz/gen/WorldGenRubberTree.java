@@ -41,7 +41,7 @@ public class WorldGenRubberTree implements IWorldGenerator {
     }
 
     private void generateAt(Random rand, World world, BlockPos position){
-        if(world.getBlockState(position.down()).getMaterial() != Material.GRASS || !BIOME_WHITELIST.contains(Biome.REGISTRY.getNameForObject(world.getBiome(position)).getResourcePath())){
+        if(world.getBlockState(position.down()).getMaterial() != Material.GRASS || !BIOME_WHITELIST.contains(Biome.REGISTRY.getNameForObject(world.getBiome(position)).getPath())){
             return;
         }
         int i = rand.nextInt(3) + this.minTreeHeight;
@@ -109,7 +109,7 @@ public class WorldGenRubberTree implements IWorldGenerator {
 
                         if (state.getBlock().isAir(state, world, upN) || state.getBlock().isLeaves(state, world, upN) || state.getMaterial() == Material.VINE) {
                             if(world.rand.nextInt(5) == 0){
-                                world.setBlockState(position.up(j3), this.log.withProperty(BlockRubberLog.RUBBER, true).withProperty(BlockRubberLog.FACING, EnumFacing.getHorizontal(new Random().nextInt(3))).withProperty(BlockRubberLog.CURRENT_RUBBER, true));
+                                world.setBlockState(position.up(j3), this.log.withProperty(BlockRubberLog.RUBBER, true).withProperty(BlockRubberLog.FACING, EnumFacing.byHorizontalIndex(new Random().nextInt(3))).withProperty(BlockRubberLog.CURRENT_RUBBER, true));
                             } else {
                                 world.setBlockState(position.up(j3), this.log);
                             }

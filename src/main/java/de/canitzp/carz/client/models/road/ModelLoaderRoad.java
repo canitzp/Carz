@@ -23,13 +23,13 @@ public class ModelLoaderRoad implements ICustomModelLoader {
     private static final String KEY = "models/block/roadmodel/";
     @Override
     public boolean accepts(@Nonnull ResourceLocation modelLocation) {
-        return modelLocation.getResourceDomain().equals(Carz.MODID)&&modelLocation.getResourcePath().startsWith(KEY);
+        return modelLocation.getNamespace().equals(Carz.MODID) && modelLocation.getPath().startsWith(KEY);
     }
 
     @Nonnull
     @Override
     public IModel loadModel(@Nonnull ResourceLocation modelLocation) throws Exception {
-        return new RawRoadModel(modelLocation.getResourcePath().substring(KEY.length()));
+        return new RawRoadModel(modelLocation.getPath().substring(KEY.length()));
     }
 
     @Override

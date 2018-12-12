@@ -42,13 +42,13 @@ public abstract class ItemBase<T extends ItemBase> extends Item {
     @SuppressWarnings("ConstantConditions")
     @Nonnull
     @Override
-    public String getUnlocalizedName() {
+    public String getTranslationKey() {
         return "item." + this.getRegistryName().toString();
     }
 
     @Nonnull
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return this.getUnlocalizedName();
+    public String getTranslationKey(ItemStack stack) {
+        return this.getTranslationKey();
     }
 }
